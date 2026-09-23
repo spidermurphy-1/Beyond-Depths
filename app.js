@@ -266,6 +266,7 @@ document.getElementById('btn-new-item').addEventListener('click', () => {
         document.getElementById('modal-title').innerText = "Nova Ficha";
         document.getElementById('form-character').reset();
         populateCharModalSelects();
+        enforceClassConditions();
         document.getElementById('skills-select-list').innerHTML = ''; // reset dynamic slots
         document.getElementById('modal-character').showModal();
     } else if (currentTab === 'armors') {
@@ -377,6 +378,31 @@ function populateCharModalSelects() {
     });
 }
 
+function enforceClassConditions() {
+    const classNameVal = document.getElementById('inp-class').value.toLowerCase();
+    let mandatoryConds = [];
+    Object.keys(CLASS_TEMPLATES).forEach(k => {
+        if (classNameVal.includes(k.toLowerCase())) {
+            mandatoryConds = mandatoryConds.concat(CLASS_TEMPLATES[k].conditions || []);
+        }
+    });
+
+    document.querySelectorAll('.inp-cond-check').forEach(chk => {
+        if (mandatoryConds.includes(chk.value)) {
+            chk.checked = true;
+            chk.disabled = true;
+            chk.parentElement.classList.add('opacity-70', 'cursor-not-allowed', 'border', 'border-red-500/50');
+            chk.parentElement.title = "Condição obrigatória da Classe";
+        } else {
+            chk.disabled = false;
+            chk.parentElement.classList.remove('opacity-70', 'cursor-not-allowed', 'border', 'border-red-500/50');
+            chk.parentElement.title = "";
+        }
+    });
+}
+
+document.getElementById('inp-class').addEventListener('input', enforceClassConditions);
+
 function updatePointsCounter() {
     const total = (parseInt(document.getElementById('inp-con').value) || 0) +
                   (parseInt(document.getElementById('inp-for').value) || 0) +
@@ -418,10 +444,8 @@ if (inpTemplate) {
             document.getElementById('inp-mis').value = parseInt(document.getElementById('inp-mis').value || 0) + (tpl.attrMods.mis || 0);
             document.getElementById('inp-von').value = parseInt(document.getElementById('inp-von').value || 0) + (tpl.attrMods.von || 0);
             
-            // Check conditions
-            document.querySelectorAll('.inp-cond-check').forEach(chk => {
-                if(tpl.conditions.includes(chk.value)) chk.checked = true;
-            });
+            enforceClassConditions();
+            updatePointsCounter();
             
             // Auto-create and attach skills
             for(let sk of tpl.skillsToCreate) {
@@ -661,6 +685,7 @@ function renderDashboard() {
         document.querySelectorAll('.inp-cond-check').forEach(chk => {
             chk.checked = char.activeConditionIds.includes(chk.value);
         });
+        enforceClassConditions();
         
         // Restore skills
         const slotsContainer = document.getElementById('skills-select-list');
@@ -727,17 +752,18 @@ function updateBars(char, mods) {
 
     const lu = Math.max(0, Math.min(maxLu, char.lust));
     document.getElementById('val-lust').innerText = lu;
+    document.getElementById('max-lust').innerText = maxLu;
     const barLust = document.getElementById('bar-lust');
     barLust.style.width = (lu / maxLu * 100) + '%';
     if (lu >= maxLu) barLust.classList.add('mind-break');
     else barLust.classList.remove('mind-break');
 
     let ecstasyLimiar = mods.ecstasy_set !== null ? mods.ecstasy_set : ((isSacerdote ? 20 : 25) + char.attr.vig);
-    document.getElementById('dash-ecstasy-threshold').innerText = ecstasyLimiar + '%';
+    document.getElementById('dash-ecstasy-threshold').innerText = ecstasyLimiar;
     
     let ecstasyStage = Math.floor(lu / ecstasyLimiar);
     if(ecstasyStage < 0) ecstasyStage = 0;
-    document.getElementById('lust-stage').innerText = `Estágio ${ecstasyStage} (${lu} / ${maxLu}%)`;
+    document.getElementById('lust-stage').innerText = `Estágio ${ecstasyStage} (${lu} / ${maxLu})`;
 
     const badge = document.getElementById('dash-condition');
     if (lu >= maxLu) { badge.className = 'badge badge-lust'; badge.innerHTML = 'Mind Break'; }

@@ -141,9 +141,9 @@
                     <h3 class="font-cinzel text-xl mb-3 flex items-center gap-2"><i class="fa-solid fa-eye text-purple-500"></i> Lust</h3>
                     <div class="progress-bar-container mb-2">
                         <div id="bar-lust" class="progress-fill fill-lust" style="width: 0%;"></div>
-                        <div class="progress-text"><span id="val-lust">0</span>%</div>
+                        <div class="progress-text"><span id="val-lust">0</span> / <span id="max-lust">100</span></div>
                     </div>
-                    <div class="text-center text-xs text-purple-300 mb-2" id="lust-stage">Estágio 0 (0%)</div>
+                    <div class="text-center text-xs text-purple-300 mb-2" id="lust-stage">Estágio 0 (0 / 100)</div>
                     <div class="flex flex-wrap gap-1 justify-center">
                         <button class="btn-icon text-xs" onclick="adjustStat('lust', -10)">-10</button>
                         <button class="btn-icon text-xs" onclick="adjustStat('lust', -5)">-5</button>
@@ -256,7 +256,7 @@
             </div>
 
             <div class="glass-panel p-6 rounded-lg text-sm text-gray-400">
-                <p><i class="fa-solid fa-circle-info mr-1"></i> Gatilho de Êxtase atual: a cada <strong class="text-purple-400" id="dash-ecstasy-threshold">--%</strong>.</p>
+                <p><i class="fa-solid fa-circle-info mr-1"></i> Gatilho de Êxtase atual: a cada <strong class="text-purple-400"><span id="dash-ecstasy-threshold">--</span> de Lust</strong>.</p>
             </div>
         </div>
     </main>
