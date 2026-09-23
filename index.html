@@ -238,6 +238,15 @@
                     <h3 class="font-cinzel text-xl text-gold border-b border-gold/20 pb-2 mb-4">Condições e Desvantagens</h3>
                     <div id="dash-conditions" class="text-sm text-gray-300 whitespace-pre-wrap">Nenhuma condição ativa.</div>
                 </div>
+
+                <!-- System Logs -->
+                <div class="glass-panel p-6 rounded-lg">
+                    <h3 class="font-cinzel text-xl text-gold border-b border-gold/20 pb-2 mb-4"><i class="fa-solid fa-scroll text-gray-500 mr-2"></i> Registro do Sistema</h3>
+                    <div id="dash-logs" class="max-h-60 overflow-y-auto space-y-2 text-xs font-mono custom-scrollbar pr-2">
+                        <!-- Logs inseridos via JS -->
+                        <div class="text-gray-500 text-center py-4">Nenhum registro encontrado.</div>
+                    </div>
+                </div>
             </div>
 
             <!-- Armor Custom Details -->
@@ -281,8 +290,11 @@
                 </div>
 
                 <div>
-                    <h3 class="font-cinzel text-gold border-b border-gold/20 pb-1 mb-3">Atributos</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    <div class="flex justify-between items-end border-b border-gold/20 pb-1 mb-3">
+                        <h3 class="font-cinzel text-gold">Atributos</h3>
+                        <div class="text-xs font-bold text-gray-400">Pontos Usados: <span id="points-counter" class="text-white">0</span> / 12</div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 inp-attr-group">
                         <div>
                             <label class="block text-xs text-gray-400 mb-1">Constituição (HP/DF)</label>
                             <input type="number" id="inp-con" value="0" class="input-dark" min="-10" max="20">
@@ -337,6 +349,15 @@
                         <option value="">Sem Armadura (Trajes Comuns)</option>
                         <!-- Puxado do Global -->
                     </select>
+                </div>
+
+                <!-- Master Options -->
+                <div id="master-options-panel" class="hidden mt-4 p-3 bg-red-900/20 border border-red-500/30 rounded">
+                    <h4 class="text-xs font-bold text-red-400 mb-2"><i class="fa-solid fa-crown"></i> Privilégio de Mestre</h4>
+                    <label class="flex items-center gap-2 text-xs">
+                        <input type="checkbox" id="inp-unlock-points" class="accent-red-500">
+                        <span>Desbloquear Limite de 12 Pontos para esta ficha</span>
+                    </label>
                 </div>
             </div>
         </form>

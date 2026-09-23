@@ -107,6 +107,8 @@ function migrateChar(char) {
     if (!char.equippedArmorId) char.equippedArmorId = "";
     if (!char.equippedSkillIds) char.equippedSkillIds = [];
     if (!char.activeConditionIds) char.activeConditionIds = [];
+    if (!char.logs) char.logs = [];
+    if (char.isUnlockedPoints === undefined) char.isUnlockedPoints = false;
     
     return char;
 }
@@ -187,8 +189,20 @@ function loadData() {
 function canEdit(item) {
     if (!db) return true;
     if (!item || !currentUser) return false;
-    if (currentUser.email && (currentUser.email.startsWith('admin@') || currentUser.email.startsWith('mestre@'))) return true;
+    if (isMaster()) return true;
     return item.ownerId === currentUser.uid;
+}
+
+function isMaster() {
+    if (!db) return true;
+    if (!currentUser || !currentUser.email) return false;
+    return currentUser.email.startsWith('admin@') || currentUser.email.startsWith('mestre@');
+}
+
+function addLog(char, msg, type = 'info') {
+    const time = new Date().toLocaleTimeString('pt-BR', { hour12: false });
+    char.logs.push({ text: msg, type: type, time: time });
+    if(char.logs.length > 50) char.logs.shift(); // Keep last 50 logs max
 }
 
 // --- AUTH UI ---
@@ -363,6 +377,26 @@ function populateCharModalSelects() {
     });
 }
 
+function updatePointsCounter() {
+    const total = (parseInt(document.getElementById('inp-con').value) || 0) +
+                  (parseInt(document.getElementById('inp-for').value) || 0) +
+                  (parseInt(document.getElementById('inp-vig').value) || 0) +
+                  (parseInt(document.getElementById('inp-agi').value) || 0) +
+                  (parseInt(document.getElementById('inp-von').value) || 0) +
+                  (parseInt(document.getElementById('inp-sed').value) || 0) +
+                  (parseInt(document.getElementById('inp-mis').value) || 0);
+    
+    const counterEl = document.getElementById('points-counter');
+    counterEl.innerText = total;
+    if(total > 12) counterEl.className = 'text-red-500 font-bold';
+    else counterEl.className = 'text-white';
+    return total;
+}
+
+document.querySelectorAll('.inp-attr-group input').forEach(inp => {
+    inp.addEventListener('input', updatePointsCounter);
+});
+
 document.getElementById('btn-add-skill-slot').addEventListener('click', () => {
     const div = document.createElement('div');
     div.className = 'flex gap-2 mb-2';
@@ -417,6 +451,17 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
     e.preventDefault();
     const form = document.getElementById('form-character');
     if(!form.checkValidity()) { form.reportValidity(); return; }
+    
+    let isUnlocked = document.getElementById('inp-unlock-points').checked;
+    if (editingCharId) {
+        const existingChar = characters.find(c => c.id === editingCharId);
+        if (existingChar && existingChar.isUnlockedPoints) isUnlocked = true;
+    }
+    
+    const totalPoints = updatePointsCounter();
+    if (totalPoints > 12 && !isUnlocked && !isMaster()) {
+        return alert("O limite para jogadores normais é de 12 pontos somados entre todos os atributos.");
+    }
 
     const classNameVal = document.getElementById('inp-class').value.toLowerCase();
     let armorId = document.getElementById('inp-armor-select').value;
@@ -440,6 +485,7 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
         equippedArmorId: armorId,
         equippedSkillIds: selSkills,
         activeConditionIds: selConds,
+        isUnlockedPoints: isUnlocked,
         attr: { 
             con: parseInt(document.getElementById('inp-con').value) || 0,
             for: parseInt(document.getElementById('inp-for').value) || 0,
@@ -454,11 +500,14 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
     if (editingCharId) {
         const char = characters.find(c => c.id === editingCharId);
         if(char && canEdit(char)) {
+            const hasAttrChange = JSON.stringify(char.attr) !== JSON.stringify(newCharData.attr);
             Object.assign(char, newCharData);
+            if (hasAttrChange) addLog(char, "Atributos Base foram modificados na ficha.", "info");
             saveToDB('characters', char, characters, 'bd_characters');
         }
     } else {
         newCharData.id = generateId();
+        newCharData.logs = [];
         const baseHp = classNameVal.includes('sacerdote') ? 90 : 10;
         const baseSt = classNameVal.includes('sacerdote') ? 90 : 10;
         newCharData.hp = Math.max(1, baseHp + (newCharData.attr.con * 10));
@@ -568,6 +617,25 @@ function renderDashboard() {
     const canEditChar = canEdit(char);
     document.querySelectorAll('.action-btn').forEach(btn => btn.disabled = !canEditChar);
     
+    // Render Logs
+    const dashLogs = document.getElementById('dash-logs');
+    dashLogs.innerHTML = '';
+    if (char.logs && char.logs.length > 0) {
+        // Reverse so newest is on top or bottom? Chronological is bottom, newest top is easier for scrolling
+        const reversed = [...char.logs].reverse();
+        reversed.forEach(lg => {
+            const el = document.createElement('div');
+            el.className = "border-l-2 pl-2 py-1 border-white/10";
+            let color = 'text-gray-300';
+            if (lg.type === 'increase') color = 'text-red-400 font-bold'; // Por solicitação, vermelho para aumentos
+            else if (lg.type === 'decrease') color = 'text-yellow-400';
+            el.innerHTML = `<span class="text-gray-500 mr-2">[${lg.time}]</span> <span class="${color}">${escapeHTML(lg.text)}</span>`;
+            dashLogs.appendChild(el);
+        });
+    } else {
+        dashLogs.innerHTML = '<div class="text-gray-500 text-center py-4">Nenhum registro encontrado.</div>';
+    }
+
     document.getElementById('btn-edit-char').onclick = () => {
         if(!canEditChar) return alert("Sem permissão.");
         editingCharId = char.id;
@@ -578,6 +646,17 @@ function renderDashboard() {
         
         populateCharModalSelects();
         
+        // Master UI
+        const mop = document.getElementById('master-options-panel');
+        const chkUnlock = document.getElementById('inp-unlock-points');
+        if (isMaster()) {
+            mop.classList.remove('hidden');
+            chkUnlock.checked = char.isUnlockedPoints || false;
+        } else {
+            mop.classList.add('hidden');
+            chkUnlock.checked = char.isUnlockedPoints || false;
+        }
+
         // Restore conditions
         document.querySelectorAll('.inp-cond-check').forEach(chk => {
             chk.checked = char.activeConditionIds.includes(chk.value);
@@ -726,6 +805,7 @@ window.adjustStat = function(stat, amount) {
     if(!char) return;
     if(!canEdit(char)) return alert("Sem permissão.");
     
+    const oldVal = char[stat];
     char[stat] += amount;
     
     const mods = getCharModifiers(char);
@@ -748,6 +828,16 @@ window.adjustStat = function(stat, amount) {
         if(char[stat] > mx) char[stat] = mx;
         if(char[stat] < 0) char[stat] = 0;
     }
+
+    if (char[stat] !== oldVal) {
+        const statName = stat.toUpperCase();
+        if (char[stat] > oldVal) {
+            addLog(char, `${statName} aumentado: ${oldVal} -> ${char[stat]}`, "increase");
+        } else {
+            addLog(char, `${statName} diminuído: ${oldVal} -> ${char[stat]}`, "decrease");
+        }
+    }
+
     saveToDB('characters', char, characters, 'bd_characters');
 }
 window.applyDamage = () => adjustStat('hp', -15);
