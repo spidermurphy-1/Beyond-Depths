@@ -62,8 +62,8 @@ function getArmorBaseStats(type) {
 
 const CONDITIONS_DB = {
     "sangrando": { name: "Sangrando", desc: "Perde 5 HP por turno (Narrativo). -2 DF.", mods: { df: -2 } },
-    "fragil_fisico": { name: "Frágil (Físico)", desc: "Max HP reduzido em 20%.", mods: { hp_mult: 0.8 } },
-    "fragil_sexual": { name: "Frágil (Sexual)", desc: "Limiar de Êxtase travado em 20%.", mods: { ecstasy_set: 20 } },
+    "fragil_fisico": { name: "Frágil (Físico)", desc: "Max HP reduzido em 20%.", mods: { hp_mult: 0.8 }, classOnly: "Sacerdote" },
+    "fragil_sexual": { name: "Frágil (Sexual)", desc: "Limiar de Êxtase travado em 20%.", mods: { ecstasy_set: 20 }, classOnly: "Sacerdote" },
     "exausto": { name: "Exausto", desc: "Max Stamina reduzida em 50%.", mods: { st_mult: 0.5 } },
     "lento": { name: "Lento", desc: "Esquiva final sofre -5.", mods: { esq: -5 } },
     "enfeiticado": { name: "Enfeitiçado", desc: "Defesa de Lust é zerada.", mods: { dlust_set: 0 } }
@@ -75,8 +75,8 @@ const CLASS_TEMPLATES = {
         attrMods: { mis: 3, von: 2 },
         conditions: ["fragil_fisico", "fragil_sexual"],
         skillsToCreate: [
-            { name: "Mente Consagrada", type: "Passiva", cost: "Passivo", test: "-", effect: "+5 na Defesa de Lust. Sempre que realiza ação de alívio, reduz 10 LUST do aliado mais afetado." },
-            { name: "Rito de Expulsão", type: "Mágica", cost: "Cooldown 3", test: "Misticismo vs DF", effect: "Requer fluidos. Aliado: Cura 15+Misticismo. Inimigo: Converte LUST em Energia Sexual (Max 3x Misticismo)." }
+            { name: "Mente Consagrada", type: "Passiva", cost: "Passivo", test: "-", effect: "+5 na Defesa de Lust. Sempre que realiza ação de alívio, reduz 10 LUST do aliado mais afetado.", classRestricted: "Sacerdote" },
+            { name: "Rito de Expulsão", type: "Mágica", cost: "Cooldown 3", test: "Misticismo vs DF", effect: "Requer fluidos. Aliado: Cura 15+Misticismo. Inimigo: Converte LUST em Energia Sexual (Max 3x Misticismo).", classRestricted: "Sacerdote" }
         ]
     }
 };
@@ -283,9 +283,13 @@ function renderSidebar() {
     listEl.innerHTML = '';
     
     let arr = [];
-    if(currentTab === 'chars') arr = characters;
-    if(currentTab === 'armors') arr = globalArmors;
-    if(currentTab === 'skills') arr = globalSkills;
+    if (currentTab === 'chars') {
+        arr = characters;
+    } else if (currentTab === 'armors') {
+        arr = globalArmors;
+    } else if (currentTab === 'skills') {
+        arr = globalSkills.filter(s => isMaster() || (currentUser && s.ownerId === currentUser.uid));
+    }
     
     if (arr.length === 0) {
         listEl.innerHTML = '<div class="text-center text-sm text-gray-500 mt-10">Nenhum item encontrado.</div>';
@@ -369,12 +373,23 @@ function populateCharModalSelects() {
     globalArmors.forEach(a => {
         selArmor.innerHTML += `<option value="${a.id}">${escapeHTML(a.name)} (Base: ${getArmorBaseStats(a.base).name})</option>`;
     });
+}
 
-    const condList = document.getElementById('conditions-list');
-    condList.innerHTML = '';
-    Object.keys(CONDITIONS_DB).forEach(k => {
-        const c = CONDITIONS_DB[k];
-        condList.innerHTML += `<label class="flex items-center gap-2 bg-black/30 p-1 rounded"><input type="checkbox" value="${k}" class="inp-cond-check"> <span>${escapeHTML(c.name)}</span></label>`;
+function updateSkillSelectOptions() {
+    const classNameVal = document.getElementById('inp-class').value.toLowerCase();
+    const targetOwner = editingCharId ? characters.find(c => c.id === editingCharId)?.ownerId : (currentUser ? currentUser.uid : null);
+    
+    document.querySelectorAll('.inp-skill-slot').forEach(select => {
+        const currentVal = select.value;
+        select.innerHTML = '<option value="">Selecione Habilidade...</option>';
+        globalSkills.forEach(s => {
+            const isOwner = (s.ownerId === targetOwner) || isMaster();
+            const matchesClass = !s.classRestricted || classNameVal.includes(s.classRestricted.toLowerCase());
+            
+            if (isOwner && matchesClass) {
+                select.innerHTML += `<option value="${s.id}" ${s.id === currentVal ? 'selected' : ''}>${escapeHTML(s.name)}</option>`;
+            }
+        });
     });
 }
 
@@ -387,18 +402,31 @@ function enforceClassConditions() {
         }
     });
 
-    document.querySelectorAll('.inp-cond-check').forEach(chk => {
-        if (mandatoryConds.includes(chk.value)) {
-            chk.checked = true;
-            chk.disabled = true;
-            chk.parentElement.classList.add('opacity-70', 'cursor-not-allowed', 'border', 'border-red-500/50');
-            chk.parentElement.title = "Condição obrigatória da Classe";
-        } else {
-            chk.disabled = false;
-            chk.parentElement.classList.remove('opacity-70', 'cursor-not-allowed', 'border', 'border-red-500/50');
-            chk.parentElement.title = "";
-        }
+    const condList = document.getElementById('conditions-list');
+    const existingChecked = Array.from(document.querySelectorAll('.inp-cond-check')).filter(c => c.checked).map(c => c.value);
+    condList.innerHTML = '';
+    
+    Object.keys(CONDITIONS_DB).forEach(k => {
+        const c = CONDITIONS_DB[k];
+        
+        // Hide classOnly condition if class doesn't match
+        if (c.classOnly && !classNameVal.includes(c.classOnly.toLowerCase())) return;
+        
+        const isMandatory = mandatoryConds.includes(k);
+        const isChecked = isMandatory || existingChecked.includes(k);
+        
+        const extraClass = isMandatory ? 'opacity-70 cursor-not-allowed border border-red-500/50' : '';
+        const titleAttr = isMandatory ? 'title="Condição obrigatória da Classe"' : '';
+        const disabledAttr = isMandatory ? 'disabled' : '';
+        const checkedAttr = isChecked ? 'checked' : '';
+        
+        condList.innerHTML += `<label class="flex items-center gap-2 bg-black/30 p-1 rounded ${extraClass}" ${titleAttr}>
+            <input type="checkbox" value="${k}" class="inp-cond-check" ${checkedAttr} ${disabledAttr}> 
+            <span>${escapeHTML(c.name)}</span>
+        </label>`;
     });
+
+    updateSkillSelectOptions();
 }
 
 document.getElementById('inp-class').addEventListener('input', enforceClassConditions);
@@ -426,13 +454,12 @@ document.querySelectorAll('.inp-attr-group input').forEach(inp => {
 document.getElementById('btn-add-skill-slot').addEventListener('click', () => {
     const div = document.createElement('div');
     div.className = 'flex gap-2 mb-2';
-    let opts = '<option value="">Selecione Habilidade...</option>';
-    globalSkills.forEach(s => opts += `<option value="${s.id}">${escapeHTML(s.name)}</option>`);
     div.innerHTML = `
-        <select class="input-dark flex-1 inp-skill-slot">${opts}</select>
+        <select class="input-dark flex-1 inp-skill-slot"></select>
         <button type="button" class="btn-icon text-red-400" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
     `;
     document.getElementById('skills-select-list').appendChild(div);
+    updateSkillSelectOptions();
 });
 
 const inpTemplate = document.getElementById('inp-template');
@@ -455,16 +482,13 @@ if (inpTemplate) {
                 // Add slot
                 const div = document.createElement('div');
                 div.className = 'flex gap-2 mb-2';
-                let opts = '<option value="">Selecione Habilidade...</option>';
-                globalSkills.forEach(s => opts += `<option value="${s.id}">${escapeHTML(s.name)}</option>`);
-                opts += `<option value="${newSk.id}" selected>${escapeHTML(newSk.name)}</option>`;
-                
                 div.innerHTML = `
-                    <select class="input-dark flex-1 inp-skill-slot">${opts}</select>
+                    <select class="input-dark flex-1 inp-skill-slot"><option value="${newSk.id}" selected></option></select>
                     <button type="button" class="btn-icon text-red-400" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
                 `;
                 document.getElementById('skills-select-list').appendChild(div);
             }
+            enforceClassConditions(); // To re-render options correctly with newly added skill
             e.target.value = '';
         }
     });
@@ -682,10 +706,12 @@ function renderDashboard() {
         }
 
         // Restore conditions
-        document.querySelectorAll('.inp-cond-check').forEach(chk => {
-            chk.checked = char.activeConditionIds.includes(chk.value);
+        // Temporary set a fake element property so enforceClassConditions can capture it
+        const condList = document.getElementById('conditions-list');
+        condList.innerHTML = '';
+        char.activeConditionIds.forEach(id => {
+            condList.innerHTML += `<input type="checkbox" class="inp-cond-check" value="${id}" checked>`;
         });
-        enforceClassConditions();
         
         // Restore skills
         const slotsContainer = document.getElementById('skills-select-list');
@@ -693,17 +719,15 @@ function renderDashboard() {
         char.equippedSkillIds.forEach(sId => {
             const div = document.createElement('div');
             div.className = 'flex gap-2 mb-2';
-            let opts = '<option value="">Selecione Habilidade...</option>';
-            globalSkills.forEach(s => {
-                opts += `<option value="${s.id}" ${s.id === sId ? 'selected' : ''}>${escapeHTML(s.name)}</option>`;
-            });
             div.innerHTML = `
-                <select class="input-dark flex-1 inp-skill-slot">${opts}</select>
+                <select class="input-dark flex-1 inp-skill-slot"><option value="${sId}" selected></option></select>
                 <button type="button" class="btn-icon text-red-400" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
             `;
             slotsContainer.appendChild(div);
         });
 
+        enforceClassConditions(); // Applies condition visibility and loads select options
+        
         document.getElementById('inp-armor-select').value = char.equippedArmorId || "";
         
         document.getElementById('inp-con').value = char.attr.con;
