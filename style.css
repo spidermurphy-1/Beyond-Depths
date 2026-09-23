@@ -74,6 +74,7 @@ h1, h2, h3, h4, .font-medieval {
 .fill-hp { background: linear-gradient(90deg, #991b1b, #ef4444); }
 .fill-stamina { background: linear-gradient(90deg, #854d0e, #eab308); }
 .fill-lust { background: linear-gradient(90deg, #581c87, #a855f7); }
+.fill-energy { background: linear-gradient(90deg, #be185d, #ec4899); }
 .fill-lust.mind-break { animation: pulse-lust 1s infinite alternate; }
 
 .progress-text {

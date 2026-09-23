@@ -47,8 +47,14 @@
             </div>
         </div>
         
+        <div class="flex border-b border-gold/20 text-xs text-center bg-black/40">
+            <button id="tab-chars" class="flex-1 py-3 bg-gold/10 text-gold font-bold transition">Fichas</button>
+            <button id="tab-armors" class="flex-1 py-3 text-gray-400 hover:text-gold transition">Armaduras</button>
+            <button id="tab-skills" class="flex-1 py-3 text-gray-400 hover:text-gold transition">Habilidades</button>
+        </div>
+        
         <div class="p-4 flex gap-2">
-            <button id="btn-new-char" class="flex-1 btn-gold py-2 rounded font-semibold text-sm">
+            <button id="btn-new-item" class="flex-1 btn-gold py-2 rounded font-semibold text-sm">
                 <i class="fa-solid fa-plus mr-1"></i> Novo
             </button>
             <button id="btn-import-char" class="flex-1 glass-card py-2 rounded text-sm hover:text-white transition">
@@ -57,10 +63,9 @@
             <input type="file" id="import-file" accept=".json" class="hidden">
         </div>
 
-        <div id="character-list" class="flex-1 overflow-y-auto p-4 space-y-3">
-            <!-- Character cards will be injected here via JS -->
+        <div id="sidebar-list" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
             <div class="text-center text-sm text-gray-500 mt-10">
-                Nenhuma ficha encontrada. Crie ou importe uma.
+                Carregando...
             </div>
         </div>
     </aside>
@@ -93,8 +98,8 @@
                 </div>
             </div>
 
-            <!-- Main Stats: HP, Stamina, Lust -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Main Stats: HP, Stamina, Lust, Energia Sexual -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- HP Card -->
                 <div class="glass-card p-5 border-t-2 border-t-red-600 relative overflow-hidden">
                     <h3 class="font-cinzel text-xl mb-3 flex items-center gap-2"><i class="fa-solid fa-heart text-red-500"></i> HP</h3>
@@ -149,6 +154,42 @@
                         <button onclick="relieve()" class="w-full bg-purple-900/30 hover:bg-purple-800/50 border border-purple-700/50 text-sm py-1.5 rounded transition">Aliviar-se</button>
                     </div>
                 </div>
+                
+                <!-- Energia Sexual Card -->
+                <div class="glass-card p-5 border-t-2 border-t-pink-500 relative overflow-hidden">
+                    <h3 class="font-cinzel text-xl mb-3 flex items-center gap-2"><i class="fa-solid fa-sparkles text-pink-500"></i> Magia</h3>
+                    <div class="progress-bar-container mb-4">
+                        <div id="bar-energy" class="progress-fill fill-energy" style="width: 0%; background-color: #ec4899;"></div>
+                        <div class="progress-text"><span id="val-energy">0</span> / <span id="max-energy">35</span></div>
+                    </div>
+                    <div class="flex flex-wrap gap-1 justify-center">
+                        <button class="btn-icon action-btn text-xs" onclick="adjustStat('energy', -5)">-5</button>
+                        <button class="btn-icon action-btn text-xs" onclick="adjustStat('energy', -1)">-1</button>
+                        <button class="btn-icon action-btn text-xs" onclick="adjustStat('energy', 1)">+1</button>
+                        <button class="btn-icon action-btn text-xs" onclick="adjustStat('energy', 5)">+5</button>
+                    </div>
+                    <div class="mt-3">
+                        <button onclick="adjustStat('energy', 35)" class="w-full bg-pink-900/30 hover:bg-pink-800/50 border border-pink-700/50 text-sm py-1.5 rounded transition action-btn">Restaurar Magia</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Derived Stats (Defesas e Esquiva) -->
+            <div class="glass-panel p-6 rounded-lg flex justify-around text-center mb-6 border border-gold/10 bg-black/20 shadow-inner">
+                <div>
+                    <div class="text-xs text-gray-400 uppercase tracking-wider mb-1"><i class="fa-solid fa-shield text-gray-500"></i> Defesa Física</div>
+                    <div class="text-3xl font-cinzel text-white" id="dash-df">0</div>
+                </div>
+                <div class="w-px bg-white/10"></div>
+                <div>
+                    <div class="text-xs text-gray-400 uppercase tracking-wider mb-1"><i class="fa-solid fa-brain text-purple-500"></i> Defesa Lust</div>
+                    <div class="text-3xl font-cinzel text-purple-300" id="dash-dl">0</div>
+                </div>
+                <div class="w-px bg-white/10"></div>
+                <div>
+                    <div class="text-xs text-gray-400 uppercase tracking-wider mb-1"><i class="fa-solid fa-person-running text-green-500"></i> Esquiva</div>
+                    <div class="text-3xl font-cinzel text-green-300" id="dash-esq">0</div>
+                </div>
             </div>
 
             <!-- Attributes and Armor -->
@@ -182,11 +223,14 @@
             </div>
             
             <!-- Extended Descriptions -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Skills -->
+            <div class="grid grid-cols-1 gap-6">
+                <!-- Skills Cards -->
                 <div class="glass-panel p-6 rounded-lg">
                     <h3 class="font-cinzel text-xl text-gold border-b border-gold/20 pb-2 mb-4">Habilidades</h3>
-                    <div id="dash-skills" class="text-sm text-gray-300 whitespace-pre-wrap">Nenhuma habilidade registrada.</div>
+                    <div id="dash-skills-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Injetado via JS -->
+                        <div class="text-sm text-gray-400">Nenhuma habilidade registrada.</div>
+                    </div>
                 </div>
                 
                 <!-- Conditions -->
@@ -225,15 +269,14 @@
                         <input type="text" id="inp-name" required class="input-dark" placeholder="Ex: Valerius">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Classe</label>
-                        <select id="inp-class" class="input-dark">
-                            <option value="Ferreiro">Ferreiro</option>
-                            <option value="Inquisidor">Inquisidor</option>
-                            <option value="Cortesã">Cortesã</option>
-                            <option value="Algoz">Algoz</option>
-                            <option value="Bárbaro">Bárbaro</option>
-                            <option value="Mago Místico">Mago Místico</option>
-                        </select>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Classe Livre</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="inp-class" required class="input-dark flex-1" placeholder="Ex: Guerreiro Rúnico">
+                            <select id="inp-template" class="input-dark w-10 px-1 text-center bg-gold/10 text-gold" title="Aplicar Template de Classe">
+                                <option value="">+</option>
+                                <option value="Sacerdote">Sacerdote</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -241,99 +284,155 @@
                     <h3 class="font-cinzel text-gold border-b border-gold/20 pb-1 mb-3">Atributos</h3>
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                         <div>
-                            <label class="block text-xs text-gray-400 mb-1">Vigor</label>
-                            <input type="number" id="inp-vigor" value="0" class="input-dark" min="-10" max="20">
+                            <label class="block text-xs text-gray-400 mb-1">Constituição (HP/DF)</label>
+                            <input type="number" id="inp-con" value="0" class="input-dark" min="-10" max="20">
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-400 mb-1">Força</label>
-                            <input type="number" id="inp-str" value="0" class="input-dark" min="-10" max="20">
+                            <label class="block text-xs text-gray-400 mb-1">Força (Dano Físico)</label>
+                            <input type="number" id="inp-for" value="0" class="input-dark" min="-10" max="20">
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-400 mb-1">Agilidade</label>
+                            <label class="block text-xs text-gray-400 mb-1">Vigor (Stamina/Êxtase)</label>
+                            <input type="number" id="inp-vig" value="0" class="input-dark" min="-10" max="20">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Agilidade (Esquiva/Iniciativa)</label>
                             <input type="number" id="inp-agi" value="0" class="input-dark" min="-10" max="20">
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-400 mb-1">Sedução</label>
+                            <label class="block text-xs text-gray-400 mb-1">Vontade (Defesa Lust)</label>
+                            <input type="number" id="inp-von" value="0" class="input-dark" min="-10" max="20">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Sedução (Dano Lust)</label>
                             <input type="number" id="inp-sed" value="0" class="input-dark" min="-10" max="20">
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-400 mb-1">Misticismo</label>
+                            <label class="block text-xs text-gray-400 mb-1">Misticismo (Magia)</label>
                             <input type="number" id="inp-mis" value="0" class="input-dark" min="-10" max="20">
                         </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">Vontade</label>
-                            <input type="number" id="inp-will" value="0" class="input-dark" min="-10" max="20">
-                        </div>
                     </div>
                 </div>
 
                 <div>
-                    <h3 class="font-cinzel text-gold border-b border-gold/20 pb-1 mb-3">Habilidades e Condições</h3>
-                    <div class="space-y-3">
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">Habilidades / Skills (uma por linha)</label>
-                            <textarea id="inp-skills" class="input-dark min-h-[80px]" placeholder="Ex: Machado Pesado (Passiva)&#10;Visão Noturna"></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">Condições e Desvantagens</label>
-                            <textarea id="inp-conditions" class="input-dark min-h-[80px]" placeholder="Ex: Claustrofobia&#10;Dívida com a Guilda"></textarea>
-                        </div>
+                    <h3 class="font-cinzel text-gold border-b border-gold/20 pb-1 mb-3">Habilidades Anexadas</h3>
+                    <div id="skills-select-list" class="space-y-2 mb-2">
+                        <!-- Selects dinâmicos -->
+                    </div>
+                    <button type="button" id="btn-add-skill-slot" class="w-full border border-dashed border-gold/30 hover:border-gold/60 hover:bg-gold/5 text-gold text-xs py-2 rounded transition">
+                        <i class="fa-solid fa-plus mr-1"></i> Anexar Habilidade do Catálogo
+                    </button>
+                </div>
+                
+                <div class="mt-4">
+                    <h3 class="font-cinzel text-gold border-b border-gold/20 pb-1 mb-3">Condições e Desvantagens</h3>
+                    <div id="conditions-list" class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                        <!-- Checkboxes gerados por JS -->
                     </div>
                 </div>
 
-                <div>
-                    <h3 class="font-cinzel text-gold border-b border-gold/20 pb-1 mb-3">Equipamento</h3>
-                    <div class="space-y-3">
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">Nome do Equipamento (Opcional)</label>
-                            <input type="text" id="inp-armor-name" class="input-dark" placeholder="Ex: Armadura de Placas Enferrujada">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">Base da Armadura</label>
-                            <select id="inp-armor" class="input-dark mb-1">
-                                <option value="none">Sem Armadura (Trajes Comuns)</option>
-                                <option value="heavy">Armadura Pesada</option>
-                                <option value="light">Armadura Leve</option>
-                                <option value="seduction">Vestimenta Ousada / Sedução</option>
-                                <option value="mixed_hl">Híbrida: Pesada + Leve</option>
-                                <option value="mixed_hs">Híbrida: Pesada + Sedução</option>
-                                <option value="mixed_ls">Híbrida: Leve + Sedução</option>
-                            </select>
-                            <p class="text-xs text-gray-500 italic" id="armor-desc-hint">Modificadores base serão calculados automaticamente.</p>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3 mt-2">
-                            <div>
-                                <label class="block text-xs text-gray-400 mb-1">Bônus DF Extra</label>
-                                <input type="number" id="inp-armor-df" value="0" class="input-dark">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-gray-400 mb-1">Bônus DLUST Extra</label>
-                                <input type="number" id="inp-armor-dlust" value="0" class="input-dark">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-gray-400 mb-1">Bônus AGI Extra</label>
-                                <input type="number" id="inp-armor-agi" value="0" class="input-dark">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-gray-400 mb-1">Bônus SED Extra</label>
-                                <input type="number" id="inp-armor-sed" value="0" class="input-dark">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-gray-400 mb-1">Bônus MIS Extra</label>
-                                <input type="number" id="inp-armor-mis" value="0" class="input-dark">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">Propriedades e Efeitos Mágicos</label>
-                            <textarea id="inp-armor-desc" class="input-dark min-h-[60px]" placeholder="Ex: Reflete 10% do dano de fogo..."></textarea>
-                        </div>
-                    </div>
+                <div class="mt-4">
+                    <h3 class="font-cinzel text-gold border-b border-gold/20 pb-1 mb-3">Equipamento Anexado</h3>
+                    <select id="inp-armor-select" class="input-dark mb-1">
+                        <option value="">Sem Armadura (Trajes Comuns)</option>
+                        <!-- Puxado do Global -->
+                    </select>
                 </div>
             </div>
         </form>
         <div class="p-4 border-t border-gold/20 flex justify-end gap-3 bg-black/20">
             <button id="btn-modal-cancel" class="px-4 py-2 text-sm text-gray-400 hover:text-white transition">Cancelar</button>
             <button id="btn-modal-save" class="px-4 py-2 btn-gold rounded text-sm font-bold">Salvar Ficha</button>
+        </div>
+    </dialog>
+
+    <!-- Modal Global Armor -->
+    <dialog id="modal-armor" class="glass-panel rounded-xl shadow-2xl p-0 max-w-md w-full">
+        <div class="p-6 border-b border-gold/20">
+            <h2 class="text-xl font-cinzel text-gold">Forjar Armadura (Global)</h2>
+        </div>
+        <form method="dialog" id="form-armor" class="p-6 max-h-[70vh] overflow-y-auto space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Nome</label>
+                <input type="text" id="inp-g-armor-name" required class="input-dark">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">Base (Modificadores Automáticos)</label>
+                <select id="inp-g-armor-base" class="input-dark mb-1">
+                    <option value="none">Sem Armadura</option>
+                    <option value="heavy">Pesada</option>
+                    <option value="light">Leve</option>
+                    <option value="seduction">Sedução</option>
+                    <option value="mixed_hl">Híbrida: Pesada + Leve</option>
+                    <option value="mixed_hs">Híbrida: Pesada + Sedução</option>
+                    <option value="mixed_ls">Híbrida: Leve + Sedução</option>
+                </select>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+                <div>
+                    <label class="block text-[10px] text-gray-400 uppercase">DF Extra</label>
+                    <input type="number" id="inp-g-armor-df" value="0" class="input-dark text-center">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 uppercase">DLUST Extra</label>
+                    <input type="number" id="inp-g-armor-dlust" value="0" class="input-dark text-center">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 uppercase">AGI Extra</label>
+                    <input type="number" id="inp-g-armor-agi" value="0" class="input-dark text-center">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 uppercase">SED Extra</label>
+                    <input type="number" id="inp-g-armor-sed" value="0" class="input-dark text-center">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 uppercase">MIS Extra</label>
+                    <input type="number" id="inp-g-armor-mis" value="0" class="input-dark text-center">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">Propriedades Especiais</label>
+                <textarea id="inp-g-armor-desc" class="input-dark min-h-[60px]"></textarea>
+            </div>
+        </form>
+        <div class="p-4 border-t border-gold/20 flex justify-end gap-3 bg-black/20">
+            <button type="button" onclick="document.getElementById('modal-armor').close()" class="px-4 py-2 text-sm text-gray-400 hover:text-white transition">Cancelar</button>
+            <button type="button" id="btn-save-g-armor" class="px-4 py-2 btn-gold rounded text-sm font-bold">Salvar Armadura</button>
+        </div>
+    </dialog>
+
+    <!-- Modal Global Skill -->
+    <dialog id="modal-skill" class="glass-panel rounded-xl shadow-2xl p-0 max-w-md w-full">
+        <div class="p-6 border-b border-gold/20">
+            <h2 class="text-xl font-cinzel text-gold">Criar Habilidade (Global)</h2>
+        </div>
+        <form method="dialog" id="form-skill" class="p-6 max-h-[70vh] overflow-y-auto space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Nome da Habilidade</label>
+                <input type="text" id="inp-g-skill-name" required class="input-dark">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-[10px] text-gray-400 uppercase">Tipo</label>
+                    <input type="text" id="inp-g-skill-type" class="input-dark" placeholder="Mágica, Passiva...">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 uppercase">Custo</label>
+                    <input type="text" id="inp-g-skill-cost" class="input-dark" placeholder="10 HP">
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-[10px] text-gray-400 uppercase">Teste</label>
+                    <input type="text" id="inp-g-skill-test" class="input-dark" placeholder="Força vs DF">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">Efeito</label>
+                <textarea id="inp-g-skill-effect" required class="input-dark min-h-[60px]"></textarea>
+            </div>
+        </form>
+        <div class="p-4 border-t border-gold/20 flex justify-end gap-3 bg-black/20">
+            <button type="button" onclick="document.getElementById('modal-skill').close()" class="px-4 py-2 text-sm text-gray-400 hover:text-white transition">Cancelar</button>
+            <button type="button" id="btn-save-g-skill" class="px-4 py-2 btn-gold rounded text-sm font-bold">Salvar Habilidade</button>
         </div>
     </dialog>
 

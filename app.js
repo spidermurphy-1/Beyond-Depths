@@ -1,11 +1,9 @@
 /**
  * Beyond Depths - System Logic (Multiplayer & Secure)
+ * VTT Architecture: Global Armors, Skills & Conditions
  */
 
 // --- FIREBASE SETUP ---
-// INSTRUÇÕES: Crie um projeto no Firebase (https://console.firebase.google.com/),
-// habilite o Firestore Database e o Authentication (Email/Senha).
-// Em seguida, cole as configurações geradas abaixo:
 const firebaseConfig = {
     apiKey: "AIzaSyA9vgfJ_fF0hmIZ95uytdW5ggZgpfm4WlI",
     authDomain: "beyon-depths.firebaseapp.com",
@@ -19,7 +17,9 @@ const firebaseConfig = {
 let db = null;
 let auth = null;
 let currentUser = null;
-let unsubscribeSnapshot = null;
+let unsubscribeChars = null;
+let unsubscribeArmors = null;
+let unsubscribeSkills = null;
 
 if (firebaseConfig.apiKey) {
     try {
@@ -45,74 +45,98 @@ function escapeHTML(str) {
     );
 }
 
-// --- DATA STRUCTURES ---
+// --- DATA STRUCTURES (GLOBALS) ---
 const ARMOR_DB = {
-    none: { name: "Sem Armadura", desc: "Trajes comuns. Sem modificadores.", mods: { df: 0, dlust: 0, agi: 0, sed: 0, mis: 0 } },
-    heavy: { name: "Armadura Pesada", desc: "Alta DF, +Defesa LUST, -AGI, -SED.", mods: { df: 10, dlust: 5, agi: -2, sed: -2, mis: 0 } },
-    light: { name: "Armadura Leve", desc: "Moderada DF, +AGI, leve +Defesa LUST.", mods: { df: 5, dlust: 2, agi: 2, sed: 0, mis: 0 } },
-    seduction: { name: "Vestimenta Ousada", desc: "Alta Sedução e Misticismo, penalidade severa em Defesas.", mods: { df: -5, dlust: -5, agi: 0, sed: 5, mis: 2 } },
+    none: { name: "Sem Armadura", desc: "Trajes comuns.", mods: { df: 0, dlust: 0, agi: 0, sed: 0, mis: 0 } },
+    heavy: { name: "Armadura Pesada", desc: "Alta DF, +DLUST, -AGI, -SED.", mods: { df: 10, dlust: 5, agi: -2, sed: -2, mis: 0 } },
+    light: { name: "Armadura Leve", desc: "Moderada DF, +AGI.", mods: { df: 5, dlust: 2, agi: 2, sed: 0, mis: 0 } },
+    seduction: { name: "Sedução", desc: "Alta SED/MIS, penalidade Defesas.", mods: { df: -5, dlust: -5, agi: 0, sed: 5, mis: 2 } },
+    mixed_hl: { name: "Híbrida: Pesada+Leve", desc: "Balanceado", mods: { df: 8, dlust: 4, agi: 0, sed: -1, mis: 0 } },
+    mixed_hs: { name: "Híbrida: Pesada+Sedução", desc: "Mistura", mods: { df: 2, dlust: 0, agi: -1, sed: 1, mis: 1 } },
+    mixed_ls: { name: "Híbrida: Leve+Sedução", desc: "Ágil", mods: { df: 0, dlust: -1, agi: 1, sed: 2, mis: 1 } }
 };
 
-function getArmorStats(type) {
-    if (ARMOR_DB[type]) return ARMOR_DB[type];
-    
-    if (type.startsWith('mixed_')) {
-        const types = type.split('_')[1];
-        let a1, a2;
-        if (types === 'hl') { a1 = ARMOR_DB.heavy; a2 = ARMOR_DB.light; }
-        if (types === 'hs') { a1 = ARMOR_DB.heavy; a2 = ARMOR_DB.seduction; }
-        if (types === 'ls') { a1 = ARMOR_DB.light; a2 = ARMOR_DB.seduction; }
-        
-        if (a1 && a2) {
-            return {
-                name: `Híbrida (${a1.name.split(' ')[1]} + ${a2.name.split(' ')[1] || 'Sedução'})`,
-                desc: "50% dos modificadores de ambas as categorias.",
-                mods: {
-                    df: Math.round((a1.mods.df + a2.mods.df) / 2),
-                    dlust: Math.round((a1.mods.dlust + a2.mods.dlust) / 2),
-                    agi: Math.round((a1.mods.agi + a2.mods.agi) / 2),
-                    sed: Math.round((a1.mods.sed + a2.mods.sed) / 2),
-                    mis: Math.round((a1.mods.mis + a2.mods.mis) / 2)
-                }
-            };
-        }
-    }
-    return ARMOR_DB.none;
+function getArmorBaseStats(type) {
+    return ARMOR_DB[type] || ARMOR_DB.none;
 }
+
+const CONDITIONS_DB = {
+    "sangrando": { name: "Sangrando", desc: "Perde 5 HP por turno (Narrativo). -2 DF.", mods: { df: -2 } },
+    "fragil_fisico": { name: "Frágil (Físico)", desc: "Max HP reduzido em 20%.", mods: { hp_mult: 0.8 } },
+    "fragil_sexual": { name: "Frágil (Sexual)", desc: "Limiar de Êxtase travado em 20%.", mods: { ecstasy_set: 20 } },
+    "exausto": { name: "Exausto", desc: "Max Stamina reduzida em 50%.", mods: { st_mult: 0.5 } },
+    "lento": { name: "Lento", desc: "Esquiva final sofre -5.", mods: { esq: -5 } },
+    "enfeiticado": { name: "Enfeitiçado", desc: "Defesa de Lust é zerada.", mods: { dlust_set: 0 } }
+};
+
+const CLASS_TEMPLATES = {
+    "Sacerdote": {
+        class: "Sacerdote",
+        attrMods: { mis: 3, von: 2 },
+        conditions: ["fragil_fisico", "fragil_sexual"],
+        skillsToCreate: [
+            { name: "Mente Consagrada", type: "Passiva", cost: "Passivo", test: "-", effect: "+5 na Defesa de Lust. Sempre que realiza ação de alívio, reduz 10 LUST do aliado mais afetado." },
+            { name: "Rito de Expulsão", type: "Mágica", cost: "Cooldown 3", test: "Misticismo vs DF", effect: "Requer fluidos. Aliado: Cura 15+Misticismo. Inimigo: Converte LUST em Energia Sexual (Max 3x Misticismo)." }
+        ]
+    }
+};
 
 // --- STATE ---
 let characters = [];
+let globalArmors = [];
+let globalSkills = [];
 let activeCharId = null;
+let currentTab = 'chars'; // chars, armors, skills
 
-function generateId() {
-    return 'char_' + Math.random().toString(36).substr(2, 9);
+function generateId() { return 'id_' + Math.random().toString(36).substr(2, 9); }
+
+function migrateChar(char) {
+    if (!char.attr) char.attr = {};
+    if (char.attr.con === undefined) {
+        char.attr.for = char.attr.str || 0;
+        char.attr.con = char.attr.for;
+        char.attr.vig = char.attr.vigor || 0;
+        char.attr.agi = char.attr.agi || 0;
+        char.attr.sed = char.attr.sed || 0;
+        char.attr.mis = char.attr.mis || 0;
+        char.attr.von = char.attr.will || 0;
+    }
+    if (char.energy === undefined) char.energy = 35;
+    
+    // Arrays for relations
+    if (!char.equippedArmorId) char.equippedArmorId = "";
+    if (!char.equippedSkillIds) char.equippedSkillIds = [];
+    if (!char.activeConditionIds) char.activeConditionIds = [];
+    
+    return char;
 }
 
 // --- DB SYNC LOGIC ---
-function saveCharToDB(char) {
+function saveToDB(collection, item, localArray, storageKey) {
     if (db && currentUser) {
-        char.ownerId = currentUser.uid;
-        db.collection('characters').doc(char.id).set(char)
-            .catch(err => console.error("Erro ao salvar:", err));
+        item.ownerId = currentUser.uid;
+        db.collection(collection).doc(item.id).set(item).catch(e => console.error("Erro:", e));
     } else {
-        // Fallback LocalStorage
-        const idx = characters.findIndex(c => c.id === char.id);
-        if (idx > -1) characters[idx] = char;
-        else characters.push(char);
-        localStorage.setItem('bd_characters', JSON.stringify(characters));
+        const idx = localArray.findIndex(x => x.id === item.id);
+        if (idx > -1) localArray[idx] = item;
+        else localArray.push(item);
+        localStorage.setItem(storageKey, JSON.stringify(localArray));
         renderSidebar();
-        renderDashboard();
+        if(collection === 'characters') renderDashboard();
     }
 }
 
-function deleteCharFromDB(charId) {
+function deleteFromDB(collection, id, localArray, storageKey) {
     if (db && currentUser) {
-        db.collection('characters').doc(charId).delete();
+        db.collection(collection).doc(id).delete();
     } else {
-        characters = characters.filter(c => c.id !== charId);
-        localStorage.setItem('bd_characters', JSON.stringify(characters));
+        const arr = localArray.filter(x => x.id !== id);
+        if (collection === 'characters') characters = arr;
+        if (collection === 'global_armors') globalArmors = arr;
+        if (collection === 'global_skills') globalSkills = arr;
+        localStorage.setItem(storageKey, JSON.stringify(arr));
         renderSidebar();
-        renderDashboard();
+        if(collection === 'characters') renderDashboard();
     }
 }
 
@@ -120,46 +144,51 @@ function loadData() {
     activeCharId = localStorage.getItem('bd_active');
     
     if (db) {
-        // Firebase Auth e Snapshot Listeners
         auth.onAuthStateChanged(user => {
             currentUser = user;
             updateAuthUI();
-            
-            if (unsubscribeSnapshot) unsubscribeSnapshot();
+            if (unsubscribeChars) { unsubscribeChars(); unsubscribeArmors(); unsubscribeSkills(); }
             
             if (user) {
-                // Sincronização em tempo real do servidor
-                unsubscribeSnapshot = db.collection('characters').onSnapshot(snapshot => {
-                    characters = [];
-                    snapshot.forEach(doc => characters.push(doc.data()));
-                    if (activeCharId && !characters.find(c => c.id === activeCharId)) {
-                        activeCharId = null;
-                    }
-                    renderSidebar();
+                unsubscribeChars = db.collection('characters').onSnapshot(snap => {
+                    characters = snap.docs.map(doc => migrateChar(doc.data()));
+                    if (activeCharId && !characters.find(c => c.id === activeCharId)) activeCharId = null;
+                    if(currentTab === 'chars') renderSidebar();
+                    renderDashboard();
+                });
+                unsubscribeArmors = db.collection('global_armors').onSnapshot(snap => {
+                    globalArmors = snap.docs.map(doc => doc.data());
+                    if(currentTab === 'armors') renderSidebar();
+                    renderDashboard();
+                });
+                unsubscribeSkills = db.collection('global_skills').onSnapshot(snap => {
+                    globalSkills = snap.docs.map(doc => doc.data());
+                    if(currentTab === 'skills') renderSidebar();
                     renderDashboard();
                 });
             } else {
-                characters = [];
-                activeCharId = null;
-                renderSidebar();
-                renderDashboard();
+                characters = []; globalArmors = []; globalSkills = []; activeCharId = null;
+                renderSidebar(); renderDashboard();
             }
         });
     } else {
-        // Fallback LocalStorage
-        const data = localStorage.getItem('bd_characters');
-        if (data) characters = JSON.parse(data);
+        const dc = localStorage.getItem('bd_characters');
+        if (dc) characters = JSON.parse(dc).map(migrateChar);
+        const da = localStorage.getItem('bd_armors');
+        if (da) globalArmors = JSON.parse(da);
+        const ds = localStorage.getItem('bd_skills');
+        if (ds) globalSkills = JSON.parse(ds);
+        
         if (activeCharId && !characters.find(c => c.id === activeCharId)) activeCharId = null;
-        updateAuthUI();
-        renderSidebar();
-        renderDashboard();
+        updateAuthUI(); renderSidebar(); renderDashboard();
     }
 }
 
-function canEdit(char) {
-    if (!db) return true; // Modo local permite tudo
-    if (!char || !currentUser) return false;
-    return char.ownerId === currentUser.uid;
+function canEdit(item) {
+    if (!db) return true;
+    if (!item || !currentUser) return false;
+    if (currentUser.email && (currentUser.email.startsWith('admin@') || currentUser.email.startsWith('mestre@'))) return true;
+    return item.ownerId === currentUser.uid;
 }
 
 // --- AUTH UI ---
@@ -172,228 +201,373 @@ const modalLogin = document.getElementById('modal-login');
 const formLogin = document.getElementById('form-login');
 
 function updateAuthUI() {
-    if (!db) {
-        elAuthPanel.innerHTML = '<span class="text-xs text-green-400">Modo Local Offline (Sem Firebase)</span>';
-        return;
-    }
-    
+    if (!db) { elAuthPanel.innerHTML = '<span class="text-xs text-green-400">Modo Local (Sem BD)</span>'; return; }
     if (currentUser) {
-        btnShowLogin.classList.add('hidden');
-        elUserInfo.classList.remove('hidden');
-        const displayName = currentUser.email ? currentUser.email.replace('@beyonddepths.local', '') : `Desconhecido`;
-        elUserEmail.innerText = escapeHTML(displayName);
+        btnShowLogin.classList.add('hidden'); elUserInfo.classList.remove('hidden');
+        elUserEmail.innerText = escapeHTML(currentUser.email.replace('@beyonddepths.local', ''));
     } else {
-        btnShowLogin.classList.remove('hidden');
-        elUserInfo.classList.add('hidden');
+        btnShowLogin.classList.remove('hidden'); elUserInfo.classList.add('hidden');
     }
 }
 
-if(btnShowLogin) {
-    btnShowLogin.addEventListener('click', () => {
-        formLogin.reset();
-        modalLogin.showModal();
-    });
-}
-
-if(btnLogout) {
-    btnLogout.addEventListener('click', () => {
-        if(auth) auth.signOut();
-    });
-}
+if(btnShowLogin) btnShowLogin.addEventListener('click', () => { formLogin.reset(); modalLogin.showModal(); });
+if(btnLogout) btnLogout.addEventListener('click', () => { if(auth) auth.signOut(); });
 
 document.getElementById('btn-login-cancel').addEventListener('click', () => modalLogin.close());
 document.getElementById('btn-login-submit').addEventListener('click', (e) => {
     e.preventDefault();
-    if(!formLogin.checkValidity()) {
-        formLogin.reportValidity();
-        return;
-    }
-    const username = document.getElementById('inp-username').value.trim();
+    if(!formLogin.checkValidity()) { formLogin.reportValidity(); return; }
+    const email = `${document.getElementById('inp-username').value.trim().toLowerCase()}@beyonddepths.local`;
     const pwd = document.getElementById('inp-password').value;
-    const dummyEmail = `${username.toLowerCase()}@beyonddepths.local`;
     
-    auth.signInWithEmailAndPassword(dummyEmail, pwd)
+    auth.signInWithEmailAndPassword(email, pwd)
         .then(() => modalLogin.close())
         .catch(err => {
             if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-                auth.createUserWithEmailAndPassword(dummyEmail, pwd)
-                    .then(() => modalLogin.close())
-                    .catch(e => alert("Erro ao criar conta: " + e.message));
-            } else {
-                alert("Erro ao logar: " + err.message);
-            }
+                auth.createUserWithEmailAndPassword(email, pwd).then(() => modalLogin.close()).catch(e => alert(e.message));
+            } else alert(err.message);
         });
 });
 
-// --- UI LOGIC ---
+// --- SIDEBAR TABS ---
+document.getElementById('tab-chars').onclick = () => { currentTab = 'chars'; updateTabsUI(); renderSidebar(); }
+document.getElementById('tab-armors').onclick = () => { currentTab = 'armors'; updateTabsUI(); renderSidebar(); }
+document.getElementById('tab-skills').onclick = () => { currentTab = 'skills'; updateTabsUI(); renderSidebar(); }
 
-// Elements
-const elSidebarList = document.getElementById('character-list');
-const elDashContainer = document.getElementById('dashboard-container');
-const elNoChar = document.getElementById('no-char-selected');
+function updateTabsUI() {
+    ['chars','armors','skills'].forEach(t => {
+        const el = document.getElementById(`tab-${t}`);
+        if(t === currentTab) {
+            el.className = `flex-1 py-3 bg-gold/10 text-gold font-bold transition`;
+        } else {
+            el.className = `flex-1 py-3 text-gray-400 hover:text-gold transition`;
+        }
+    });
+}
 
-// Modal Character
-const modalChar = document.getElementById('modal-character');
-const formChar = document.getElementById('form-character');
-let editingCharId = null;
+document.getElementById('btn-new-item').addEventListener('click', () => {
+    if (db && !currentUser) return alert("Faça login para criar conteúdo.");
+    if (currentTab === 'chars') {
+        editingCharId = null;
+        document.getElementById('modal-title').innerText = "Nova Ficha";
+        document.getElementById('form-character').reset();
+        populateCharModalSelects();
+        document.getElementById('skills-select-list').innerHTML = ''; // reset dynamic slots
+        document.getElementById('modal-character').showModal();
+    } else if (currentTab === 'armors') {
+        document.getElementById('form-armor').reset();
+        document.getElementById('modal-armor').showModal();
+    } else if (currentTab === 'skills') {
+        document.getElementById('form-skill').reset();
+        document.getElementById('modal-skill').showModal();
+    }
+});
 
-document.getElementById('btn-new-char').addEventListener('click', () => {
-    if (db && !currentUser) return alert("Faça login para criar uma ficha no servidor.");
+function renderSidebar() {
+    const listEl = document.getElementById('sidebar-list');
+    listEl.innerHTML = '';
     
-    editingCharId = null;
-    document.getElementById('modal-title').innerText = "Nova Ficha";
-    formChar.reset();
-    document.getElementById('armor-desc-hint').innerText = "Modificadores base serão calculados automaticamente.";
-    modalChar.showModal();
-});
-
-document.getElementById('btn-modal-cancel').addEventListener('click', () => modalChar.close());
-
-document.getElementById('inp-armor').addEventListener('change', (e) => {
-    const stats = getArmorStats(e.target.value);
-    document.getElementById('armor-desc-hint').innerText = stats.desc;
-});
-
-document.getElementById('btn-modal-save').addEventListener('click', (e) => {
-    e.preventDefault();
-    if(!formChar.checkValidity()) {
-        formChar.reportValidity();
+    let arr = [];
+    if(currentTab === 'chars') arr = characters;
+    if(currentTab === 'armors') arr = globalArmors;
+    if(currentTab === 'skills') arr = globalSkills;
+    
+    if (arr.length === 0) {
+        listEl.innerHTML = '<div class="text-center text-sm text-gray-500 mt-10">Nenhum item encontrado.</div>';
         return;
     }
+    
+    arr.forEach(item => {
+        const isAct = (currentTab === 'chars' && item.id === activeCharId);
+        const div = document.createElement('div');
+        div.className = `p-3 rounded transition flex items-center justify-between border ${isAct ? 'bg-gold/10 border-gold' : 'glass-card border-transparent'}`;
+        
+        if (currentTab === 'chars') {
+            div.classList.add('cursor-pointer');
+            div.onclick = () => { activeCharId = item.id; localStorage.setItem('bd_active', item.id); renderSidebar(); renderDashboard(); };
+            div.innerHTML = `
+                <div class="flex-1">
+                    <div class="font-bold text-sm ${isAct ? 'text-gold' : 'text-gray-200'}">${escapeHTML(item.name)}</div>
+                    <div class="text-xs text-gray-400">${escapeHTML(item.class)}</div>
+                </div>
+            `;
+        } else {
+            const sub = currentTab === 'armors' ? `DF: +${item.mods.df}` : `Tipo: ${item.type}`;
+            div.innerHTML = `
+                <div class="flex-1">
+                    <div class="font-bold text-sm text-gray-200">${escapeHTML(item.name)}</div>
+                    <div class="text-xs text-gray-400">${escapeHTML(sub)}</div>
+                </div>
+                ${canEdit(item) ? `<button onclick="deleteFromDB('${currentTab === 'armors' ? 'global_armors' : 'global_skills'}', '${item.id}', ${currentTab === 'armors' ? 'globalArmors' : 'globalSkills'}, 'bd_${currentTab}')" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-trash"></i></button>` : ''}
+            `;
+        }
+        listEl.appendChild(div);
+    });
+}
 
-    const armorObj = {
-        base: document.getElementById('inp-armor').value,
-        name: document.getElementById('inp-armor-name').value,
-        desc: document.getElementById('inp-armor-desc').value,
+// --- GLOBAL MODALS LOGIC ---
+document.getElementById('btn-save-g-armor').addEventListener('click', (e) => {
+    e.preventDefault();
+    const form = document.getElementById('form-armor');
+    if(!form.checkValidity()) { form.reportValidity(); return; }
+    
+    const obj = {
+        id: generateId(),
+        name: document.getElementById('inp-g-armor-name').value,
+        base: document.getElementById('inp-g-armor-base').value,
+        desc: document.getElementById('inp-g-armor-desc').value,
         mods: {
-            df: parseInt(document.getElementById('inp-armor-df').value) || 0,
-            dlust: parseInt(document.getElementById('inp-armor-dlust').value) || 0,
-            agi: parseInt(document.getElementById('inp-armor-agi').value) || 0,
-            sed: parseInt(document.getElementById('inp-armor-sed').value) || 0,
-            mis: parseInt(document.getElementById('inp-armor-mis').value) || 0
+            df: parseInt(document.getElementById('inp-g-armor-df').value) || 0,
+            dlust: parseInt(document.getElementById('inp-g-armor-dlust').value) || 0,
+            agi: parseInt(document.getElementById('inp-g-armor-agi').value) || 0,
+            sed: parseInt(document.getElementById('inp-g-armor-sed').value) || 0,
+            mis: parseInt(document.getElementById('inp-g-armor-mis').value) || 0
         }
     };
+    saveToDB('global_armors', obj, globalArmors, 'bd_armors');
+    document.getElementById('modal-armor').close();
+});
+
+document.getElementById('btn-save-g-skill').addEventListener('click', (e) => {
+    e.preventDefault();
+    const form = document.getElementById('form-skill');
+    if(!form.checkValidity()) { form.reportValidity(); return; }
+    
+    const obj = {
+        id: generateId(),
+        name: document.getElementById('inp-g-skill-name').value,
+        type: document.getElementById('inp-g-skill-type').value,
+        cost: document.getElementById('inp-g-skill-cost').value,
+        test: document.getElementById('inp-g-skill-test').value,
+        effect: document.getElementById('inp-g-skill-effect').value
+    };
+    saveToDB('global_skills', obj, globalSkills, 'bd_skills');
+    document.getElementById('modal-skill').close();
+});
+
+// --- CHARACTER MODAL LOGIC ---
+let editingCharId = null;
+
+function populateCharModalSelects() {
+    const selArmor = document.getElementById('inp-armor-select');
+    selArmor.innerHTML = '<option value="">Sem Armadura</option>';
+    globalArmors.forEach(a => {
+        selArmor.innerHTML += `<option value="${a.id}">${escapeHTML(a.name)} (Base: ${getArmorBaseStats(a.base).name})</option>`;
+    });
+
+    const condList = document.getElementById('conditions-list');
+    condList.innerHTML = '';
+    Object.keys(CONDITIONS_DB).forEach(k => {
+        const c = CONDITIONS_DB[k];
+        condList.innerHTML += `<label class="flex items-center gap-2 bg-black/30 p-1 rounded"><input type="checkbox" value="${k}" class="inp-cond-check"> <span>${escapeHTML(c.name)}</span></label>`;
+    });
+}
+
+document.getElementById('btn-add-skill-slot').addEventListener('click', () => {
+    const div = document.createElement('div');
+    div.className = 'flex gap-2 mb-2';
+    let opts = '<option value="">Selecione Habilidade...</option>';
+    globalSkills.forEach(s => opts += `<option value="${s.id}">${escapeHTML(s.name)}</option>`);
+    div.innerHTML = `
+        <select class="input-dark flex-1 inp-skill-slot">${opts}</select>
+        <button type="button" class="btn-icon text-red-400" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
+    `;
+    document.getElementById('skills-select-list').appendChild(div);
+});
+
+const inpTemplate = document.getElementById('inp-template');
+if (inpTemplate) {
+    inpTemplate.addEventListener('change', async (e) => {
+        const tpl = CLASS_TEMPLATES[e.target.value];
+        if (tpl) {
+            document.getElementById('inp-class').value = tpl.class;
+            document.getElementById('inp-mis').value = parseInt(document.getElementById('inp-mis').value || 0) + (tpl.attrMods.mis || 0);
+            document.getElementById('inp-von').value = parseInt(document.getElementById('inp-von').value || 0) + (tpl.attrMods.von || 0);
+            
+            // Check conditions
+            document.querySelectorAll('.inp-cond-check').forEach(chk => {
+                if(tpl.conditions.includes(chk.value)) chk.checked = true;
+            });
+            
+            // Auto-create and attach skills
+            for(let sk of tpl.skillsToCreate) {
+                const newSk = { id: generateId(), ...sk };
+                await saveToDB('global_skills', newSk, globalSkills, 'bd_skills');
+                
+                // Add slot
+                const div = document.createElement('div');
+                div.className = 'flex gap-2 mb-2';
+                let opts = '<option value="">Selecione Habilidade...</option>';
+                globalSkills.forEach(s => opts += `<option value="${s.id}">${escapeHTML(s.name)}</option>`);
+                opts += `<option value="${newSk.id}" selected>${escapeHTML(newSk.name)}</option>`;
+                
+                div.innerHTML = `
+                    <select class="input-dark flex-1 inp-skill-slot">${opts}</select>
+                    <button type="button" class="btn-icon text-red-400" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
+                `;
+                document.getElementById('skills-select-list').appendChild(div);
+            }
+            e.target.value = '';
+        }
+    });
+}
+
+document.getElementById('btn-modal-cancel').addEventListener('click', () => document.getElementById('modal-character').close());
+document.getElementById('btn-modal-save').addEventListener('click', (e) => {
+    e.preventDefault();
+    const form = document.getElementById('form-character');
+    if(!form.checkValidity()) { form.reportValidity(); return; }
+
+    const classNameVal = document.getElementById('inp-class').value.toLowerCase();
+    let armorId = document.getElementById('inp-armor-select').value;
+    
+    // Class restrictions
+    if (classNameVal.includes('sacerdote') && armorId) {
+        const armor = globalArmors.find(a => a.id === armorId);
+        if (armor && (armor.base === 'heavy' || armor.base.startsWith('mixed_h'))) {
+            alert("Sacerdotes não podem equipar armaduras pesadas. Armadura desequipada.");
+            armorId = "";
+        }
+    }
+
+    const selSkills = Array.from(document.querySelectorAll('.inp-skill-slot')).map(s => s.value).filter(v => v !== "");
+    const selConds = Array.from(document.querySelectorAll('.inp-cond-check')).filter(c => c.checked).map(c => c.value);
 
     const newCharData = {
         name: document.getElementById('inp-name').value,
         class: document.getElementById('inp-class').value,
         avatarUrl: document.getElementById('inp-avatar').value,
-        skills: document.getElementById('inp-skills').value,
-        conditions: document.getElementById('inp-conditions').value,
+        equippedArmorId: armorId,
+        equippedSkillIds: selSkills,
+        activeConditionIds: selConds,
         attr: { 
-            vigor: parseInt(document.getElementById('inp-vigor').value) || 0,
-            str: parseInt(document.getElementById('inp-str').value) || 0,
+            con: parseInt(document.getElementById('inp-con').value) || 0,
+            for: parseInt(document.getElementById('inp-for').value) || 0,
+            vig: parseInt(document.getElementById('inp-vig').value) || 0,
             agi: parseInt(document.getElementById('inp-agi').value) || 0,
+            von: parseInt(document.getElementById('inp-von').value) || 0,
             sed: parseInt(document.getElementById('inp-sed').value) || 0,
-            mis: parseInt(document.getElementById('inp-mis').value) || 0,
-            will: parseInt(document.getElementById('inp-will').value) || 0
-        },
-        armor: armorObj
+            mis: parseInt(document.getElementById('inp-mis').value) || 0
+        }
     };
 
     if (editingCharId) {
         const char = characters.find(c => c.id === editingCharId);
         if(char && canEdit(char)) {
             Object.assign(char, newCharData);
-            saveCharToDB(char);
-        } else {
-            alert("Sem permissão para editar esta ficha.");
+            saveToDB('characters', char, characters, 'bd_characters');
         }
     } else {
         newCharData.id = generateId();
-        newCharData.hp = 100;
-        newCharData.stamina = 100;
+        const baseHp = classNameVal.includes('sacerdote') ? 90 : 10;
+        const baseSt = classNameVal.includes('sacerdote') ? 90 : 10;
+        newCharData.hp = Math.max(1, baseHp + (newCharData.attr.con * 10));
+        newCharData.stamina = Math.max(1, baseSt + (newCharData.attr.vig * 5));
         newCharData.lust = 0;
-        
-        // Push local imediato para UX rápida (se fallback local)
-        if(!db) characters.push(newCharData);
+        newCharData.energy = classNameVal.includes('sacerdote') ? 50 : 35;
         
         activeCharId = newCharData.id;
         localStorage.setItem('bd_active', activeCharId);
-        
-        saveCharToDB(newCharData);
+        saveToDB('characters', newCharData, characters, 'bd_characters');
     }
-    
-    modalChar.close();
+    document.getElementById('modal-character').close();
 });
 
-// Render Sidebar
-function renderSidebar() {
-    elSidebarList.innerHTML = '';
-    if (characters.length === 0) {
-        elSidebarList.innerHTML = '<div class="text-center text-sm text-gray-500 mt-10">Nenhuma ficha encontrada.</div>';
-        return;
+// --- DASHBOARD RENDER ---
+function getActiveChar() { return characters.find(c => c.id === activeCharId); }
+
+function getCharArmor(char) {
+    if (!char.equippedArmorId) return null;
+    return globalArmors.find(a => a.id === char.equippedArmorId) || null;
+}
+
+function getCharModifiers(char) {
+    const armor = getCharArmor(char);
+    const baseArmorStats = armor ? getArmorBaseStats(armor.base) : getArmorBaseStats('none');
+    
+    let mods = { df: 0, dlust: 0, agi: 0, sed: 0, mis: 0, hp_mult: 1, st_mult: 1, esq: 0, dlust_set: null, ecstasy_set: null };
+    
+    // Sum Armor
+    mods.df += (baseArmorStats.mods.df || 0) + (armor?.mods?.df || 0);
+    mods.dlust += (baseArmorStats.mods.dlust || 0) + (armor?.mods?.dlust || 0);
+    mods.agi += (baseArmorStats.mods.agi || 0) + (armor?.mods?.agi || 0);
+    mods.sed += (baseArmorStats.mods.sed || 0) + (armor?.mods?.sed || 0);
+    mods.mis += (baseArmorStats.mods.mis || 0) + (armor?.mods?.mis || 0);
+    
+    // Class Passives
+    if (char.class && char.class.toLowerCase().includes('sacerdote')) {
+        mods.dlust += 5; // Mente Consagrada
     }
-
-    characters.forEach(char => {
-        const isAct = char.id === activeCharId;
-        const div = document.createElement('div');
-        div.className = `p-3 rounded cursor-pointer transition flex items-center justify-between border ${isAct ? 'bg-gold/10 border-gold shadow-[0_0_10px_rgba(212,175,55,0.2)]' : 'glass-card border-transparent hover:border-white/10'}`;
-        
-        // SECURITY: Usando escapeHTML
-        div.innerHTML = `
-            <div class="flex-1" onclick="selectChar('${escapeHTML(char.id)}')">
-                <div class="font-bold text-sm ${isAct ? 'text-gold' : 'text-gray-200'}">${escapeHTML(char.name)}</div>
-                <div class="text-xs text-gray-400">${escapeHTML(char.class)} - Nv 1</div>
-            </div>
-            ${isAct ? '<i class="fa-solid fa-chevron-right text-gold text-xs"></i>' : ''}
-        `;
-        elSidebarList.appendChild(div);
+    
+    // Apply Conditions
+    char.activeConditionIds.forEach(cid => {
+        const c = CONDITIONS_DB[cid];
+        if (c && c.mods) {
+            if (c.mods.df) mods.df += c.mods.df;
+            if (c.mods.dlust) mods.dlust += c.mods.dlust;
+            if (c.mods.agi) mods.agi += c.mods.agi;
+            if (c.mods.esq) mods.esq += c.mods.esq;
+            if (c.mods.hp_mult) mods.hp_mult *= c.mods.hp_mult;
+            if (c.mods.st_mult) mods.st_mult *= c.mods.st_mult;
+            if (c.mods.dlust_set !== undefined) mods.dlust_set = c.mods.dlust_set;
+            if (c.mods.ecstasy_set !== undefined) mods.ecstasy_set = c.mods.ecstasy_set;
+        }
     });
-}
-
-window.selectChar = function(id) {
-    activeCharId = id;
-    localStorage.setItem('bd_active', id);
-    renderSidebar();
-    renderDashboard();
-}
-
-// Render Dashboard
-function getActiveChar() {
-    return characters.find(c => c.id === activeCharId);
+    
+    return mods;
 }
 
 function renderDashboard() {
     const char = getActiveChar();
-    if (!char) {
-        elDashContainer.classList.add('hidden');
-        elNoChar.classList.remove('hidden');
-        return;
-    }
+    const dash = document.getElementById('dashboard-container');
+    const noChar = document.getElementById('no-char-selected');
+    if (!char) { dash.classList.add('hidden'); noChar.classList.remove('hidden'); return; }
 
-    elDashContainer.classList.remove('hidden');
-    elNoChar.classList.add('hidden');
-
-    // SECURITY: Usando escapeHTML
+    dash.classList.remove('hidden'); noChar.classList.add('hidden');
     document.getElementById('dash-name').innerHTML = escapeHTML(char.name);
     document.getElementById('dash-class').innerHTML = escapeHTML(char.class);
     
-    // Avatar
-    const elAvatar = document.getElementById('dash-avatar');
-    // Sanitização simples de URL: garantir que seja http ou https (evita javascript:)
     if (char.avatarUrl && char.avatarUrl.startsWith('http')) {
-        elAvatar.src = char.avatarUrl; // src escapa naturalmente no DOM, mas filter evita JS url.
-        elAvatar.classList.remove('hidden');
-    } else {
-        elAvatar.classList.add('hidden');
-    }
-    
-    // Skills and Conditions
-    document.getElementById('dash-skills').innerHTML = escapeHTML(char.skills) || "Nenhuma habilidade registrada.";
-    document.getElementById('dash-conditions').innerHTML = escapeHTML(char.conditions) || "Nenhuma condição ativa.";
+        document.getElementById('dash-avatar').src = char.avatarUrl;
+        document.getElementById('dash-avatar').classList.remove('hidden');
+    } else document.getElementById('dash-avatar').classList.add('hidden');
 
-    updateBars();
-    renderAttributes();
+    const mods = getCharModifiers(char);
+
+    // Conditions Text
+    const condList = char.activeConditionIds.map(id => CONDITIONS_DB[id]?.name).filter(Boolean);
+    document.getElementById('dash-conditions').innerHTML = condList.length > 0 ? condList.join('<br>') : "Nenhuma condição ativa.";
     
-    // Controls Visibility
+    // Skills Grid
+    const gridSkills = document.getElementById('dash-skills-grid');
+    gridSkills.innerHTML = '';
+    const mySkills = (char.equippedSkillIds || []).map(id => globalSkills.find(s => s.id === id)).filter(Boolean);
+    
+    if (mySkills.length > 0) {
+        mySkills.forEach(sk => {
+            const card = document.createElement('div');
+            card.className = "border border-gold/20 bg-black/30 rounded p-3 text-sm";
+            card.innerHTML = `
+                <div class="font-bold text-gold mb-1 border-b border-gold/10 pb-1">${escapeHTML(sk.name)}</div>
+                <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-xs text-gray-400 mb-2">
+                    <div><span class="font-bold">Tipo:</span> ${escapeHTML(sk.type)}</div>
+                    <div><span class="font-bold">Custo:</span> ${escapeHTML(sk.cost)}</div>
+                    <div class="col-span-2"><span class="font-bold">Teste:</span> ${escapeHTML(sk.test)}</div>
+                </div>
+                <div class="text-gray-300 italic text-xs">${escapeHTML(sk.effect)}</div>
+            `;
+            gridSkills.appendChild(card);
+        });
+    } else {
+        gridSkills.innerHTML = '<div class="text-sm text-gray-400">Nenhuma habilidade anexada.</div>';
+    }
+
+    updateBars(char, mods);
+    renderAttributesAndDerivedStats(char, mods);
+    
     const canEditChar = canEdit(char);
-    const actionButtons = document.querySelectorAll('.action-btn');
-    const editBtns = document.getElementById('dash-edit-btns');
+    document.querySelectorAll('.action-btn').forEach(btn => btn.disabled = !canEditChar);
     
-    actionButtons.forEach(btn => btn.disabled = !canEditChar);
-    
-    // Edit/Delete buttons logic
     document.getElementById('btn-edit-char').onclick = () => {
         if(!canEditChar) return alert("Sem permissão.");
         editingCharId = char.id;
@@ -401,112 +575,111 @@ function renderDashboard() {
         document.getElementById('inp-name').value = char.name;
         document.getElementById('inp-class').value = char.class;
         document.getElementById('inp-avatar').value = char.avatarUrl || "";
-        document.getElementById('inp-skills').value = char.skills || "";
-        document.getElementById('inp-conditions').value = char.conditions || "";
         
-        document.getElementById('inp-vigor').value = char.attr.vigor;
-        document.getElementById('inp-str').value = char.attr.str;
+        populateCharModalSelects();
+        
+        // Restore conditions
+        document.querySelectorAll('.inp-cond-check').forEach(chk => {
+            chk.checked = char.activeConditionIds.includes(chk.value);
+        });
+        
+        // Restore skills
+        const slotsContainer = document.getElementById('skills-select-list');
+        slotsContainer.innerHTML = '';
+        char.equippedSkillIds.forEach(sId => {
+            const div = document.createElement('div');
+            div.className = 'flex gap-2 mb-2';
+            let opts = '<option value="">Selecione Habilidade...</option>';
+            globalSkills.forEach(s => {
+                opts += `<option value="${s.id}" ${s.id === sId ? 'selected' : ''}>${escapeHTML(s.name)}</option>`;
+            });
+            div.innerHTML = `
+                <select class="input-dark flex-1 inp-skill-slot">${opts}</select>
+                <button type="button" class="btn-icon text-red-400" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
+            `;
+            slotsContainer.appendChild(div);
+        });
+
+        document.getElementById('inp-armor-select').value = char.equippedArmorId || "";
+        
+        document.getElementById('inp-con').value = char.attr.con;
+        document.getElementById('inp-for').value = char.attr.for;
+        document.getElementById('inp-vig').value = char.attr.vig;
         document.getElementById('inp-agi').value = char.attr.agi;
+        document.getElementById('inp-von').value = char.attr.von;
         document.getElementById('inp-sed').value = char.attr.sed;
         document.getElementById('inp-mis').value = char.attr.mis;
-        document.getElementById('inp-will').value = char.attr.will;
         
-        // Armor Migration Support
-        const armor = typeof char.armor === 'string' ? { base: char.armor, mods: {} } : (char.armor || { base: 'none', mods: {} });
-        
-        document.getElementById('inp-armor').value = armor.base;
-        document.getElementById('inp-armor-name').value = armor.name || "";
-        document.getElementById('inp-armor-desc').value = armor.desc || "";
-        document.getElementById('inp-armor-df').value = armor.mods?.df || 0;
-        document.getElementById('inp-armor-dlust').value = armor.mods?.dlust || 0;
-        document.getElementById('inp-armor-agi').value = armor.mods?.agi || 0;
-        document.getElementById('inp-armor-sed').value = armor.mods?.sed || 0;
-        document.getElementById('inp-armor-mis').value = armor.mods?.mis || 0;
-        
-        const stats = getArmorStats(armor.base);
-        document.getElementById('armor-desc-hint').innerText = stats.desc;
-        modalChar.showModal();
+        document.getElementById('modal-character').showModal();
     };
 
     document.getElementById('btn-delete-char').onclick = () => {
         if(!canEditChar) return alert("Sem permissão.");
         if(confirm(`Tem certeza que deseja apagar ${char.name}?`)) {
-            activeCharId = null;
-            localStorage.removeItem('bd_active');
-            deleteCharFromDB(char.id);
+            activeCharId = null; localStorage.removeItem('bd_active');
+            deleteFromDB('characters', char.id, characters, 'bd_characters');
         }
     };
-    
-    document.getElementById('btn-export-char').onclick = () => exportChar(char);
 }
 
-function updateBars() {
-    const char = getActiveChar();
-    if (!char) return;
+function updateBars(char, mods) {
+    const isSacerdote = char.class && char.class.toLowerCase().includes('sacerdote');
+    
+    const baseHp = isSacerdote ? 90 : 10;
+    const baseSt = isSacerdote ? 90 : 10;
+    
+    // Apply Condition Multipliers
+    let maxHp = Math.max(1, Math.floor((baseHp + (char.attr.con * 10)) * mods.hp_mult));
+    let maxSt = Math.max(1, Math.floor((baseSt + (char.attr.vig * 5)) * mods.st_mult));
+    const maxEn = isSacerdote ? 50 : 35;
+    const maxLu = isSacerdote ? 120 : 100;
+    
+    const hp = Math.max(0, Math.min(maxHp, char.hp));
+    document.getElementById('val-hp').innerText = hp; document.getElementById('max-hp').innerText = maxHp;
+    document.getElementById('bar-hp').style.width = (hp / maxHp * 100) + '%';
 
-    const hp = Math.max(0, Math.min(100, char.hp));
-    document.getElementById('val-hp').innerText = hp;
-    document.getElementById('bar-hp').style.width = hp + '%';
+    const st = Math.max(0, Math.min(maxSt, char.stamina));
+    document.getElementById('val-stamina').innerText = st; document.getElementById('max-stamina').innerText = maxSt;
+    document.getElementById('bar-stamina').style.width = (st / maxSt * 100) + '%';
 
-    const st = Math.max(0, Math.min(100, char.stamina));
-    document.getElementById('val-stamina').innerText = st;
-    document.getElementById('bar-stamina').style.width = st + '%';
+    const en = Math.max(0, Math.min(maxEn, char.energy));
+    document.getElementById('val-energy').innerText = en; document.getElementById('max-energy').innerText = maxEn;
+    document.getElementById('bar-energy').style.width = (en / maxEn * 100) + '%';
 
-    const lu = Math.max(0, Math.min(100, char.lust));
+    const lu = Math.max(0, Math.min(maxLu, char.lust));
     document.getElementById('val-lust').innerText = lu;
     const barLust = document.getElementById('bar-lust');
-    barLust.style.width = lu + '%';
-    
-    if (lu >= 100) barLust.classList.add('mind-break');
+    barLust.style.width = (lu / maxLu * 100) + '%';
+    if (lu >= maxLu) barLust.classList.add('mind-break');
     else barLust.classList.remove('mind-break');
 
-    const ecstasyLimiar = 25 + char.attr.vigor;
+    let ecstasyLimiar = mods.ecstasy_set !== null ? mods.ecstasy_set : ((isSacerdote ? 20 : 25) + char.attr.vig);
     document.getElementById('dash-ecstasy-threshold').innerText = ecstasyLimiar + '%';
     
     let ecstasyStage = Math.floor(lu / ecstasyLimiar);
     if(ecstasyStage < 0) ecstasyStage = 0;
-    
-    document.getElementById('lust-stage').innerText = `Estágio ${ecstasyStage} (${lu}%)`;
+    document.getElementById('lust-stage').innerText = `Estágio ${ecstasyStage} (${lu} / ${maxLu}%)`;
 
     const badge = document.getElementById('dash-condition');
-    if (lu >= 100) {
-        badge.className = 'badge badge-lust';
-        badge.innerHTML = 'Mind Break';
-    } else if (hp <= 0) {
-        badge.className = 'badge badge-danger';
-        badge.innerHTML = 'Inconsciente';
-    } else if (st <= 0) {
-        badge.className = 'badge badge-warning';
-        badge.innerHTML = 'Caído';
-    } else if (ecstasyStage > 0) {
-        badge.className = 'badge badge-lust';
-        badge.innerHTML = `Êxtase (Nível ${ecstasyStage})`;
-    } else {
-        badge.className = 'badge badge-normal';
-        badge.innerHTML = 'Normal';
-    }
+    if (lu >= maxLu) { badge.className = 'badge badge-lust'; badge.innerHTML = 'Mind Break'; }
+    else if (hp <= 0) { badge.className = 'badge badge-danger'; badge.innerHTML = 'Inconsciente'; }
+    else if (st <= 0) { badge.className = 'badge badge-warning'; badge.innerHTML = 'Caído'; }
+    else if (ecstasyStage > 0) { badge.className = 'badge badge-lust'; badge.innerHTML = `Êxtase (Nível ${ecstasyStage})`; }
+    else { badge.className = 'badge badge-normal'; badge.innerHTML = 'Normal'; }
 }
 
-function renderAttributes() {
-    const char = getActiveChar();
-    
-    const armorObj = typeof char.armor === 'string' ? { base: char.armor, mods: {} } : (char.armor || { base: 'none', mods: {} });
-    const baseStats = getArmorStats(armorObj.base);
-    
-    const finalMods = {
-        df: (baseStats.mods.df || 0) + (armorObj.mods?.df || 0),
-        dlust: (baseStats.mods.dlust || 0) + (armorObj.mods?.dlust || 0),
-        agi: (baseStats.mods.agi || 0) + (armorObj.mods?.agi || 0),
-        sed: (baseStats.mods.sed || 0) + (armorObj.mods?.sed || 0),
-        mis: (baseStats.mods.mis || 0) + (armorObj.mods?.mis || 0),
-    };
+function renderAttributesAndDerivedStats(char, mods) {
+    const totalDF = char.attr.con + mods.df;
+    const totalDL = mods.dlust_set !== null ? mods.dlust_set : (char.attr.von + mods.dlust);
+    const totalEsq = (char.attr.agi * 3) + mods.agi + mods.esq;
+
+    document.getElementById('dash-df').innerText = totalDF;
+    document.getElementById('dash-dl').innerText = totalDL;
+    document.getElementById('dash-esq').innerText = totalEsq;
 
     const mkRow = (name, base, mod, icon) => {
         let finalVal = base + (mod || 0);
-        let modStr = '';
-        if (mod > 0) modStr = `<span class="text-green-400 text-xs">(+${mod})</span>`;
-        if (mod < 0) modStr = `<span class="text-red-400 text-xs">(${mod})</span>`;
-        
+        let modStr = mod > 0 ? `<span class="text-green-400 text-xs">(+${mod})</span>` : (mod < 0 ? `<span class="text-red-400 text-xs">(${mod})</span>` : '');
         return `<div class="flex justify-between items-center py-1 border-b border-white/5">
             <span class="text-gray-400"><i class="fa-solid fa-${icon} w-5"></i> ${name}</span>
             <span class="font-semibold text-lg text-white">${finalVal} ${modStr}</span>
@@ -514,37 +687,37 @@ function renderAttributes() {
     };
 
     document.getElementById('dash-attributes').innerHTML = `
-        ${mkRow('Vigor', char.attr.vigor, 0, 'heart-pulse')}
-        ${mkRow('Força', char.attr.str, 0, 'dumbbell')}
-        ${mkRow('Agilidade', char.attr.agi, finalMods.agi, 'person-running')}
-        ${mkRow('Sedução', char.attr.sed, finalMods.sed, 'face-kiss-wink-heart')}
-        ${mkRow('Misticismo', char.attr.mis, finalMods.mis, 'wand-magic-sparkles')}
-        ${mkRow('Vontade', char.attr.will, 0, 'brain')}
+        ${mkRow('Constituição', char.attr.con, 0, 'shield-heart')}
+        ${mkRow('Força', char.attr.for, 0, 'dumbbell')}
+        ${mkRow('Vigor', char.attr.vig, 0, 'heart-pulse')}
+        ${mkRow('Agilidade', char.attr.agi, mods.agi, 'person-running')}
+        ${mkRow('Vontade', char.attr.von, 0, 'brain')}
+        ${mkRow('Sedução', char.attr.sed, mods.sed, 'face-kiss-wink-heart')}
+        ${mkRow('Misticismo', char.attr.mis, mods.mis, 'wand-magic-sparkles')}
     `;
 
-    document.getElementById('dash-armor-name').innerHTML = escapeHTML(armorObj.name) || baseStats.name;
-    document.getElementById('dash-armor-type').innerHTML = armorObj.name ? `Base: ${baseStats.name}` : (baseStats.name === "Sem Armadura" ? "Trajes Comuns" : "Equipado");
-    
-    const armorDetailsPanel = document.getElementById('dash-armor-details-panel');
-    const armorDescText = document.getElementById('dash-armor-desc');
-    if (armorObj.desc) {
-        armorDescText.innerHTML = escapeHTML(armorObj.desc);
-        armorDetailsPanel.classList.remove('hidden');
+    const armor = getCharArmor(char);
+    if (armor) {
+        document.getElementById('dash-armor-name').innerHTML = escapeHTML(armor.name);
+        document.getElementById('dash-armor-type').innerHTML = `Base: ${getArmorBaseStats(armor.base).name}`;
+        document.getElementById('dash-armor-desc').innerHTML = escapeHTML(armor.desc || "Sem efeitos especiais.");
+        document.getElementById('dash-armor-details-panel').classList.remove('hidden');
+        
+        let modHtml = '';
+        const aMod = armor.mods || {};
+        if(aMod.df) modHtml += `<li class="${aMod.df > 0 ? 'text-green-400' : 'text-red-400'}">Defesa Física Extra: ${aMod.df > 0 ? '+'+aMod.df : aMod.df}</li>`;
+        if(aMod.dlust) modHtml += `<li class="${aMod.dlust > 0 ? 'text-green-400' : 'text-red-400'}">Defesa Lust Extra: ${aMod.dlust > 0 ? '+'+aMod.dlust : aMod.dlust}</li>`;
+        if(aMod.agi) modHtml += `<li class="${aMod.agi > 0 ? 'text-green-400' : 'text-red-400'}">Agilidade Extra: ${aMod.agi > 0 ? '+'+aMod.agi : aMod.agi}</li>`;
+        if(aMod.sed) modHtml += `<li class="${aMod.sed > 0 ? 'text-green-400' : 'text-red-400'}">Sedução Extra: ${aMod.sed > 0 ? '+'+aMod.sed : aMod.sed}</li>`;
+        if(aMod.mis) modHtml += `<li class="${aMod.mis > 0 ? 'text-green-400' : 'text-red-400'}">Misticismo Extra: ${aMod.mis > 0 ? '+'+aMod.mis : aMod.mis}</li>`;
+        if(modHtml === '') modHtml = '<li class="text-gray-500">Apenas mods da base</li>';
+        document.getElementById('dash-armor-mods').innerHTML = modHtml;
     } else {
-        armorDetailsPanel.classList.add('hidden');
+        document.getElementById('dash-armor-name').innerHTML = "Sem Armadura";
+        document.getElementById('dash-armor-type').innerHTML = "Trajes Comuns";
+        document.getElementById('dash-armor-details-panel').classList.add('hidden');
+        document.getElementById('dash-armor-mods').innerHTML = '<li class="text-gray-500">Nenhum bônus</li>';
     }
-
-    let modHtml = '';
-    if(finalMods.df) modHtml += `<li class="${finalMods.df > 0 ? 'text-green-400' : 'text-red-400'}">Defesa Física: ${finalMods.df > 0 ? '+'+finalMods.df : finalMods.df}</li>`;
-    if(finalMods.dlust) modHtml += `<li class="${finalMods.dlust > 0 ? 'text-green-400' : 'text-red-400'}">Defesa Lust: ${finalMods.dlust > 0 ? '+'+finalMods.dlust : finalMods.dlust}</li>`;
-    if(finalMods.agi) modHtml += `<li class="${finalMods.agi > 0 ? 'text-green-400' : 'text-red-400'}">Agilidade: ${finalMods.agi > 0 ? '+'+finalMods.agi : finalMods.agi}</li>`;
-    if(finalMods.sed) modHtml += `<li class="${finalMods.sed > 0 ? 'text-green-400' : 'text-red-400'}">Sedução: ${finalMods.sed > 0 ? '+'+finalMods.sed : finalMods.sed}</li>`;
-    if(finalMods.mis) modHtml += `<li class="${finalMods.mis > 0 ? 'text-green-400' : 'text-red-400'}">Misticismo: ${finalMods.mis > 0 ? '+'+finalMods.mis : finalMods.mis}</li>`;
-    
-    if(modHtml === '') modHtml = '<li class="text-gray-500">Nenhum modificador</li>';
-    
-    // Seguro pois modHtml é gerado puramente por números internamente
-    document.getElementById('dash-armor-mods').innerHTML = modHtml;
 }
 
 // --- QUICK ACTIONS ---
@@ -554,54 +727,32 @@ window.adjustStat = function(stat, amount) {
     if(!canEdit(char)) return alert("Sem permissão.");
     
     char[stat] += amount;
-    if(char[stat] > 100) char[stat] = 100;
-    if(char[stat] < 0) char[stat] = 0;
     
-    saveCharToDB(char);
+    const mods = getCharModifiers(char);
+    const isSacerdote = char.class && char.class.toLowerCase().includes('sacerdote');
+    
+    if (stat === 'lust') {
+        const mx = isSacerdote ? 120 : 100;
+        if(char[stat] > mx) char[stat] = mx;
+        if(char[stat] < 0) char[stat] = 0;
+    } else if (stat === 'hp') {
+        const mx = Math.max(1, Math.floor(((isSacerdote ? 90 : 10) + (char.attr.con * 10)) * mods.hp_mult));
+        if(char[stat] > mx) char[stat] = mx;
+        if(char[stat] < 0) char[stat] = 0;
+    } else if (stat === 'stamina') {
+        const mx = Math.max(1, Math.floor(((isSacerdote ? 90 : 10) + (char.attr.vig * 5)) * mods.st_mult));
+        if(char[stat] > mx) char[stat] = mx;
+        if(char[stat] < 0) char[stat] = 0;
+    } else if (stat === 'energy') {
+        const mx = isSacerdote ? 50 : 35;
+        if(char[stat] > mx) char[stat] = mx;
+        if(char[stat] < 0) char[stat] = 0;
+    }
+    saveToDB('characters', char, characters, 'bd_characters');
 }
-
 window.applyDamage = () => adjustStat('hp', -15);
 window.rest = () => adjustStat('stamina', 30);
 window.relieve = () => adjustStat('lust', -20);
-
-// --- IMPORT / EXPORT ---
-document.getElementById('btn-import-char').addEventListener('click', () => {
-    if (db && !currentUser) return alert("Faça login para importar uma ficha no servidor.");
-    document.getElementById('import-file').click();
-});
-
-document.getElementById('import-file').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-        try {
-            const data = JSON.parse(event.target.result);
-            if (data.name && data.attr) {
-                data.id = generateId(); 
-                saveCharToDB(data);
-                activeCharId = data.id;
-                localStorage.setItem('bd_active', activeCharId);
-                alert(`Ficha de ${escapeHTML(data.name)} importada com sucesso!`);
-            } else {
-                alert("Arquivo JSON inválido.");
-            }
-        } catch (err) {
-            alert("Erro ao ler o arquivo.");
-        }
-    };
-    reader.readAsText(file);
-    e.target.value = '';
-});
-
-function exportChar(char) {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(char, null, 2));
-    const dlAnchorElem = document.createElement('a');
-    dlAnchorElem.setAttribute("href", dataStr);
-    dlAnchorElem.setAttribute("download", `bd_${char.name.toLowerCase().replace(/\s+/g, '_')}.json`);
-    dlAnchorElem.click();
-}
 
 // INIT
 loadData();
