@@ -1800,7 +1800,7 @@ function renderAttributesAndDerivedStats(char, mods) {
     if(document.getElementById('tt-danlust')) document.getElementById('tt-danlust').innerHTML = buildTT('Base (5 + SED)', 5 + char.attr.sed, mods.breakdown.danLust);
 
     // HP, ST, Lust, Magia tooltips
-    const baseStats = getClassBaseStats(char.class);
+    const baseStats = getClassStats(char.class);
     if(document.getElementById('tt-hp')) document.getElementById('tt-hp').innerHTML = buildTT('Base', baseStats.hp, mods.breakdown.hp);
     if(document.getElementById('tt-st')) document.getElementById('tt-st').innerHTML = buildTT('Base', baseStats.st, mods.breakdown.st);
     if(document.getElementById('tt-lust')) document.getElementById('tt-lust').innerHTML = buildTT('Base', baseStats.lust, mods.breakdown.lust);
@@ -2151,7 +2151,7 @@ document.getElementById('btn-combat-confirm').onclick = () => {
         roll = baseIni + Math.floor(Math.random() * 20) + 1;
     }
     
-    const cStats = isMon ? null : getClassBaseStats(source.class);
+    const cStats = isMon ? null : getClassStats(source.class);
     const mods = isMon ? null : getCharModifiers(source);
     
     let mhp = isMon ? source.hp : Math.max(1, Math.floor((cStats.hp + (source.attr.con * 10)) * mods.hp_mult));
