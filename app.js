@@ -931,7 +931,7 @@ document.getElementById('btn-login-cancel').addEventListener('click', () => moda
 document.getElementById('btn-login-submit').addEventListener('click', (e) => {
     e.preventDefault();
     if(!formLogin.checkValidity()) { formLogin.reportValidity(); return; }
-    const email = `${document.getElementById('inp-username').value.trim().toLowerCase()}@beyonddepths.local`;
+    const email = `${document.getElementById('inp-username').value.trim().toLowerCase().replace(/[^a-z0-9]/g, '')}@beyonddepths.com`;
     const pwd = document.getElementById('inp-password').value;
     
     auth.signInWithEmailAndPassword(email, pwd)
