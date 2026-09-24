@@ -71,662 +71,129 @@ const CONDITIONS_DB = {
 
 const PERK_COSTS = [0, 1, 2, 3, 5, 9];
     const PERKS_DB = {
-        sed: {
-            name: "Sedução",
-            icon: "fa-heart",
-            perks: {
-                "Seios Grandes": [
-                    "Peitos fartos. Sistema: +1 em rolagens de Persuasão Visual.",
-                    "Formato macio. Sistema: O toque inflige +2 Dano LUST instintivo. (Sem teste, contato direto).",
-                    "Mamilos eretos. Sistema: Inimigos corpo a corpo sofrem -1 de Iniciativa (Requer falha em Teste de Resistência: VON vs SED do usuário).",
-                    "Sufocamento de peitos. Sistema: Agarrões causam Dano LUST passivo e reduzem a Defesa LUST em -2 (Teste para Escapar: FOR/AGI vs FOR do usuário).",
-                    "Transe. Sistema: Ação completa. Alvos (raio 5m) rolam Teste Oposto (VON vs SED do usuário) ou perdem o turno atordoados."
-                ],
-                "Bunda e Quadris Largos": [
-                    "Bunda grande. Sistema: Ataques inimigos por trás sofrem Desvantagem (rola 2d20, pega o menor).",
-                    "Molejo provocante. Sistema: +1 em Sedução; quem estiver na sua retaguarda sofre 1 Dano LUST passivo no turno dele.",
-                    "Montaria de Coxas. Sistema: Vantagem (Teste: FOR/AGI vs AGI) para Imobilizar. Alvo imobilizado toma Dano LUST contínuo.",
-                    "Carne absorvente. Sistema: Dano Físico nas costas reduzido em 1; converte em 1 Dano LUST em Área (Teste: VON vs SED para ignorar LUST).",
-                    "Onda de Rebolado. Sistema: Ação em Área. Todos no raio visual fazem Teste Oposto (VON vs SED) ou ficam Atordoados por LUST (1 turno)."
-                ],
-                "Sexo Dominante": [
-                    "Cheiro provocante. Sistema: Inimigo entrar em raio de 2m sofre 1 Dano LUST ambiente (Teste Oposto: VON vs SED anula).",
-                    "Sensibilidade. Sistema: +2 Provocação (Taunt LUST). Apanhar aumenta seu dano LUST no turno seguinte.",
-                    "Penetração Direta. Sistema: Acertar submissão/penetração ignora 50% da Defesa LUST do alvo (Teste Oposto: FOR/AGI vs FOR).",
-                    "Vampirismo Seminal. Sistema: Se o alvo sofrer Mind Break perto de você, absorve a energia curando seu HP em 3d6.",
-                    "Primeira Metida. Sistema: Acertar um ataque LUST crítico aplica Mind Break instantâneo (Teste Oposto: VON vs SED com Desvantagem do alvo para evitar)."
-                ],
-                "Cheiro Viciante": [
-                    "Suor sedutor. Sistema: NPCs neutros rolam Teste Oposto (VON vs SED) ou ganham status 'Amigável'. +1 Interações.",
-                    "Feromônio confuso. Sistema: Inimigos a 2m de distância rolam todos os testes de Vontade com Desvantagem.",
-                    "Névoa de Tesão. Sistema: Passiva (+2 Dano LUST Área). Inimigos no raio perdem 1 de Acerto (Teste Oposto: VON vs SED resiste).",
-                    "Aura Intensa. Sistema: Inimigos engajados com você perdem 25% da Resistência LUST Base (Teste Oposto: VON vs SED para negar).",
-                    "Frenesi. Sistema: LUST em área (Teste Oposto: VON vs SED). Se falhar, NPCs e Monstros atacam uns aos outros."
-                ],
-                "Beijo que Drena": [
-                    "Lábios úmidos. Sistema: Beijar impõe estado 'Obediente' a lacaios fora de combate (Teste Oposto: VON vs SED).",
-                    "Beijo Confuso. Sistema: Alvo beijado após agarrão perde 1 Turno (Teste Oposto: VON vs SED para resistir).",
-                    "Sucção de Energia. Sistema: Beijo forçado (Ataque LUST) drena passivamente 10 pontos de Stamina do alvo.",
-                    "Beijo do Vampiro. Sistema: O beijo rouba 2d8 HP do alvo curando você diretamente.",
-                    "Prisão Emocional. Sistema: Após beijar, o inimigo sofre -5 em todos os ataques se o alvo não for você (Teste Oposto: VON vs SED para quebrar)."
-                ],
-                "Olhar Dominador": [
-                    "Olhos de desejo. Sistema: +2 direto na Habilidade de Sedução à distância.",
-                    "Contato Travador. Sistema: Olhar direto em NPCs reduz a Iniciativa deles em -2 (Requer Falha em Teste: VON vs SED).",
-                    "Provocação Ocular. Sistema: Pode causar 1d4 de Dano LUST no alvo com Ação Bônus (Teste Oposto: VON vs SED resiste metade).",
-                    "Olhar Transpassante. Sistema: Mirar ativamente (Ação) corta a Defesa Mágica LUST do oponente pela metade.",
-                    "Ajoelhar. Sistema: (Ação) Força Teste Oposto (VON vs SED). Falha faz o inimigo largar armas e implorar no chão."
-                ],
-                "Voz Sensual": [
-                    "Voz rouca. Sistema: Garante Vantagem em testes (SED) para mentir ou pedir favores a NPCs.",
-                    "Sussurro. Sistema: Oferece +1 de Bônus em testes cruzados de Agarrão/Submissão se sussurrar na orelha.",
-                    "Palavras Provocantes. Sistema: Permite usar Ataques de LUST à distância (Raio de 10m) rolando SED vs VON.",
-                    "Gemido Alto. Sistema: Cancelamento (Ação). Anula buffs mentais ou Fúria em 5m (Teste Oposto: VON vs SED do alvo para manter os buffs).",
-                    "Canção da Sereia. Sistema: Paralisa todos os inimigos (raio 15m) que falharem no Teste (VON vs SED)."
-                ],
-                "Sem Vergonha": [
-                    "Mente orgulhosa. Sistema: Ignora penalidades de armadura rasgada e debuffs mentais de 'Desconforto'.",
-                    "Pele Exposta. Sistema: Estar nu/semi-nu garante +1 de Defesa LUST base.",
-                    "Nudez Tática. Sistema: Estar nu garante +3 Rolagem Base para interações Sociais e Corpo-a-Corpo baseadas em SED.",
-                    "Masoquismo. Sistema: Receber Dano LUST concede um Bônus temporário de +1 Dano Físico para si mesmo.",
-                    "Resistência e Nudez. Sistema: Barra LUST cheia não te dá Mind Break; ativa imunidade mental (LUST) e dobra sua Força."
-                ],
-                "Fluidos Viciantes": [
-                    "Sabor doce. Sistema: Qualquer fluido seu atua como item consumível; aliados curam +2 HP ao ingerir.",
-                    "Soro do sangue/suor. Sistema: Cura ativa recebida/dada envolvendo seus fluidos é ampliada (+5 HP extra).",
-                    "Néctar de Controle. Sistema: NPCs que ingerirem seu fluido rolam resistências contra você com Desvantagem (VON).",
-                    "Fluido Purificador. Sistema: Fazer sexo/submissão anula imediatamente status de Veneno ou Doenças no parceiro.",
-                    "Banho Purificador. Sistema: Sexo torna o aliado Imune a ataques LUST inimigos por 24 horas."
-                ],
-                "Pau Enorme": [
-                    "Volume visual. Sistema: Ganha +1 bônus direto em rolagens conjuntas de Sedução e Intimidação.",
-                    "Intimidar LUST. Sistema: Expor (Ação Bônus) causa +2 Dano LUST visual (Teste Oposto: VON vs SED anula).",
-                    "Arma Contundente. Sistema: Pode usar como arma física concedendo +1 de Dano Desarmado.",
-                    "Aprisionamento Interno. Sistema: Acertar submissão paralisa ativamente o parceiro por 1 Turno (Teste: VON vs SED para agir com desvantagem).",
-                    "Ignora Resistência. Sistema: Ignora imunidade racial/tamanho em ataques LUST."
-                ],
-                "Língua Extensível": [
-                    "Precisão Oral. Sistema: Concede Vantagem (AGI) para destrancar ferrolhos ou nós usando a boca.",
-                    "Alcance Aumentado. Sistema: Pode aplicar golpes de Dano LUST (Ação Bônus) a média distância.",
-                    "Músculo Adicional. Sistema: Bônus de +2 em testes Opostos Físicos (FOR) de Imobilização se focados em zonas erógenas.",
-                    "Língua de chicote. Sistema: Alcance de 1 Metro. Permite Ataques de Oportunidade LUST (SED vs VON) contra quem recuar.",
-                    "Língua Preênsil. Sistema: Funciona como Terceiro Braço. Permite manipular itens pesados ou desarmar inimigos a distância."
-                ],
-                "Buceta Hiperflexível": [
-                    "Adaptação. Sistema: Imune a Dano Físico de empalamento/penetração na região.",
-                    "Controle de pressão. Sistema: Adiciona +1 Dano LUST direto e passivo em golpes de Sexo ou Submissão.",
-                    "Parede Rugosa. Sistema: Qualquer dano LUST causado a um penetrador é ampliado passivamente em 50%.",
-                    "Espaço Interno. Sistema: Funciona como inventário oculto para armas leves e pequenos itens.",
-                    "Recipiente Seguro. Sistema: Permite guardar líquidos vitais e Poções Mágicas dentro sem que estraguem."
-                ],
-                "Pele de Látex": [
-                    "Textura lisa. Sistema: Ganha +1 Defesa Física natural contra arranhões e lâminas.",
-                    "Flexibilidade Humana. Sistema: Vantagem (+3) em Testes Opostos de Acrobacia e Escape de apertos (AGI vs FOR).",
-                    "Fricção Reduzida. Sistema: Inimigos têm penalidade passiva de -1 para acertar socos em você (deslizam).",
-                    "Pele de Sucção. Sistema: Se o inimigo rolar Falha Crítica atacando você, a mão dele fica travada (Teste Físico: FOR vs AGI para soltar).",
-                    "Corpo de Brinquedo. Sistema: Sofrer ataques físicos corpo-a-corpo devolve 1 ponto de Cura de LUST residual."
-                ],
-                "Dedos Longos e Flexíveis": [
-                    "Alcance extra. Sistema: Ganha +1 passivo em testes de Prestidigitação (AGI) ou roubo furtivo.",
-                    "Articulação Dupla. Sistema: Permite re-rolar 1 falha diária em teste manual para escape de algemas.",
-                    "Habilidade Manual. Sistema: Aplica +2 de Dano LUST absoluto extra em golpes de submissão erótica contínua.",
-                    "Mãos independentes. Sistema: Permite sacar e usar dois itens usando apenas 1 Ação.",
-                    "Esticador. Sistema: Permite alcance cego de mecanismos e dano LUST interno (Ignora 50% da Defesa LUST nestes ataques)."
-                ],
-                "Pés Ágeis e Sensuais": [
-                    "Pés com força. Sistema: Ganha +1 Equilíbrio (Vantagem passiva para resistir a Empurrões de FOR).",
-                    "Dedos de Mão do Pé. Sistema: Vantagem em Prestidigitação usando as pernas, permitindo roubar embaixo da mesa sem usar as mãos.",
-                    "Footjob Profissional. Sistema: Permite causar Dano LUST (1 Ação Bônus) usando os pés enquanto ataca normalmente com armas nas mãos.",
-                    "Pisada de Controle. Sistema: Vantagem em Testes de Dominação/Controle (FOR) contra inimigos atordoados/caídos no chão.",
-                    "Sentido Tátil. Sistema: Nunca é pego desprevenido; percebe furtividade no piso concedendo +1 Iniciativa passiva."
-                ],
-                "Mamilos Sensíveis e Longos": [
-                    "Mamilos eretos. Sistema: Visíveis sob a roupa. Concede +1 em Persuasão Visual.",
-                    "Tamanho aumentado. Sistema: Podem ser usados para estimulação (+1 Dano LUST em contato).",
-                    "Hipersensibilidade. Sistema: Estímulo nos seios (Ação de LUST aliada/inimiga) recupera 5 de sua Stamina.",
-                    "Flexíveis. Sistema: Conseguem ser sugados por si mesmos (Permite Auto-Cura de LUST de 1d4 como Ação).",
-                    "Produção de fluido. Sistema: Quando com 50% de LUST, produzem fluido que cura e excita aliados que beberem (+5 HP, +2 SED)."
-                ],
-                "Quadris Largos": [
-                    "Estrutura óssea. Sistema: Facilita posições de montar. +1 Bônus passivo para manter submissão superior.",
-                    "Amplitude profunda. Sistema: Amplitude permite movimento mais focado. (+1 de Dano LUST fixo e +1 de Bônus em testes Opostos de Agarrão: FOR vs AGI).",
-                    "Pelve absorvente. Sistema: Pode receber golpes fortes sem dor (Reduz 1 Dano Físico de impacto na região inferior).",
-                    "Rotação de quadril. Sistema: Movimentos circulares durante sexo causam Dano LUST extra (Inimigo Rola VON vs SED ou toma dobro de Dano LUST).",
-                    "Estrutura resiliente. Sistema: Cura acelerada após parir ou recuperar o fôlego (Descanso Curto concede +50% de eficácia)."
-                ]
-            }
-        },
-        con: {
-            name: "Constituição", icon: "fa-shield-heart",
-            perks: {
-                "Couro Resistente": [
-                    "Pele grossa. Sistema: Reduz permanentemente 1 Dano Físico recebido (Armadura Natural).",
-                    "Couraça adaptável. Sistema: Redução base de Dano Físico aumentada para 3 absolutos.",
-                    "Fechamento capilar. Sistema: Imunidade a status de Sangramento nível 1 e 2 (feridas rápidas).",
-                    "Armadura Natural Reforçada. Sistema: Dobra a defesa corporal contra Perfurações (flechas e estocadas têm dano reduzido à metade).",
-                    "Corpo Rígido. Sistema: Lâminas comuns têm 25% de chance de quebrar ao te atingirem com um Crítico (Teste Oposto de FOR do atacante vs sua CON para não quebrar a arma)."
-                ],
-                "Tolerância à Dor": [
-                    "Nervos mortos leves. Sistema: Passivo; rola Vantagem em Testes de Resistência (VON) contra efeitos de dor mental.",
-                    "Foco na Dor. Sistema: Penalidades por HP baixo só ativam quando chegar a 10% da vida total.",
-                    "Combatente. Sistema: Imune à Paralisia ou Atordoamento oriundo de ataques físicos críticos.",
-                    "Adrenalina. Sistema: Ao tomar um Crítico inimigo, ganha passivamente +2 de Dano Físico no seu próximo ataque.",
-                    "Resistência Final. Sistema: Se HP zerar, não desmaia; ganha 3 Turnos para agir antes de cair inconsciente."
-                ],
-                "Sistema Imunológico Forte": [
-                    "Digestão Forte. Sistema: Vantagem em Testes de Resistência (CON) para resistir a Náusea e Veneno injetado.",
-                    "Anticorpos de guerra. Sistema: Imunidade passiva a todas as Doenças de contágio comum mundano.",
-                    "Sangue Reativo. Sistema: Corta o tempo ativo de 'Envenenamento Severo' e as rolagens de toxinas pela metade.",
-                    "Cura Sanguínea. Sistema: Seu sangue atua como item (Ação) que cura Veneno de aliados próximos.",
-                    "Muralha Biológica. Sistema: Imune a Doenças mágicas e infestações parasitárias."
-                ],
-                "Regeneração Acelerada": [
-                    "Sangue rápido. Sistema: Descansos curtos (Short Rests) curam 50% mais a sua barra de HP que a regra habitual.",
-                    "Latente passiva. Sistema: Fora de Batalha (Exploração), você cura passivamente 1 HP permanente a cada 10 Minutos no jogo.",
-                    "Pulsante em combate. Sistema: No início do seu turno, recupera HP exato equivalente ao seu Modificador de Constituição (CON).",
-                    "Costura Rápida. Sistema: Estanca automaticamente a condição Hemorragia Massiva instantâneo no turno 1, sem rolar nem gastar Ação.",
-                    "Regeneração Avançada. Sistema: Reconecta e conserta Magicamente Membros do corpo amputados usando a ação inteira."
-                ],
-                "Densidade Óssea": [
-                    "Massa pesada. Sistema: Ganha +1 bônus fixo nos Testes Opostos (CON/FOR) contra tentativas inimigas de Empurrões.",
-                    "Caixa torácica reforçada. Sistema: Imunidade passiva a quebra-ossos; (Armas Contundentes perdem o bônus de Dano Crítico em você).",
-                    "Esqueleto Encouraçado. Sistema: Bater em você machuca o oponente. Socos Desarmados inimigos dão 1 Dano a quem bateu.",
-                    "Imóvel em Quedas. Sistema: Nunca recebe Dano de Queda (Livre para até 15 metros caindo de pé).",
-                    "Estrutura Óssea Densa. Sistema: Imune ao 'Dano Contundente' global e mecânica de Esmagamento."
-                ],
-                "Termorregulação Perfeita": [
-                    "Nega incômodos. Sistema: Ignora Debuff de clima extremo (Desertos ou Neve) sem exigir roupas térmicas.",
-                    "Resistência de Pele. Sistema: Ganha Resistência Passiva (Dano Cortado na metade) contra todos ataques de Fogo e Gelo comum.",
-                    "Metabolismo Estável. Sistema: Imune à condição 'Fadiga por Clima'. Nunca perde Stamina por calor extremo.",
-                    "Absorção Elementar. Sistema: Ser atingido por feitiços rasteiros de Fogo ou Gelo cura Vida HP no lugar de machucar.",
-                    "Isolamento Absoluto. Sistema: Imunidade a tomar Dano de Fogo. Nega chamas místicas e nevascas."
-                ],
-                "Estômago Forte": [
-                    "Mastigação Forte. Sistema: Pode ingerir e se curar com sucata orgânica como se fossem Ração nos testes de Descanso.",
-                    "Processamento dobrado. Sistema: Toda Poção Menor de HP/Stamina tem eficácia dobrada em você.",
-                    "Corrupção Alimentar. Sistema: Ingerir venenos propositais curam seus outros debuffs internos em vez de causar dano.",
-                    "Devorar. Sistema: (Ação Principal) Consumir orgânicos caídos na arena aplica bônus de +20 HP temporário.",
-                    "Fornalha Gástrica. Sistema: Engolir miúdos de Chefes confere um Status temporário do Monstro na sua ficha."
-                ],
-                "Firmeza de Montanha": [
-                    "Base Firme. Sistema: Impossível sofrer ataques de condição 'Surpresa' furtivos corpo-a-corpo e não cai por tropeço normal.",
-                    "Duelo de força. Sistema: Rolagem de +2 base fixo em Testes Opostos de Rasteiras ou Disputas de Agarrão.",
-                    "Enraizamento. Sistema: Imunidade completa a Knockback vindo de Forças de Tamanho 'Médio' ou inferior.",
-                    "Rebote Cinético. Sistema: Tentar te dar um empurrão devolve 1d4 de Dano Contundente (Requer Falha em Teste Oposto: FOR do atacante vs sua CON).",
-                    "Gravidade Puxada. Sistema: Cancela e imuniza as mecânicas ambientais de Telecinese Inimiga e Levitações forçadas."
-                ],
-                "Vitalidade Ampliada": [
-                    "Sangue encorpado. Sistema: Modificador de Multiplicação: +10% de acréscimo final calculado no seu HP Máximo Base.",
-                    "Coração espesso. Sistema: O Bônus sobe para +20% HP Máximo total da ficha.",
-                    "Veias Fortes. Sistema: O Modificador atinge +30% HP Máximo na ficha.",
-                    "Reservatório Físico. Sistema: Aplica +50% no HP Máximo e ganha Vantagem em Testes Opostos de empurrão.",
-                    "Coração Resistente. Sistema: Ressurreição: Uma vez em campanha, se morto em batalha, você auto-revive com 50% HP imediato."
-                ],
-                "Estase Carnal": [
-                    "Genética Lenta. Sistema: A longevidade da vida ignora os efeitos e penalidades de envelhecimento.",
-                    "Pulmões Controlados. Sistema: Confere x3 no multiplicador de Fôlego debaixo d'água antes de sofrer asfixia.",
-                    "Hibernação. Sistema: Consegue sobreviver semanas sem água/comida zerando os limites de sobrevivência ao adormecer.",
-                    "Controle Hemorrágico. Sistema: (Ação Livre) Prende Veneno ativo em 1 membro anulando a dispersão sistêmica.",
-                    "Estase Completa. Sistema: Imune à maldição de Roubo de Idade e a mecânicas temporais de envelhecimento mágico."
-                ],
-                "Escudo Físico Reativo": [
-                    "Músculos reflexos. Sistema: +1 de CA (Classe de Armadura) contra golpes furtivos surpresa.",
-                    "Pele repulsiva. Sistema: Quem te ataca corpo-a-corpo e erra sofre Desvantagem no próximo ataque (Teste de Resistência: VON vs sua CON).",
-                    "Onda Muscular. Sistema: Receber +30 de dano num turno empurra inimigos 2m pra trás (Teste Oposto: FOR/AGI do inimigo vs sua CON para resistir).",
-                    "Casco da Tartaruga. Sistema: Ação Bônus (Desistir de andar): Dobra sua Defesa Física passiva no turno.",
-                    "Abalo Refletor. Sistema: Todo dano físico corpo a corpo recebido reflete 50% de volta (Teste de Resistência: AGI do atacante vs sua CON para esquivar)."
-                ],
-                "Glândulas Adaptativas": [
-                    "Suor ácido. Sistema: Ganha Vantagem (+2) em Testes Opostos (CON/AGI) para escapar de amarras de corda.",
-                    "Suor Inibidor. Sistema: Inimigos num raio de 2m sofrem Desvantagem para lançar feitiços de Medo/LUST contra você.",
-                    "Película Deslizante. Sistema: Imunidade passiva permanente contra a condição de ser 'Agarrado' (Grappled).",
-                    "Mutações Químicas. Sistema: Oponentes que ingerirem/tocarem seu fluido sofrem Envenenamento e -2 VON (Teste de Resistência: CON vs sua CON anula).",
-                    "Crisálida de Sono. Sistema: Em MindBreak ou HP zero, vira um casulo por 24h e revive com HP max/LUST zero."
-                ]
-            }
-        },
-    vig: {
-        name: "Vigor", icon: "fa-bolt",
-        perks: {
-            "Fôlego Constante": [
-                "Pulmões de ferro. Sistema: Aumenta sua reserva máxima em +10 Stamina.",
-                "Músculos incansáveis. Sistema: Aumento permanente de +20 Stamina Máxima.",
-                "Eficiência cardiovascular. Sistema: Reduz em -1 o Custo de Stamina de golpes físicos.",
-                "Fornalha pulmonar. Sistema: Ganha +50 Stamina Máxima. Imunidade à condição Exaustão.",
-                "Recuperação Contínua. Sistema: Recupera passivamente 15 Stamina a cada turno de combate."
+    "sed": {
+        "name": "Sedução",
+        "icon": "fa-heart",
+        "perks": {
+            "Atributos Exuberantes (Seios/Físico)": [
+                "+1 em testes de persuasão corporal. Contato físico aplica 1 Dano LUST (Sem teste).",
+                "O formato do seu corpo distrai: inimigos em 2m têm -1 de Iniciativa.",
+                "Agarrões aplicam Vantagem para Sedução e reduzem a Defesa LUST do alvo em -2."
             ],
-            "Corredor Frequente": [
-                "Pernas densas. Sistema: Bônus permanente de +2m na sua Movimentação.",
-                "Passo Lamacento. Sistema: Ignora custo extra de movimento mecânico em Terreno Difícil.",
-                "Adaptação de Carga. Sistema: Ignora penalidades de movimentação impostas por Armaduras pesadas.",
-                "Investida Direta. Sistema: Ação Correr (Dash) agora custa apenas uma Ação Bônus.",
-                "Mobilidade Tática. Sistema: Movimentação em combate não aciona Ataques de Oportunidade do inimigo."
+            "Molejo e Quadris": [
+                "Ataques sofridos pelas costas rolam com Desvantagem para o atacante.",
+                "Montaria Sensível: Ganha Vantagem para testes de agarrar/imobilizar usando as pernas.",
+                "Ação - Rebolar (Área 5m): Inimigos fazem teste (VON vs SED) ou perdem a Ação Principal."
             ],
-            "Coração Resiliente": [
-                "Adrenalina. Sistema: Recupera 5 Stamina imediata ao sofrer dano físico.",
-                "Foco em Combate. Sistema: Acertar ataque melee (corpo a corpo) recupera 5 Stamina.",
-                "Sacrifício da Carne. Sistema: Permite usar HP no lugar de Stamina (Conversão 1 HP = 2 Stamina).",
-                "Coração forte. Sistema: A regeneração natural de Stamina é dobrada permanentemente.",
-                "Imunidade Muscular. Sistema: Zerar HP/Stamina não causa inconsciência imediata; você aguenta mais 1 turno de pé."
-            ],
-            "Repelir Êxtase": [
-                "Controle Mental. Sistema: Aumenta o seu Limiar Máximo da barra de LUST em +5 pontos.",
-                "Treino de Foco. Sistema: Aumenta o seu Limiar Máximo da barra de LUST em +10 pontos.",
-                "Tolerância. Sistema: Aumenta o seu Limiar Máximo da barra de LUST em +20 pontos.",
-                "Masoquismo Reativo. Sistema: Passar de 50% de LUST concede Bônus de +2 em Rolagens Físicas (FOR/AGI/CON).",
-                "Transe de Combate. Sistema: LUST Cheio ativa Fúria (+50% Dano) ao invés de aplicar Mind Break automático."
-            ],
-            "Adaptação Erótica": [
-                "Alívio prático. Sistema: Ação de 'Alívio Sexual' custa metade da Stamina em combate.",
-                "Maestria corporal. Sistema: Alívio Pessoal em combate não consome Ação Principal (apenas Ação Bônus).",
-                "Foco Rápido. Sistema: A ação de Alívio Sexual recupera +15 Stamina instantânea.",
-                "Provocação. Sistema: Se aliviar em combate aplica Dano LUST em área (Teste de Resistência Oposto: VON vs VIG/SED para anular).",
-                "Clímax de Combate. Sistema: Atingir gozo zera todos os tempos de recarga (Cooldowns) da sua classe de combate."
-            ],
-            "Tolerância Adrenalínica": [
-                "Bloqueio de Tesão. Sistema: Imune aos debuffs mecânicos causados pelo Estágio 1 de LUST.",
-                "Foco Inibidor. Sistema: Anula completamente os debuffs causados pelo Estágio 2 de LUST.",
-                "Conversão Mística. Sistema: O debuff de Estágio 3 passa a conceder +2 de Dano Físico ao invés da penalidade.",
-                "Couraça de Nervos Rígidos. Sistema: 100% Imune aos Espasmos Paralisantes e perda de turno gerada por alto LUST.",
-                "Fúria após Mind Break. Sistema: Sofrer Mind Break ativa a Fúria de Combate, dobrando FOR sem controle (Berserk) por 3 turnos."
-            ],
-            "Capacidade Pulmonar": [
-                "Oxigenação Elevada. Sistema: Dobra o limite mecânico de tempo segurando o fôlego sob água ou gás.",
-                "Filtro natural. Sistema: Vantagem natural (CON) contra ataques que envolvam Veneno/Gás inalados.",
-                "Sobrevivência aquática. Sistema: Ignora o Dano Fixo de Asfixia direto nas primeiras 5 rodadas submerso.",
-                "Caixa Respiratória. Sistema: Fica completamente imune a sofrer 'Dano de Toxina Inalada'.",
-                "Pulmões Adaptáveis. Sistema: Passa a respirar normalmente debaixo d'água e em áreas de vácuo mágico."
-            ],
-            "Segundo Fôlego": [
-                "Reserva emergencial. Sistema: (Ação Bônus) Recupera 10 Stamina ativa em batalha 1x ao dia.",
-                "Dobro da Reserva. Sistema: O Segundo Fôlego passa a recuperar 30 Stamina no combate.",
-                "Conversão de Vitalidade. Sistema: Pode queimar 25% do seu HP Máximo para recuperar imediatamente toda a Stamina.",
-                "Onda de Energia. Sistema: Acionar Segundo Fôlego joga Inimigos adjacentes 2m para trás (Teste Oposto: FOR/AGI vs sua VIG para resistir).",
-                "Vigor Mínimo. Sistema: A sua Stamina é incapaz de descer abaixo de 10 na barra mecânica."
-            ],
-            "Atleta Treinado": [
-                "Corpo flexível. Sistema: Vantagem passiva (+ mod VIG) em todo Teste Acrobático e de Escalada de cenário.",
-                "Fibras elásticas. Sistema: Multiplica a distância de qualquer rolagem base de Salto longo por 3.",
-                "Corpo Resistente. Sistema: Não exige Teste de Resistência à Exaustão (CON) ao ficar múltiplas noites sem dormir.",
-                "Biorritmo Estável. Sistema: Imunidade ao status mecânico 'Lentidão' vindo de armadilhas ou Feitiços de Gelo.",
-                "Físico Protegido. Sistema: Feitiços e Monstros não conseguem drenar ou aplicar debuff permanente nos seus Atributos Físicos."
-            ],
-            "Aura de Energia": [
-                "Inspiração Tropa. Sistema: Concede +5 de Stamina (Max ST) passiva a aliados num raio de 5m.",
-                "Corrente Mágica. Sistema: Aumenta o buff para os aliados na aura para +10 Max ST.",
-                "Transferência de Pulso. Sistema: Doa (Ação Bônus) metade da sua Stamina pra curar a barra de um aliado.",
-                "Comando de Motivação. Sistema: Ao usar ação para motivar um Aliado, sua próxima habilidade custa zero Stamina.",
-                "Cúpula Revigorante. Sistema: Passivamente dobra a velocidade de Regeneração de ST natural de todos aliados na aura."
-            ],
-            "Blindagem Mental": [
-                "Bloqueio de Tesão. Sistema: Subtrai passivamente 10% do Dano LUST total que um inimigo causa a você.",
-                "Psiquê Protegida. Sistema: A redução contra qualquer Dano LUST sofrido no combate aumenta para 25%.",
-                "Drenagem de Energia. Sistema: Ataques Místicos LUST contra ti curam a sua Stamina num valor equivalente ao invés de subir LUST.",
-                "Impactos Telepáticos Convertidos. Sistema: Qualquer magia telepática agressiva contra você te cura em HP.",
-                "Vigor Estável. Sistema: Inimigos estão impedidos magicamente de sugar ou roubar seu MP/Stamina."
-            ],
-            "Descanso Profundo": [
-                "Sono Rápido. Sistema: Descansos curtos de Acampamento (1h) concedem a você a cura máxima de um Descanso Longo (8h).",
-                "Reparação Celular. Sistema: Dormir remove a Condição 'Doença Menor' automaticamente sem itens.",
-                "Tática de Guerrilha. Sistema: Bastam 15 minutos em meditação para curar todo o HP e Stamina no meio da masmorra.",
-                "Sono Purgante. Sistema: O descanso zera a corrupção oculta mental sombria que restou (Zera a barra de LUST).",
-                "Estase de Cristal. Sistema: Torna-se Imune a ataques furtivos e dano furtivo bônus enquanto estiver dormindo."
+            "Feromônios Viciantes": [
+                "Inimigos a 2m sofrem 1 Dano LUST passivo no início do turno deles.",
+                "Penetração/Ação Oral ganha +1d4 de Dano LUST e cura você em 1d4 de Stamina.",
+                "Se o alvo gozar/sofrer Mind Break a 5m de você, recupere 3d6 de HP."
             ]
         }
     },
-    for: {
-        name: "Força", icon: "fa-dumbbell",
-        perks: {
-            "Golpes Pesados": [
-                "Músculos grandes. Sistema: Adiciona +1 de Dano Fixo Corpo-a-Corpo (Melee).",
-                "Impactos maciços. Sistema: Concede +3 de Dano Fixo (Melee).",
-                "Força de Empurrão. Sistema: Acertos físicos empurram os alvos em 1 Metro (Teste Oposto de Resistência: FOR/AGI do alvo vs sua FOR para não recuar).",
-                "Ataque em Área. Sistema: Seu ataque físico atinge também alvos menores em 1 quadrado adjacente ao principal.",
-                "Quebra de Armadura. Sistema: Seus ataques corpo-a-corpo ignoram 50% da Armadura Física inimiga (passivo)."
+    "for": {
+        "name": "Força",
+        "icon": "fa-dumbbell",
+        "perks": {
+            "Pegada Firme": [
+                "Agarrões causam 1d4 de Dano LUST extra por turno em áreas sensíveis.",
+                "Pode usar Ação Menor para forçar o alvo imobilizado a receber toque (+SED em Dano LUST).",
+                "Aumenta limite de peso e permite carregar/suspender parceiros sem penalidade."
             ],
-            "Agarre Firme": [
-                "Trava Corporal. Sistema: Vantagem passiva automática para rolar testes Opostos de Agarrões/Submissão.",
-                "Cadeado físico. Sistema: O Inimigo possui Desvantagem para tentar escapar de seus agarrões.",
-                "Aperto na Garganta. Sistema: Oponente agarrado toma 1d4 de Dano Asfixiante direto no início do seu turno (Dano automático).",
-                "Trauma Físico. Sistema: Um Crítico num agarrão aplica -2 em Atributos Físicos (FOR/AGI) do alvo permanentemente.",
-                "Abraço Asfixiante. Sistema: (Ação) O Agarrão em lacaios pequenos resulta em Morte Instantânea (Requer falha em Teste Oposto: FOR/AGI vs sua FOR)."
+            "Resistência Bruta": [
+                "Ao sofrer Dano Físico, você pode gastar 5 Stamina para reduzir o dano em 1d4.",
+                "Resistir a imobilizações ou posições indesejadas rola com Vantagem.",
+                "Dano Corpo-a-Corpo (Físico) ganha +FOR no dano."
             ],
-            "Músculos Fibrosos": [
-                "Enrijecer. Sistema: Vantagem (+2) em Testes de Resistência Opostos (FOR/AGI) para evitar Rasteiras ou ser derrubado.",
-                "Redutor Contundente. Sistema: Reduz em 2 todo Dano Contundente sofrido no combate.",
-                "Densidade Tática. Sistema: Monstros ou magias de tamanho médio não conseguem mover ou jogar você pelo grid.",
-                "Rompedor de Amarras. Sistema: Quebra amarras e correntes usando apenas 1 Ação Bônus sem rolar dados.",
-                "Corpo Imóvel. Sistema: Ganha Imunidade passiva total às condições de 'Agarrado' ou 'Imobilizado'."
-            ],
-            "Quebra-Defesas": [
-                "Fura-Defesas. Sistema: Seus ataques ignoram 1 Ponto direto de Redução de Dano Físico inimigo.",
-                "Aço Danificado. Sistema: Seus ataques desconsideram 3 Pontos de Defesa Física passiva de Monstros Fortes.",
-                "Destruição de Base. Sistema: Acertos críticos quebram escudos pequenos de madeira imediatamente.",
-                "Abalo Físico. Sistema: Acertos Críticos reduzem permanentemente a Defesa Base do inimigo em 1 ponto.",
-                "Dano a Estruturas. Sistema: Quebra instantaneamente qualquer Parede Mágica de Gelo/Terra conjurada usando Força."
-            ],
-            "Arremesso Pesado": [
-                "Atirador Físico. Sistema: Pode usar Perícia Atletismo (FOR) para atacar jogando objetos pesados no inimigo.",
-                "Arremesso de Corpos. Sistema: (Ação) Permite arremessar inimigos pequenos ou cadáveres como projéteis.",
-                "Remoção Aliada. Sistema: Arremessa um Aliado pra fora de Zonas de Perigo sem causar Dano a ele.",
-                "Chuva de Detritos. Sistema: Jogar objetos massivos causa 'Atordoado' em área de 3m (Teste Oposto de Esquiva: AGI do alvo vs sua FOR).",
-                "Impacto em Gigantes. Sistema: Consegue realizar Empurrões (Knockbacks) contra Chefes Gigantes (Teste Oposto normal de FOR vs FOR)."
-            ],
-            "Força de Impacto": [
-                "Peso Extra. Sistema: Inflige a condição 'Lentidão' nos Inimigos que bloquearem golpes pesados (Teste de Resistência: CON vs sua FOR anula).",
-                "Concussão Focada. Sistema: Acertos Críticos aplicam a Condição 'Tonto', reduzindo a rolagem do Próximo Turno Inimigo.",
-                "Impacto na Cabeça. Sistema: Pancadas Desarmadas aplicam status de 'Atordoado' em Lacaios (Teste de Resistência: CON do alvo vs sua FOR para evitar).",
-                "Abalo. Sistema: Golpear o chão converte um raio de 3m do grid em 'Terreno Difícil'.",
-                "Onda de Choque. Sistema: Ataques errados ainda causam Dano (metade da FOR) em alvos adjacentes pelo impacto."
-            ],
-            "Força Desmedida": [
-                "Ataque a Caídos. Sistema: +2 de Dano Fixo imediato em Oponentes sob a condição 'Caído/Derrubado'.",
-                "Dano Extra. Sistema: +5 de Dano Fixo Adicional ao atacar inimigos sob a condição 'Agarrado' ou 'Imobilizado'.",
-                "Chute Rápido. Sistema: Atacar oponentes 'Atordoados' garante Vantagem (Rola 2d20) nas rolagens de acerto melee.",
-                "Ataque Oportunista. Sistema: O seu primeiro ataque contra um inimigo 'Rendido/Dormindo' multiplica o Dano Final por x2.",
-                "Grito Aterrador. Sistema: Matar um inimigo força alvos ao redor a sentirem Medo (Teste de Resistência Oposto: VON do alvo vs sua FOR)."
-            ],
-            "Tensão Muscular Mágica": [
-                "Força Mágica. Sistema: Em Duelos Arcanos, você pode rolar FORÇA em vez de VONTADE para resistir a um Empurrão Mágico.",
-                "Quebrar Magia. Sistema: Pode quebrar Prisões Arcanas invisíveis socando-as diretamente com Atletismo (FOR).",
-                "Soco Antimagia. Sistema: Golpes Desarmados aplicam +2 Dano Bônus Fixo ao atingir Invocações ou Elementais Mágicos.",
-                "Empunhadura Estável. Sistema: Segurar espadas envoltas em chamas ou venenos não causa Dano nas mãos.",
-                "Rebote Físico. Sistema: (Ação de Reação) Permite socar feitiços de projétil (Teste Oposto: FOR vs Magia) rebatendo-os."
-            ],
-            "Saltador Experiente": [
-                "Salto de Base. Sistema: Pode realizar saltos acrobáticos de +5m Verticais sem impulso de corrida.",
-                "Ataque em Queda. Sistema: Cair de um Salto Longo em cima de inimigos permite adicionar um Dado Extra de Dano da arma.",
-                "Transporte Aéreo. Sistema: Salto Longo permite carregar 1 Aliado leve sem diminuir a distância do pulo.",
-                "Abalo na Queda. Sistema: A aterrissagem pesada causa 'Derrubado' em Inimigos num raio de 3m (Teste Oposto de Equilíbrio: FOR/AGI vs sua FOR).",
-                "Aterrissagem Pesada. Sistema: Zera o Dano de Queda livre e reverte como Dano Esmagador contra o alvo atingido no solo."
-            ],
-            "Carregador de Fardo": [
-                "Costas Firmes. Sistema: Armas mecânicamente classificadas como 'Pesadas' não diminuem sua Velocidade de Movimento.",
-                "Carga Extra. Sistema: Dobra permanentemente sua capacidade de Carga/Inventário sem lhe causar Debuff de peso.",
-                "Mover Corpos. Sistema: Arrastar lacaios imobilizados no grid passa a não gastar ou penalizar sua Movimentação.",
-                "Firmeza de Uma Mão. Sistema: Consegue empunhar Armas 'Duas Mãos' usando apenas Uma Mão (Liberando a outra para Escudo).",
-                "Suporte Estrutural. Sistema: (Ação) Capaz de suportar fisicamente Armadilhas de Esmagamento/Teto para o grupo."
-            ],
-            "Ataques Focados": [
-                "Ritmo de Batalha. Sistema: Ganha um bônus progressivo de +1 Dano Fixo por rodada se atacar sem errar.",
-                "Foco Acumulado. Sistema: O bônus progressivo aumenta para +2 de Dano Fixo por cada rodada acertando.",
-                "Ferida Aberta. Sistema: Seu Dano Físico aplica o Status de 'Sangramento Nível 1' em criaturas biológicas.",
-                "Ferida Profunda. Sistema: Causar o Dano de Sangramento debuffa Curas Inimigas (-50% Heal Reduction) no alvo.",
-                "Amputação Direta. Sistema: Um Sucesso Crítico permite inutilizar partes secundárias (Braço, Cauda, Asas) do alvo."
-            ],
-            "Impacto Sísmico": [
-                "Tremores Leves. Sistema: Errar um golpe desequilibra Alvos Menores em volta (-1 Acerto para eles) (Teste Oposto: AGI vs FOR anula).",
-                "Abalo de Solo. Sistema: (Ação Bônus) Pisada cria um abalo; Inimigos a 2m sofrem Derrubado (Teste Oposto: FOR/AGI vs sua FOR).",
-                "Cobertura Rápida. Sistema: Soco Mágico no chão sobe uma pedra temporária que lhe concede Cobertura Média (+2 CA).",
-                "Fenda Direta. Sistema: Esmagar o Chão cria uma Fenda num alvo com Dano e 'Pernas Presas' (Teste Oposto de Esquiva: AGI vs FOR).",
-                "Abalo Estrutural. Sistema: (Ação Suprema) Um único golpe direcionado derruba Paredes Mágicas ou Fortificações do cenário."
+            "Submissão Forçada": [
+                "Quando imobiliza alguém, o alvo perde 2 de Defesa LUST instantaneamente.",
+                "Ganha Vantagem em testes de FOR vs AGI para iniciar atos sexuais.",
+                "Alvos penetrados à força por você perdem -5 de Stamina por turno."
             ]
         }
     },
-    agi: {
-        name: "Agilidade", icon: "fa-person-running",
-        perks: {
-            "Reflexos Apurados": [
-                "Percepção leve. Sistema: Ganha +2 Fixo nos lances de Iniciativa em combate.",
-                "Reação de aranha. Sistema: Ganha +5 Fixo de Iniciativa, movendo-se no instante em que pensam em atacar.",
-                "Mente acelerada. Sistema: Impossível sofrer ataques de condição 'Surpresa' enquanto dorme ou de olhos vendados.",
-                "Antecipação Tática. Sistema: Uma vez por combate (Ação Livre), troque seu lugar na ordem de turnos de Iniciativa com um aliado.",
-                "Iniciativa Perfeita. Sistema: Você é invariavelmente o primeiro a agir em qualquer combate (Iniciativa Máxima Absoluta)."
+    "agi": {
+        "name": "Agilidade",
+        "icon": "fa-person-running",
+        "perks": {
+            "Flexibilidade Extrema": [
+                "Consegue escapar de amarras e agarrões rolando com Vantagem.",
+                "Pode usar posições exóticas: garante +2 de Dano LUST em ações corporais.",
+                "Ao esquivar de um ataque, pode gastar Reação para aplicar Toque Sensível no atacante."
             ],
-            "Esquiva Acrobática": [
-                "Ginga fluida. Sistema: Bônus permanente de +1 na sua Classe de Armadura (CA) / Esquiva base.",
-                "Rolamentos de recuo. Sistema: Bônus permanente aumenta para +3 de CA (Esquiva natural) contra Ataques a Distância.",
-                "Olhos afiados focados. Sistema: Garante Vantagem passiva para desviar (Teste de Resistência de AGI) contra Magias de Área.",
-                "Acrobacia Aérea. Sistema: +5 CA absoluta e permite usar Esquiva no Ar, cancelando ataques anti-aéreos.",
-                "Aparar do Vento. Sistema: Todo ataque que errar você força o inimigo a rolar (Teste Oposto: FOR/AGI dele vs sua AGI) ou ele deixa a arma cair."
+            "Reflexos Eróticos": [
+                "Adiciona +AGI na Defesa contra ataques corpo-a-corpo.",
+                "Movimentação sexual não gera Ataque de Oportunidade.",
+                "Pode usar uma Ação Menor para realizar masturbação/oral rápido num alvo agarrado."
             ],
-            "Deslize Furtivo": [
-                "Passos sutis. Sistema: Ganha Vantagem (Rola 2d20) em todos Testes de Furtividade (AGI) para não fazer ruído.",
-                "Camuflagem instintiva. Sistema: Ficar parado em sombras densas fornece status de Invisibilidade a olho nu.",
-                "Pés sem atrito. Sistema: Ignora e passa imune a armadilhas de piso de placa de pressão sem acioná-las.",
-                "Aproximação Letal. Sistema: Usar a Ação de Esconder-se agora consome apenas uma Ação Bônus.",
-                "Ataque Furtivo. Sistema: Se iniciar combate Oculto, seu primeiro ataque multiplica o Dano Final por x10 (Abate Vitais)."
-            ],
-            "Precisão Letal": [
-                "Olhar calculista. Sistema: Margem de Crítico Físico aumentada em 1 (Acerta Crítico rolando 19 ou 20 no d20).",
-                "Punhaladas nos vasos. Sistema: Margem Crítica aumentada para 2 (Acerta Crítico Físico rolando 18, 19 ou 20).",
-                "Golpes perfeitamente aplicados. Sistema: Acertos Críticos aplicam o Status Cegueira ou Sangramento Severo no inimigo.",
-                "Ponto fraco exposto. Sistema: Seu Dano Crítico passa a ignorar 100% da Redução de Armadura Física do alvo.",
-                "Abate de Lacaios. Sistema: Todo ataque Crítico Corpo-a-Corpo contra lacaios menores/fracos resulta em Instakill garantido."
-            ],
-            "Queda de Gato": [
-                "Articulações elásticas. Sistema: Corta pela exata metade todo o Dano Físico recebido por Quedas Livres.",
-                "Pulo Felino. Sistema: Quedas ou saltos acidentais de até 20m de altura tornam-se mecanicamente inofensivos (0 Dano).",
-                "Equilíbrio Aéreo. Sistema: Imune à condição 'Derrubado' após Quedas ou Knockbacks Aéreos; sempre pousa de pé.",
-                "Planar Aerodinâmico. Sistema: Pode planar suavemente (como Magia Levitação leve) manipulando as roupas no ar.",
-                "Aterrissagem Segura. Sistema: Ignora Dano Terminal completamente, caindo de céu/nuvens até o chão sem receber nenhum arranhão."
-            ],
-            "Escapar de Agarrões": [
-                "Corpo escorregadio. Sistema: Recebe Bônus Fixo de +2 nos Testes Opostos (AGI) para escapar de Agarrões/Grapples Inimigos.",
-                "Articulações deslocáveis. Sistema: O Bônus Fixo aumenta para +5 Absoluto em testes para fugir de qualquer Submissão/LUST.",
-                "Escape Rápido. Sistema: Tentar soltar-se vira uma Ação Bônus ao invés de consumir sua Ação Principal.",
-                "Reflexo Sujo. Sistema: Inimigos que tentarem te Agarrar e falharem recebem Condição 'Atordoado' no turno (Teste de Resistência CON vs AGI).",
-                "Escape Oportuno. Sistema: Quando se solta com sucesso, rouba passivamente a arma ou 1 item menor do inimigo."
-            ],
-            "Ataques Rápidos": [
-                "Movimento contínuo. Sistema: Armas leves/finesse (Adagas/Sabres) causam +1 de Dano Fixo.",
-                "Mãos borradas. Sistema: Ganha a capacidade de usar um Ataque Extra (Ação Bônus) se usar Armas Leves/Desarmado.",
-                "Aceleração Cardíaca. Sistema: Pode gastar 10 Stamina para desferir um Terceiro Ataque Físico livre na sua rodada.",
-                "Foco Sanguíneo. Sistema: Acertar golpes sucessivos num mesmo inimigo acumula Bônus de +2 Dano por acerto na mesma rodada.",
-                "Ataque Giratório. Sistema: (Ação Principal) Você gira atacando todos os alvos a 1 quadrado de distância ao mesmo tempo com sua arma."
-            ],
-            "Contra-Ataque Rápido": [
-                "Abertura oportunista. Sistema: Se um inimigo corpo-a-corpo errar o ataque em você, permite 1 Revide/Contra-Ataque de Reação imediato.",
-                "Revide Direto. Sistema: Seu Contra-Ataque de Reação ganha Bônus para causar seu Dano Bruto integral da Arma Primária.",
-                "Reação Dupla. Sistema: Você recebe passivamente 2 Ações de Reação por Rodada (pode contra-atacar duas vezes em turnos inimigos).",
-                "Aparar e Perfurar. Sistema: Acertar um Contra-Ataque interrompe o combo inimigo, encerrando o turno de ação física dele.",
-                "Contra-Ataque Preciso. Sistema: Alvos atingidos pelo seu Contra-Ataque sofrem Sangramento e 'Lentidão' no próximo turno."
-            ],
-            "Passo Fantasma": [
-                "Corrida ofuscante. Sistema: Mover-se ao menos 3 metros no seu turno te concede +1 de CA (Esquiva) passiva até o próximo turno.",
-                "Passo Invisível. Sistema: Se mover ou sair de combate corporal não gera/ativa Ataques de Oportunidade contra você.",
-                "Fase etérea passageira. Sistema: Pode usar seu Deslocamento para atravessar fisicamente 1 espaço ocupado por um inimigo sem impedimento.",
-                "Leveza Impossível. Sistema: Corre livremente por Superfícies Verticais (paredes) ou por cima de Água Líquida se mantiver o passo.",
-                "Salto Sombrio. Sistema: (Ação Bônus) Se esconder em área de Penumbra permite se Teleportar para outra área de Breu a até 10m visíveis."
-            ],
-            "Mobilidade Avançada": [
-                "Bater e Correr. Sistema: Após realizar Ação de Ataque, desliza magicamente 2 metros grátis no grid.",
-                "Recuo Elástico. Sistema: O deslize/recuo grátis é estendido para 5 metros de fuga absoluta na rodada.",
-                "Impulso Tático. Sistema: Mover-se no primeiro turno de combate tem o Deslocamento total dobrado.",
-                "Miragem de Passos. Sistema: Ao usar Correr (Dash), todos inimigos ganham Desvantagem (-Rola 2d20) ao te alvejar com ataques visuais.",
-                "Movimento e Ataque. Sistema: Seu 'Ataque Giratório' (Ataque em Área) agora pode atingir alvos separados saltando num raio de 10m."
-            ],
-            "Reação Ocular": [
-                "Visão cinética. Sistema: (Ação de Reação) Rola Teste Oposto (AGI vs Acerto Inimigo) para tentar desviar ou cortar 1 flecha atirada em você.",
-                "Aparagem Absoluta. Sistema: Bloqueio de Projéteis mundanos (Flechas/Facas) torna-se 100% à prova de falhas se você usar Reação.",
-                "Devolução de Projéteis. Sistema: Flechas e projéteis rebatidos voam de volta ao atirador causando o dano original nele mesmo (Acerto Automático).",
-                "Reflexo Arcano. Sistema: Permite usar a Aparagem Absoluta contra Feitiços/Balas Mágicas de uso Direto e Foco único.",
-                "Refletir Magia. Sistema: Reflete magias Supremos e Lendários em área de volta ao Caster usando todo o corpo como eixo rotacional."
-            ],
-            "Dança da Morte": [
-                "Passos ágeis. Sistema: Todo Arqueiro ou Atirador sofre passivamente -1 de penalidade para te acertar (Devido a sua fluidez constante).",
-                "Graciosidade que Empolga. Sistema: Sucesso num Teste de Esquiva confere +1 de Bônus em testes no próximo turno de todos os seus aliados num raio de 5m.",
-                "Combate de Multidão. Sistema: Ganha +1 CA para cada inimigo a mais (além do primeiro) que estiver em quadrado adjacente a você.",
-                "Abertura Falsa. Sistema: (Ação Bônus) Abre a guarda de propósito. Todo Inimigo a 2m que tentar bater e errar perde a Postura caindo 'Derrubados'.",
-                "Esquiva em Grupo. Sistema: Em caso de falha num Teste Oposto de Magia de Área inimiga (Fogo/Gelo), um salto puxando o aliado garante Dano Zero para ambos."
+            "Acrobata Sensual": [
+                "Ganha +AGI em testes de Sedução durante danças ou movimentos rítmicos.",
+                "Ao sofrer dano LUST, passe num teste de AGI (CD 15) para reduzir o dano pela metade.",
+                "Uma vez por combate, troque de lugar com o alvo no meio de um ato."
             ]
         }
     },
-    von: {
-        name: "Vontade", icon: "fa-brain",
-        perks: {
-            "Mente Inabalável": [
-                "Postura de veterano. Sistema: Rola Testes de Resistência Opostos (VON) com Vantagem contra Intimidação.",
-                "Cérebro blindado. Sistema: Bônus absoluto de +2 na Defesa Base contra magias de Hipnose/Ilusão.",
-                "Claridade Racional. Sistema: Imunidade total à Condição 'Amedrontado/Fobia' imposta por Monstros.",
-                "Carisma Inverso. Sistema: Completamente impermeável à feitiços de Encantamento e Sedução Arcanos.",
-                "Defesa Mental. Sistema: Inimigos que tentam ataques telepáticos sofrem Dano Psíquico de volta (Teste Oposto: VON do atacante vs sua VON)."
+    "con": {
+        "name": "Constituição",
+        "icon": "fa-shield-heart",
+        "perks": {
+            "Vigor Inesgotável": [
+                "Adiciona +10 na Stamina Máxima.",
+                "Descansos rápidos curam o dobro de HP e Stamina.",
+                "Chegar a 0 Stamina não causa Exaustão imediata (suporta +1 rodada no ápice)."
             ],
-            "Resistência Mental": [
-                "Acostumado à sujeira. Sistema: +2 nos Testes de Resistência (VON) contra o acúmulo de LUST (Tesão).",
-                "Foco. Sistema: Aumenta o Bônus de Defesa contra Dano LUST para +5 Fixo passivo.",
-                "Inversão do Papel. Sistema: Corta pela metade a eficácia de Magias LUST inimigas direcionadas a você.",
-                "Mente Dissociativa. Sistema: No Estágio 3 de LUST, você não sofre os debuffs de paralisação e fadiga extremas.",
-                "Conversão de Dano. Sistema: Dano massivo de LUST curará o seu HP ao invés de causar Mind Break."
+            "Corpo Sensível e Resistente": [
+                "+1 de Defesa contra Ataques Físicos.",
+                "Vantagem contra Venenos, Doenças e Fadiga Exaustiva.",
+                "Ao final de atos intensos, ganha um buff temporário de +1 FOR e +1 AGI ao invés de cansaço."
             ],
-            "Clarividência": [
-                "Intuição afiada. Sistema: Inimigos rolam com Desvantagem testes Furtividade contra você (Teste Oposto: AGI deles vs sua VON/Percepção).",
-                "Vê borrões nítidos. Sistema: Magias Menores de Invisibilidade falham passivamente na sua presença num raio de 5m.",
-                "Ilusões frágeis. Sistema: Você ganha +5 Fixo em Testes de VON para não cair em labirintos ou miragens de feitiço.",
-                "Sentido Assassino. Sistema: Imune a acertos críticos originados de flanqueamento e emboscadas furtivas (Percebe automaticamente).",
-                "Análise Completa. Sistema: Permite enxergar Dados Ocultos dos NPCs e Chefes (HP exato, CA, LUST e Resistências Elementais)."
-            ],
-            "Presença Imponente": [
-                "Postura intimidadora. Sistema: Bônus Fixo de +2 em rolagens de Persuasão e Intimidação.",
-                "Predador Nato. Sistema: Ameaçar inimigos enfraquecidos inflige 'Abalado' neles (Teste de Resistência: VON do alvo vs sua VON).",
-                "Grito Intimidador. Sistema: (Ação) Berro aplica Lentidão e -1 Iniciativa num raio de 5m (Teste Oposto: VON do alvo vs sua VON para resistir).",
-                "Aterrorizar Lacaios. Sistema: Monstros menores fogem em Medo ao você realizar Acertos Críticos neles (Teste de Resistência: VON).",
-                "Comando Mental. Sistema: Força inimigos normais a largarem suas armas (Teste de Resistência: VON do inimigo vs sua VON para anular)."
-            ],
-            "Meditação Tática": [
-                "Respira e foca. Sistema: Gastar o turno (Ação Completa) para Meditar recupera passivamente Vida e Estamina baseados na VON.",
-                "Calmante Interior. Sistema: Meditar em combate cessa Venenos fracos, Sangramentos menores ou Cegueira.",
-                "Foco Pleno. Sistema: Ignora passivamente as penalidades (debuffs de atributos) derivadas de estar com HP baixo no combate.",
-                "Transe de Batalha. Sistema: Meditar por 1 minuto purga (zera) a sua barra de LUST acumulada na masmorra.",
-                "Aura de Calma. Sistema: Sua Meditação cria uma Aura que remove Debuffs Mentais/Medo de aliados num raio de 5m."
-            ],
-            "Foco Implacável": [
-                "Coração Concentrado. Sistema: Vantagem natural em Testes de Concentração (VON) para não perder magias invocadas ao tomar dano.",
-                "Ignora Espasmos. Sistema: Receber Dano Físico de raspão (menos de 5 Dano) nunca cancela os seus Rituais Arcanos Castados.",
-                "Controle Sensorial. Sistema: Imune a Cegueira ou Surdez para efeitos de mirar feitiços mágicos à distância.",
-                "Máquina Mística. Sistema: Ser alvo de Acerto Crítico dobra (x2) o Dano Fixo ou a Cura Falsa do seu próximo feitiço conjurado.",
-                "Concentração Final. Sistema: Atingir HP Zero permite finalizar as Invocações pendentes de Feitiço em Forma Espiritual antes do coma."
-            ],
-            "Disciplina Carnal": [
-                "Mente Reprimida. Sistema: Diminui a corrupção LUST em -2 pontos por rodada passivamente, sem necessitar da Ação de Alívio Sexual.",
-                "Afastar do Combate. Sistema: Usar Desengajar/Fuga Tática retira passivamente -5 pontos da barra de LUST.",
-                "Limiar Expansivo. Sistema: Dobra a capacidade Total da barra de Limites de Prazer LUST da sua Ficha de Atributos.",
-                "Flagelo Purificador. Sistema: (Ação Especial) Paga custo de HP em auto-flagelação para curar 2d10 da Corrupção LUST de aliados próximos.",
-                "Recuperação de Sanidade. Sistema: Se sofrer Mind Break, ignora a Derrota Absoluta (Insta-Lose) e recobra 10% da sanidade (1x por Masmorra)."
-            ],
-            "Barreira Psíquica": [
-                "Reduz Dano Mental. Sistema: Ignora 1 ponto fixo de Dano Arcânico advindo de Magias de LUST ou Raios Telepáticos Ocultos.",
-                "Escudo Mágico Espesso. Sistema: Diminui 5 Pontos Absolutos de Dano recebido de Explosões de Magias Elementais.",
-                "Projeta Escudo Foco. Sistema: Confere +2 de Redução Mágica e Imunidade a Medo/Pânico para Aliados adjacentes a você.",
-                "Ricochete Mental. Sistema: Ataques Mentais/Telepáticos Inimigos rebatem Dano Psíquico neles mesmos (Teste Oposto: VON atacante vs sua VON).",
-                "Mente Fechada. Sistema: 100% de Imunidade a Magias Colossais de Possessão Mental ou Mind Control Inimigo."
-            ],
-            "Quebra-Amarras": [
-                "Controle afrouxado. Sistema: Magias inimigas de Enraizamento ('Root') tem a duração em turnos reduzida pela metade.",
-                "Desdém mental. Sistema: Efeitos inimigos de 'Paralisia' ou 'Atordoamento' na sua mente duram no máximo 1 único Turno.",
-                "Toque de Despertar. Sistema: Usar a Ação Tocar num Aliado o desperta do Controle Mental inimigo de Magos e Súcubos automaticamente.",
-                "Veto do Enfraquecimento. Sistema: Imunidade a Feitiços de Preguiça, Enfraquecer Atributos e Magias de Sono em Área inimigas.",
-                "Quebra de Ilusões. Sistema: Cancela automaticamente Labirintos e Ilusões de Cenário, revelando a saída ao grupo."
-            ],
-            "Avatar da Mente": [
-                "Empodera Conjurações. Sistema: Adiciona seu Modificador de VONTADE no Dano Base em todas as suas Magias Ofensivas.",
-                "Guerreiro Monge Oculto. Sistema: Seus Ataques Corpo-a-Corpo passam a Escalar Dano Bruto rolando VONTADE (VON) em vez de FORÇA.",
-                "Canalização Divina. Sistema: Converte 100% do Dano Físico de suas Armas em Dano Mental (ignorando Armaduras Físicas pesadas).",
-                "Ataque a Espíritos. Sistema: Seus Golpes Físicos acertam Invocações Intangíveis e Fantasmas que possuem Imunidade Física total.",
-                "Projeção Astral. Sistema: (Ação) Permite Lutar como Espírito Invulnerável fisicamente enquanto seu corpo real descansa seguro."
-            ],
-            "Vontade de Sobreviver": [
-                "Recusa a morte de amigos. Sistema: Se um aliado Cair a 0 HP, você ganha Vantagem e +2 de Dano Extra contra o agressor dele.",
-                "A Party no Limite. Sistema: Se todos aliados caírem na luta, você dobra seu próprio HP Máximo curando a saúde como herói final.",
-                "Foco na Sobrevivência. Sistema: Chegar a 0 HP não lhe causa Nocaute/Desmaio; você permanece lutando ignorando a morte por 3 turnos.",
-                "Grito do Último Suspiro. Sistema: (Ação de Reação) Quando Aliado sofrer Letalidade, você Cancela a Morte dele o deixando com 1 HP firme.",
-                "Ignorar Letalidade. Sistema: Cancela e Anula Passivamente os Ataques Inimigos de Execução (InstaKill), convertendo em Dano Físico Normal."
-            ],
-            "Telecinese Latente": [
-                "Balanço suave. Sistema: Permite Atrair e Levitar Itens Leves à distância com a mente em combate, usando Percepção Visual (Ação Bônus).",
-                "Atirar pedras e estilhaços. Sistema: (Ação Principal) Causa Dano Mágico de Longa Distância usando pedras e escombros (Teste Acerto de Magia normal).",
-                "Dedos da Mente. Sistema: (Reação Bônus) Interrompe a Concentração Mágica do Inimigo asfixiando-o telecineticamente (Teste Oposto: VON vs VON).",
-                "Levitação Pessoal. Sistema: Adquire Deslocamento de Voo passivo (Flutuar). Fica Imune a Terrenos Difíceis e armadilhas de piso ocultas.",
-                "Arremesso Telecinético. Sistema: (Ação Suprema) Empurra Objetos Massivos em linha reta. Inimigos esmagados rolam (Teste Oposto: FOR/AGI vs sua VON)."
+            "Absorção e Prazer": [
+                "Dano físico contundente pode ser resistido com Vantagem usando CON.",
+                "Ganha +CON como bônus em testes para resistir ao seu próprio orgasmo precoce.",
+                "Converter Dor em Stamina: Dano físico intenso recupera 1d4 de Stamina."
             ]
         }
     },
-    mis: {
-        name: "Misticismo", icon: "fa-wand-magic-sparkles",
-        perks: {
-            "Afinidade Elemental": [
-                "Magia Primal. Sistema: Concede +1 base de Dano Mágico Fixo em todos os feitiços ofensivos.",
-                "Sintonia. Sistema: +3 de Bônus Fixo direto a todos os danos mágicos elementais.",
-                "Impacto residual. Sistema: Feitiços de dano aplicam Queimadura ou Congelamento (Teste de Resistência: CON vs MIS do Conjurador).",
-                "Magia Perfurante. Sistema: O seu Dano Mágico passa a ignorar todas as resistências secundárias de alvos comuns.",
-                "Magia Pura. Sistema: Todo seu Dano Elemental se converte em Dano Puro, ignorando Imunidades Inimigas."
+    "mis": {
+        "name": "Misticismo",
+        "icon": "fa-wand-magic-sparkles",
+        "perks": {
+            "Magia Carnal": [
+                "Feitiços aplicam +MIS em Dano LUST secundário.",
+                "Magias de cura restauram +1d4 HP se aplicadas através de fluidos ou beijo.",
+                "Pode conjurar magias usando LUST ao invés de Stamina (1 LUST = 2 Stamina)."
             ],
-            "Controle de Mana/Energia": [
-                "Redução de Custo. Sistema: Reduz em 1 o custo de Estamina/Mana de qualquer magia de nível médio.",
-                "Feitiços Menores. Sistema: Magias Menores (Custo 1) se tornam Habilidades Grátis que não gastam recursos.",
-                "Condensação de rituais. Sistema: Corta pela exata metade o custo final de todas as Magias Pesadas ou Supremos.",
-                "Magia de Sangue. Sistema: Permite usar HP próprio no lugar de Estamina/Mana para conjurar (1 HP = 2 Mana).",
-                "Reserva Mágica. Sistema: (Ação Principal) 1x ao Dia, ignora limites e custos conjurando uma Magia Lendária grátis."
+            "Aura Sensível": [
+                "Inimigos a 3m têm Desvantagem para resistir às suas ilusões.",
+                "Feitiços de Sedução Mágica ganham +2 na Classe de Dificuldade (CD).",
+                "Atacar você corpo-a-corpo rola com Desvantagem se o atacante tiver LUST > 50%."
             ],
-            "Canalização Rápida": [
-                "Acelera feitiços. Sistema: Reduz o tempo de preparação de feitiços em 1 turno inteiro.",
-                "Sinergia com runas. Sistema: Permite mover-se e conjurar magias simultaneamente (sem perder Esquiva ou Movimento).",
-                "Mãos independentes. Sistema: Magias ofensivas ou defensivas menores se tornam conjuráveis com Ação Bônus na rodada.",
-                "Conjuração Dupla. Sistema: Permite conjurar ativamente duas magias distintas (ex: Ataque e Cura) no mesmo turno.",
-                "Conjuração Instantânea. Sistema: Transforma feitiços de lentidão (Preparação de Turnos) em Casts Instantâneos."
+            "Laço Místico": [
+                "Pode conectar-se a 1 aliado. Vocês compartilham as barras de Stamina.",
+                "Danos (HP ou LUST) do aliado podem ser absorvidos por você.",
+                "Orgasmos Mágicos: Seu orgasmo cura 2d6 HP para todos os aliados conectados."
+            ]
+        }
+    },
+    "von": {
+        "name": "Vontade",
+        "icon": "fa-brain",
+        "perks": {
+            "Mente Blindada": [
+                "+1 de Defesa Base contra ataques Mágicos e Mentais.",
+                "Vantagem em testes para resistir ao status Mind Break.",
+                "Qualquer Dano LUST que você sofra é reduzido em 2 pontos."
             ],
-            "Escudo Arcano": [
-                "Escudo Leve. Sistema: Cria passivamente barreira que absorve os primeiros 10 pontos de Dano recebido no combate.",
-                "Parede Prismática. Sistema: Aumenta a proteção passiva base do Escudo Arcano para absorver 30 HP Dano.",
-                "Barreira Empática. Sistema: Inimigos que quebrarem sua Barreira recebem Dano LUST (Teste Oposto: VON do atacante vs sua MIS).",
-                "Explosão do Escudo. Sistema: Quando o escudo rompe, explode em Dano em Área (Teste Oposto: AGI para meia Esquiva vs MIS).",
-                "Cúpula Protetora. Sistema: Barreira divina densa que absorve 1 Golpe Letal (Insta-Kill) antes de trincar."
+            "Masoquismo / Êxtase Curativo": [
+                "Ao receber Dano Físico, você acumula metade do dano como Energia Sexual.",
+                "Rola com Vantagem contra intimidação, dor ou medo.",
+                "Conversão de Dano (Regra): Se receber 10 ou mais de Dano LUST em um só turno, cura 1d8 do seu HP e previne Mind Break."
             ],
-            "Raio Aumentado": [
-                "Expansão Mística. Sistema: Aumenta o tamanho de magias de alvo único para pegar alvos numa área extra de 5 Metros.",
-                "Artilharia Mágica. Sistema: Amplia em +10 metros o alcance global da distância de ataque sem penalidade.",
-                "Área Dobrada. Sistema: Qualquer Área de Efeito (AoE) criada por você tem o seu Raio Base exatamente dobrado.",
-                "Ramificação. Sistema: Projéteis mágicos se ramificam passivamente para atingir múltiplos inimigos em 2m do alvo.",
-                "Projétil Perfurante. Sistema: Magias atravessam obstáculos de cenário sólido sem perder precisão no alvo."
-            ],
-            "Percepção Arcana": [
-                "Terceiro Olho. Sistema: Passiva ativada; percebe imediatamente armadilhas arcanas e paredes falsas (Testes de Percepção automáticos).",
-                "Visão da Aura. Sistema: Identifica status de maldição e criaturas sob Efeito de Invisibilidade magicamente.",
-                "Antecipação Arcana. Sistema: Ganha 1 Turno de Aviso informando qual elemento que o inimigo Mago vai conjurar.",
-                "Lê Segredos. Sistema: (Ação) Permite invadir a mente e puxar informações do Inimigo (Teste Oposto: VON do alvo vs sua MIS).",
-                "Visão Estrutural. Sistema: Seu olhar revela a planta da masmorra."
-            ],
-            "Manipulação de Fluidos": [
-                "Biologia Mágica. Sistema: Poções e itens curativos ingeridos por você recebem +5 de Cura extra.",
-                "Transmutação alquímica. Sistema: Transmuta poças em Venenos ou Antídotos mágicos usando Ação Bônus.",
-                "Dreno Leve. Sistema: Absorve HP de Oponentes Atordoados/Lentos causando Dano Drenante (Teste Oposto de Resistência: CON vs MIS).",
-                "Transferência de Vitalidade. Sistema: Permite cortar o pulso para doação (Transferência 100% eficiente) do seu HP a aliados caídos.",
-                "Cura Pura. Sistema: Magias de cura passam a anular passivamente Mutações Demoníacas ou Corrupções pesadas."
-            ],
-            "Cura Amplificada": [
-                "Estabilizador bruto. Sistema: Todos os seus Feitiços de Cura ganham Bônus Fixo de +10 de HP em qualquer aliado.",
-                "Rios de luz. Sistema: Aumenta para +20 HP Fixo bônus curativo passivo de Magias Divinas ou Médicas.",
-                "Cura Purificante. Sistema: Suas curas de HP limpam (zera ou debuffa) as barras de LUST dos alvos.",
-                "Regeneração Celular. Sistema: Cura agora regenera Membros Decepados permanentemente.",
-                "Ressurreição. Sistema: Magias de Cura podem reviver Aliados do Estado de Morte Permanente os trazendo com 50% HP."
-            ],
-            "Pacto de Sangue": [
-                "Magia Sanguínea. Sistema: Sem mana, paga custos normais consumindo seu HP Próprio (1 para 1).",
-                "Conversão de Sangue. Sistema: Ofertar 1 HP com cortes converte em 2 de Energia para gastar no turno.",
-                "Retaliação Arcana. Sistema: Dobra o Alcance e Dano final (x2) da sua próxima Magia se tiver sofrido um Acerto Crítico recém.",
-                "Lifesteal Sanguinário. Sistema: Passiva: Todas as magias sombrias roubam 25% do HP que deram de Dano Inimigo.",
-                "Dreno Vital. Sistema: Drena a Vida (HP) de Lacaios imobilizados em 1 Turno para recarregar as próprias magias gratuitamente."
-            ],
-            "Absorção Mística": [
-                "Esponja Mágica. Sistema: Ser alvo de uma magia inimiga (Mesmo tomando Dano) recarrega +2 na sua Energia Mágica.",
-                "Devorador de Luxúria. Sistema: Dano LUST de Súcubos é anulado (Imunidade) e convertido como +5 Cura Arcana para você.",
-                "Absorção de Magia Menor. Sistema: Magias Elementares inimigas fracas (Custo de 1 a 3) são passivamente sugadas pela sua aura (0 Dano).",
-                "Dreno Vampírico. Sistema: (Ação Bônus Corpo-a-Corpo) Zera a Energia do inimigo pra você (Teste Oposto: VON vs MIS).",
-                "Absorção de Magia Maior. Sistema: Usa Ação Reação para Engolir e Anular totalmente 1 Magia Suprema Lendária."
-            ],
-            "Mestre Ritualístico": [
-                "Ritual Rápido. Sistema: Corta 50% dos Turnos exigidos (Arredondado para baixo) de qualquer Ritual Pesado.",
-                "Libertação Material. Sistema: Conjura magias Sombrias/Ritual sem necessitar de Componentes Materiais Mundanos.",
-                "Âncora Ambulante. Sistema: Cúpulas e Áreas Mágicas de proteção não precisam mais ser fixas no chão; seguem como Aura o Avatar.",
-                "Conjurador Solitário. Sistema: Conjura feitiços que pediriam 3 Magos do Coven de forma Solitária, pagando custos sozinho.",
-                "Feitiços Híbridos. Sistema: Permite criar Feitiços Híbridos Inéditos (Fogo que congela, etc.) misturando efeitos das cartas."
-            ],
-            "Invocação Vinculante": [
-                "Familiar Espião. Sistema: Permite Invocar Pequenos Familiares para revelar o Grid invisível (Não atacam).",
-                "Familiar Explosivo. Sistema: Familiares podem ser explodidos numa Ação (Teste Oposto de Esquiva Inimiga: AGI vs MIS).",
-                "Invocação de Batalha. Sistema: Invoca Lacaios Mágicos para dar Dano no Turno Próprio como aliados.",
-                "Boi de Piranha Mental. Sistema: Familiares atraem (Taunt) Magias de Possessão Inimiga protegendo o Invocador de LUST e Medo.",
-                "Invocação Maior. Sistema: (Ação Suprema) Invoca e controla inteiramente 1 Entidade Chefe Primordial no Campo substituindo sua ficha."
+            "Controle de Êxtase": [
+                "Seu limite Máximo de LUST aumenta em +20.",
+                "Ignora penalidades de Confusão por LUST passando num teste (CD 12+VON).",
+                "Pode gastar sua Energia Sexual para buffar ataques (cada ponto = +1d6 Dano LUST)."
             ]
         }
     }
@@ -1173,11 +640,14 @@ function updateSkillSelectOptions() {
     document.querySelectorAll('.inp-skill-slot').forEach(select => {
         const currentVal = select.value;
         select.innerHTML = '<option value="">Selecione Habilidade...</option>';
+        const seenNames = new Set();
+        
         globalSkills.forEach(s => {
             const isOwner = (s.ownerId === targetOwner) || isMaster();
             const matchesClass = !s.classRestricted || classNameVal.includes(s.classRestricted.toLowerCase());
             
-            if (isOwner && matchesClass) {
+            if (isOwner && matchesClass && !seenNames.has(s.name)) {
+                seenNames.add(s.name);
                 select.innerHTML += `<option value="${s.id}" ${s.id === currentVal ? 'selected' : ''}>${escapeHTML(s.name)}</option>`;
             }
         });
@@ -1499,6 +969,32 @@ function renderDashboard() {
     // Conditions Text
     const condList = char.activeConditionIds.map(id => CONDITIONS_DB[id]?.name).filter(Boolean);
     document.getElementById('dash-conditions').innerHTML = condList.length > 0 ? condList.join('<br>') : "Nenhuma condição ativa.";
+    
+    // Combat Actions Table
+    const tBody = document.getElementById('dash-actions-table');
+    tBody.innerHTML = '';
+    const sed = char.attr.sed || 0;
+    const force = char.attr.for || 0;
+    const agi = char.attr.agi || 0;
+    const mis = char.attr.mis || 0;
+    
+    const actions = [
+        { name: "Ataque Desarmado/Físico", effect: `1d8 + ${force} HP`, cost: "1 Ação" },
+        { name: "Penetração Intensa (ERPG)", effect: `1d8 + ${sed} LUST`, cost: "15 Stamina" },
+        { name: "Oral / Toques Sensíveis", effect: `1d6 + ${Math.max(sed, agi)} LUST`, cost: "10 Stamina" },
+        { name: "Provocação Mística", effect: `1d4 + ${mis} LUST à distância`, cost: "5 Stamina" },
+        { name: "Esquiva / Fuga", effect: `Teste de Agilidade + ${agi}`, cost: "Reação ou Movimento" }
+    ];
+    
+    actions.forEach(act => {
+        tBody.innerHTML += `
+            <tr class="hover:bg-gold/5 transition-colors">
+                <td class="py-2 pr-2 font-bold text-gray-300">${act.name}</td>
+                <td class="py-2 pr-2 text-purple-400 font-bold">${act.effect}</td>
+                <td class="py-2 text-gray-400 text-xs">${act.cost}</td>
+            </tr>
+        `;
+    });
     
     // Skills Grid
     const gridSkills = document.getElementById('dash-skills-grid');
@@ -1876,7 +1372,7 @@ function updatePerksMath() {
                         cardEl.className = 'p-3 bg-gray-800 rounded-lg border border-gold/40 shadow-[0_0_10px_rgba(218,165,32,0.1)] flex flex-col gap-2 transition-all';
                         descEl.className = 'text-[11px] md:text-xs text-gray-200 bg-black/60 p-2 rounded border-l-2 border-purple-500 transition-colors min-h-[36px] font-medium leading-relaxed';
                         
-                        if(lvl === 5) {
+                        if(lvl === 3) {
                             cardEl.classList.add('border-purple-500', 'shadow-[0_0_15px_rgba(168,85,247,0.3)]');
                             descEl.classList.add('text-purple-300', 'font-bold');
                         }
@@ -1910,7 +1406,7 @@ window.adjustPerk = function(attrKey, perkName, delta) {
     let lvl = draftPerks[attrKey][perkName] || 0;
     lvl += delta;
     if(lvl < 0) lvl = 0;
-    if(lvl > 5) lvl = 5;
+    if(lvl > 3) lvl = 3;
     draftPerks[attrKey][perkName] = lvl;
     updatePerksMath();
 }
@@ -2022,21 +1518,22 @@ document.getElementById('btn-combat-confirm').onclick = () => {
     const iniVal = document.getElementById('inp-combat-ini').value;
     let roll = parseInt(iniVal);
     if (isNaN(roll)) {
-        const baseIni = source.isMonster ? (source.ini || 10) : (source.attr?.agi || 0);
-        roll = baseIni + Math.floor(Math.random() * 20) + 1;
+    const isMon = type === 'monster';
+    const baseIni = isMon ? (source.ini || 10) : (source.attr?.agi || 0);
+    roll = baseIni + Math.floor(Math.random() * 20) + 1;
     }
     
-    const cStats = source.isMonster ? null : getClassStats(source.class);
-    const mods = source.isMonster ? null : getCharModifiers(source);
+    const cStats = isMon ? null : getClassStats(source.class);
+    const mods = isMon ? null : getCharModifiers(source);
     
-    let mhp = source.isMonster ? source.hp : Math.max(1, Math.floor((cStats.hp + (source.attr.con * 10)) * mods.hp_mult));
-    let mst = source.isMonster ? source.stamina : Math.max(1, Math.floor((cStats.st + (source.attr.vig * 5)) * mods.st_mult));
-    let mlu = source.isMonster ? source.lust : cStats.lust;
+    let mhp = isMon ? source.hp : Math.max(1, Math.floor((cStats.hp + (source.attr.con * 10)) * mods.hp_mult));
+    let mst = isMon ? source.stamina : Math.max(1, Math.floor((cStats.st + (source.attr.vig * 5)) * mods.st_mult));
+    let mlu = isMon ? source.lust : cStats.lust;
     
     const combatant = {
         cid: generateId(),
         refId: source.id,
-        isMonster: !!source.isMonster,
+        isMonster: isMon,
         name: source.name,
         avatar: source.avatar || '',
         ini: roll,
