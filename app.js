@@ -74,35 +74,179 @@ const PERKS_DB = {
     sed: {
         name: "Sedução", icon: "fa-heart",
         perks: {
-            "Volúpia Anatômica: Seios": ["Estético leve", "Formato perfeito (+1 distração)", "Volume gerador de LUST", "Dimensões hipertróficas (LUST passivo)", "Proporções extremas (Transe)"],
-            "Volúpia Anatômica: Glúteos e Quadris": ["Curvas acentuadas", "Quadril hipnótico (+1 persuasão)", "Ataques de submissão com bônus SED", "Absorve impacto e amplifica LUST", "Proporções colossais inescapáveis"],
-            "Magnificência Genital": ["Alteração estética e calor", "Tamanho/profundidade ideais (+2 provocação)", "Ignora dores, +50% LUST no parceiro", "Drena Energia/LUST pelo contato", "Alvos paralisados pelo êxtase"],
-            "Feromônios Inebriantes": ["Perfume adocicado", "Impõe -1 VON corpo a corpo", "Névoa afrodisíaca (+2 LUST área)", "Densa: Alvos perdem 10% Resistência LUST", "Nuvem de Cio: Frenesi incontrolável"],
-            "Beijo Sugador": ["Lábios instigantes", "Confusão mental por 1 turno", "Drena 10 Stamina", "Drena HP e Stamina", "Dreno de Alma: Maximiza LUST, debuff atributos"],
-            "Olhar da Perdição": ["Olhos magnéticos", "Impõe Hesitação (atrasa iniciativa)", "Força dano de LUST visual", "Quebra DLUST do alvo pela metade", "Submissão Ocular telepática"],
-            "Voz de Sereia": ["Timbre aveludado", "Vantagem (+1) imobilização sexual", "Excitação forçada (Dano LUST à distância)", "Anula buffs mentais/Fúria", "Cântico: Paralisa alvos em área"],
-            "Toque Corruptor": ["Dedos indutores de calafrios", "Debuff leve de Agilidade no toque", "Golpes físicos causam 50% dano LUST", "Ignora 50% armadura para Despir", "Dissolve roupas e armaduras mundanas"],
-            "Graça Felina": ["Movimentação elegante", "Esquiva usa SED (leves)", "Dança gera LUST passivo na área", "Imune penalidade de agarrão/submissão", "Intangível se provocar (ataques erram)"],
-            "Imunidade à Vergonha": ["Exibicionismo leve", "Nudez parcial = +1 DLUST", "Nudez Total = +3 testes SED", "Ganha buffs ao atingir Limiar de Êxtase", "Avatar Luxúria: Força dobrada no Mind Break"],
-            "Secreções Afetivas": ["Fluidos revigorantes", "Fluidos curam +5 HP ao aliado", "Fluido viciante (facilita comandos)", "Fluidos purificam venenos", "Névoa que protege área de Mind Break"],
-            "Domínio do Vínculo": ["Empatia imediata após sexo", "Pode marcar alvo (sabe direção)", "Alvo marcado sofre LUST se te atacar", "Telepatia de Prazer", "Contrato Subserviência: Controle mental e HP share"]
+            "Volúpia Anatômica: Seios": [
+                "Volume acentuado que atrai olhares gulosos. Você ganha +1 em testes sociais de persuasão leve.",
+                "Formato perfeito e chamativo. O contato físico intencional causa um leve LUST passivo no alvo.",
+                "Mamilos sempre marcados e pele quente. Combates próximos atordoam inimigos com excitação visual passiva.",
+                "Proporções macias e avassaladoras. Permite usar o próprio peso para sufocar oponentes de prazer, reduzindo a defesa LUST deles.",
+                "Bênção da Luxúria: A mera exposição nua causa transe hipnótico em área, forçando rendição orgástica incondicional."
+            ],
+            "Volúpia Anatômica: Glúteos e Quadris": [
+                "Curvas sinuosas que balançam. Inimigos hesitam instintivamente antes de golpear você pelas costas.",
+                "Molejo hipnótico (+1 persuasão). Ao dar as costas, quem estiver olhando sofre LUST direto.",
+                "Coxas grossas permitindo 'Ataque Sentada Esmagadora', imobilizando alvos sob o peso enquanto os estimula brutalmente.",
+                "Carne mágica: absorve golpes físicos e os devolve como gemidos contagiantes, quebrando a concentração de feitiços inimigos.",
+                "Dança do Cio: Uma rebolada cria onda de choque de luxúria, engolindo inimigos em área numa euforia atordoante."
+            ],
+            "Magnificência Genital": [
+                "Aroma inebriante, exalando umidade e calor que desperta instintos primitivos em quem chega perto.",
+                "Sensibilidade adaptativa (+2 provocação). O atrito aumenta a produção de feromônios, deixando parceiros obcecados.",
+                "Tamanho/profundidade ideais. Anula defesa de dor/LUST de quem entrar em contato íntimo direto; 50% mais LUST gerado.",
+                "Templo do Pecado. Drena magicamente energia ou LUST de quem se aliviar com você, transferindo-a para o seu HP.",
+                "Anatomia Dominadora. A primeira penetração (ativa ou passiva) decreta o Mind Break instantâneo de oponentes fracos."
+            ],
+            "Feromônios Inebriantes": [
+                "Suor tem aroma afrodisíaco. Torna pessoas ao redor mais propensas a aceitar toques casuais.",
+                "O cheiro quebra lógicas. Impõe -1 VON a alvos em alcance corpo a corpo.",
+                "Névoa sensual exalada em combate (+2 LUST em área). Inimigos erram por confusão erótica.",
+                "Aura Densa. Quem respira a névoa perde 25% da Resistência a LUST permanente durante o combate.",
+                "Nuvem de Dominância Absoluta. Ativa frenesi incontrolável; afetados atacam roupas uns dos outros se falharem em teste."
+            ],
+            "Beijo Sugador": [
+                "Lábios macios e quentes que instigam obediência canina instintiva após o contato.",
+                "Beijo profundo que confunde a mente do alvo por 1 turno inteiro, apagando intenções hostis.",
+                "Beijo ofegante que rouba 10 de fôlego e Stamina do alvo durante intimidade forçada ou consentida.",
+                "Beijo Vampírico. Rouba HP do alvo e o cura em si, convertendo a vitalidade do alvo em puro êxtase no doador.",
+                "Beijo de Dreno de Alma. Um beijo prolongado reduz atributos do alvo permanentemente na cena, garantindo escravidão emocional."
+            ],
+            "Olhar da Perdição": [
+                "Olhos gulosos que prometem perversão. Fixar o olhar atrai inimigos para você.",
+                "Contato visual paralisa o alvo momentaneamente num misto de medo e atração cega (atrasa iniciativa).",
+                "Encarar o alvo ativamente queima LUST diretamente na mente dele, sem necessitar de toque.",
+                "Olhar Despido. Atravessa defesas morais; focar no alvo corta a Defesa LUST dele pela metade instantaneamente.",
+                "Comando de Submissão. Um piscar de olhos imperativo ordena que o alvo se deite ou implore por você."
+            ],
+            "Voz de Sereia": [
+                "Timbre aveludado e relaxante que desmonta guardas defensivas.",
+                "Sussurros macios no ouvido garantem Vantagem (+1) ao tentar iniciar imobilizações corporais/sexuais.",
+                "Palavras de comando excitam à distância, induzindo dano de LUST sem precisar encostar no alvo.",
+                "Gemidos que perfuram tímpanos e quebram a aura inimiga, anulando status de Fúria ou buffs mentais deles.",
+                "Cântico do Prazer. Paralisa todos numa grande área, fazendo-os ouvir a voz como uma ordem sagrada e irrecusável."
+            ],
+            "Toque Corruptor": [
+                "Temperatura das pontas dos dedos arrepia a pele, desarmando tensões físicas de quem é tocado.",
+                "Um arranhão ou massagem deixa os músculos do inimigo trêmulos de vontade, aplicando Debuff de agilidade.",
+                "Sucos físicos carregados: Metade de todo o Dano físico causado se converte em Dano LUST no alvo.",
+                "Pele Amolecida. Ignora 50% da armadura do inimigo caso a ação seja tentar despi-lo em combate.",
+                "Dissolução Perversa. Toque mágico que derrete roupas e armaduras de metal/couro instantaneamente, expondo a vítima nua."
+            ],
+            "Graça Felina": [
+                "Postura elegante, com movimentos e alongamentos extremamente sensuais e provocativos.",
+                "Substitui uso de Agilidade por Sedução em esquivas ou acrobacias leves em combate.",
+                "Dança de combate contínua que passivamente excita (gera LUST) em todos os alvos que estiverem te assistindo.",
+                "Flexibilidade surreal. Imune a penalidades por estar no chão ou ser imobilizado em posições submissas.",
+                "Dança Intangível. Pode se mover como água nua; ataques inimigos erram automaticamente se falharem contra o seu LUST."
+            ],
+            "Imunidade à Vergonha": [
+                "Não sofre penalidades morais por lutar com roupas expostas, rasgadas e provocantes.",
+                "A nudez parcial te fornece +1 de Defesa LUST, pois o orgulho do próprio corpo bloqueia a humilhação.",
+                "Nudez Total fornece +3 absurdo em TODOS os testes sociais e habilidades corpo-a-corpo de Sedução.",
+                "Masoquismo. Sofrer LUST extremo não te debuffa; na verdade, bater o Limiar garante Buffs de ataque.",
+                "Avatar Transcendental. Estar completamente despido no ápice do LUST torna sua mente incorruptível e força sobre-humana."
+            ],
+            "Secreções Afetivas": [
+                "Lágrimas, suor e saliva ganham um sabor doce, servindo como bebida revigorante para parceiros.",
+                "Ingerir fluidos do seu corpo cura e estanca pequenos sangramentos, agindo como +5 HP para os aliados.",
+                "Néctar Viciante. Quem consome entra em 'abstinência', facilitando obedecer aos seus comandos no combate.",
+                "Fluidos purificadores celestiais. O sexo curativo limpa venenos pesados do corpo do aliado através do seu suor.",
+                "Santuário Fluido. Banhá-los em suas secreções (intimidade profunda) garante ao alvo imunidade total a LUST por 24h."
+            ],
+            "Domínio do Vínculo": [
+                "Empatia erótica passiva: Sabe de cara quem tem fetiches sombrios ou desejos latentes na sala.",
+                "Permite marcar o alvo com mordida/chupão. Você sente na pele a direção e a distância dele.",
+                "A marca pune. Quem tem sua marca sofre espasmos de dor (LUST massivo) se tentar atacar o mestre.",
+                "Telepatia de Prazer. Você pode enviar ondas de orgasmo ou dor prazerosa diretamente na mente conectada à distância.",
+                "Coleira de Alma. A marca obriga o alvo a trocar a própria vida, recebendo dano no seu lugar cegamente por amor."
+            ]
         }
     },
     con: {
         name: "Constituição", icon: "fa-shield-heart",
         perks: {
-            "Couro Resistente": ["Redução dano: 1", "Redução dano: 3", "Ignora sangramento e ataques rasantes", "Dobra redução de dano (Ativação 1 turno)", "Impenetrável (Anula ataques abaixo de limiar)"],
-            "Tolerância à Dor": ["Ignora feridas superficiais", "Penalidades só em 30% de HP", "Imune tortura não-luxuriosa", "Adrenalina da Dor: Bônus FOR em Crítico", "Luta 3 turnos com 0 HP"],
-            "Sistema Imunológico Implacável": ["Raramente adoece", "Vantagem contra doenças comuns", "Corta duração de venenos fortes pela metade", "Cura envenenamento aliados via doação de sangue", "Imunidade total (veneno/parasita/gravidez)"],
-            "Sangue Fervente (Regeneração)": ["Feridas fecham rápido no descanso", "Recupera 1 HP/turno (passivo fora combate)", "Regeneração ativa (cura baseada no VIG)", "Cicatrização mágica (anula sangramento na hora)", "Recoloca membros decepados"],
-            "Densidade Óssea": ["Ossos pesados", "Proteção extra contra impacto", "Ossos inquebráveis (+bônus ataque desarmado)", "Imune a quedas de 15 metros", "Imune a dano contundente e fratura"],
-            "Termorregulação Perfeita": ["Não se incomoda com sol/neve", "Resistência Fogo/Gelo Nv1", "Sobrevive nú em extremos sem perder HP/Stamina", "Gelo/Fogo curam HP em vez de ferir", "Isolamento Absoluto a extremos e magias elementais"],
-            "Estômago de Ogro": ["Come carne crua", "Comida cura o dobro", "Come lixo/poção corrompida pra curar", "Come materiais duros = cura massiva e buff", "Fornalha Gástrica: Absorve atributo do inimigo engolido"],
-            "Firmeza de Montanha": ["Postura equilibrada", "Vantagem para evitar quedas/rasteiras", "Não pode ser movido por tamanho Médio/Grande", "Dano de recuo ao tentarem quebrar postura", "Gravidade Pessoal: Imune telecinese/knockback"],
-            "Vitalidade Descomunal": ["+10% HP Máx", "+20% HP Máx", "+30% HP Máx e ganha cura passiva", "+50% HP Máx", "+100% HP Máx (Coração Dragão: revive com 50% HP)"],
-            "Estase Carnal": ["Envelhece devagar", "Segura respiração 3x", "Hibernação profunda (sobrevive sem nada por semanas)", "Controle hemorrágico (isola veneno)", "Imortalidade biológica (não envelhece/maldições)"],
-            "Escudo Físico Reativo": ["Músculos tencionam", "Atacante sofre desvantagem no próximo golpe", "Onda de choque derruba entorno se dano > 30", "Dobra CON base no turno abrindo mão do movimento", "Reflete 50% dano físico direto sem dados"],
-            "Glândulas Adaptativas": ["Suor limpante", "Suor afasta monstros LUST fracos", "Expele gosma adesiva/escorregadia", "Fluidos anulam LUST do alvo que os ingere", "Casulo em 0 HP/MindBreak para recuperação 24h"]
+            "Couro Resistente": [
+                "Pele grossa. Diminui hematomas rápidos e resiste melhor a chicotadas leves (-1 Dano).",
+                "A pele enrijece ao contato violento. Redução de dano físico base aumentada para 3.",
+                "Ferimentos fecham antes de verter muito sangue. Ignora sangramentos menores.",
+                "Armadura Viva. Tencionar a pele num turno dobra a defesa contra armas pontiagudas.",
+                "Corpo de Aço Mágico. Lâminas e armas de ferro mundanas entortam ou ricocheteiam na sua carne nua."
+            ],
+            "Tolerância à Dor": [
+                "Ignora choques estáticos ou cortes finos, achando a dor curiosamente tolerável.",
+                "A barra de dor mistura-se com euforia. Penalidades mecânicas por HP baixo só começam em 30%.",
+                "Sádico Físico. Tortura não-sexual apenas enfurece, concedendo imunidade a paralisia por dor excruciante.",
+                "Adrenalina Escarlate. Receber um ataque Crítico te concede aumento massivo de Força temporária.",
+                "Máquina de Combate. Mesmo com HP em ZERO, o corpo continua agindo perfeitamente e violento por 3 turnos antes de cair."
+            ],
+            "Sistema Imunológico Implacável": [
+                "Sistema digestivo bruto. Comer lixo, fluidos impuros ou coisas nojentas não causa ânsia.",
+                "Anticorpos rápidos. Vantagem pesada para não pegar doenças em lugares inóspitos.",
+                "O sangue derrete neurotoxinas. Corta o efeito letal de venenos fortes pela metade do tempo.",
+                "Sangue Antitóxico Puro. Pode cortar as veias para misturar sangue na água e curar aliados envenenados.",
+                "Muralha Biológica Absoluta. Imunidade total a doenças, pragas mágicas ou gestação/infestação parasitária demoníaca."
+            ],
+            "Sangue Fervente (Regeneração)": [
+                "Feridas esfoladas cicatrizam ligeiramente num único repouso curto.",
+                "Regeneração latente passiva. Cura ferimentos menores fora de combate a uma taxa de 1 HP/turno.",
+                "Sangue pulsante em batalha. Cura HP por turno ativamente com base na sua barra de Vigor.",
+                "Costura Mágica Celular. A pele se regenera, estancando feridas abertas ou decepadas de hemorragias em segundos.",
+                "Regeneração Titânica. Membros amputados reconectam como se fossem feitos de barro vivo se pressionados juntos."
+            ],
+            "Densidade Óssea": [
+                "Ossos pesados pesam mais. Passos densos, impossível ser levado por empurrões leves.",
+                "Caixa torácica protetora. Proteção extra contra golpes de impacto como porretes.",
+                "Esqueleto Encouraçado. Socos teus quebram ossos finos; inimigos batendo as mãos sentem-se esmurrando pedra.",
+                "Imóvel contra Quedas. Cai de 15 metros de altura diretamente nos pés afundando o chão e os ossos intactos.",
+                "Estrutura Divina Calificada. Absolutamente imune a dano contundente ou ter os ossos estilhaçados por esmagamento."
+            ],
+            "Termorregulação Perfeita": [
+                "Não sente suores em calor ou tremores no frio moderados.",
+                "Corpo resistente a elementos bruscos (Resistência Nível 1 a Fogo/Gelo).",
+                "O metabolismo estabiliza. Pode lutar completamente nú na neve profunda ou vulcão sem debuffs.",
+                "Pele Absorsora Elementar. Magias místicas de nível fraco em Fogo ou Gelo te curam HP em vez de queimar.",
+                "Isolamento Titânico. Imunidade completa a ser incendiado por chamas místicas ou congelamento arcano fatal."
+            ],
+            "Estômago de Ogro": [
+                "Pode mastigar couro, folhas e carne completamente podre sem se sentir doente.",
+                "Processamento eficiente. Qualquer refeição decente recupera o dobro do HP/Stamina base.",
+                "Pode ingerir magias venenosas ou poções de corrupção sombria ignorando os debuffs pesados para pegar curas residuais.",
+                "Fome Carniceira. Devorar materiais crus (rocha macia, inimigos menores mortos) converte-os em massivos Buffs de HP temporário.",
+                "Fornalha Gástrica Negra. Pode literalmente engolir o coração ou cérebro de monstros mágicos recém-abatidos para absorver temporariamente o atributo maior deles."
+            ],
+            "Firmeza de Montanha": [
+                "Base plantada larga e densa, dificultando ser pego de surpresa e derrubado.",
+                "Vantagem clara de resistência em disputas para evitar agarrões pélvicos, empurrões ou rasteiras pesadas.",
+                "Enraizamento Terreno. Impossível de ser arrastado ou movido contra a vontade por chefes/criaturas de porte Médio.",
+                "Rebote de Força. Quem tentar empurrar seu corpo brutalmente falha e toma dano de impacto muscular de volta.",
+                "Gravidade Pessoal Puxada. Imunidade total à ser levitado, telecinese ou sofrer Knockbacks colossais de magias massivas."
+            ],
+            "Vitalidade Descomunal": [
+                "As paredes do coração são grossas (+10% HP Máximo mod).",
+                "Sangue carrega nutrientes de forma violenta pelos músculos espessos (+20% HP Máximo mod).",
+                "A vitalidade salta aos olhos, com veias proeminentes transbordando força vital (+30% HP Máximo mod).",
+                "Reservatório Gárgula vivo (+50% HP Máximo mod).",
+                "Coração de Dragão. Ao ser dado como morto ou executado em combate, ressurge uma rodada depois com uma explosão cardíaca e 50% de Vida."
+            ],
+            "Estase Carnal": [
+                "Desaceleração cronológica molecular leve. A aparência não envelhece no ritmo natural.",
+                "Pode bloquear o ar por 3x mais tempo mantendo a mente ativa embaixo d'água.",
+                "Pode desacelerar o metabolismo a 1% para entrar em Hibernação profunda, sobrevivendo semanas em tumbas de pedra sem água/ar.",
+                "Controle Hemorrágico Manual. Pode estancar e parar fluxo sanguíneo num braço específico para ilhar espalhamento de veneno.",
+                "Imortalidade Genética Biológica. Corrosões do tempo, maldições de senilidade ou morte natural não existem para sua espécie."
+            ],
+            "Escudo Físico Reativo": [
+                "Músculos contraem instintivamente protegendo vasos grandes e garganta.",
+                "Pele repulsiva. Se alguém o esmurra no corpo-a-corpo, sente a mão doer, tomando desvantagem no próximo ataque.",
+                "Onda de Choque Muscular. Levar mais de 30 de dano instantâneo causa uma explosão de ar que joga todos inimigos ao redor pra trás.",
+                "Casco da Tartaruga-Leão. Ao desistir da sua Movimentação na rodada, sua Defesa e Constituição dobram passivamente no turno inimigo.",
+                "Abalo Sísmico do Impacto Refletor. Ignora a rolagem do inimigo para absorver e refletir de imediato 50% de qualquer colisão violenta."
+            ],
+            "Glândulas Adaptativas": [
+                "Suor tem uma composição ácida rala que lava sujeiras mortais facilmente.",
+                "Pode expulsar toxinas através de um suor fedido que emana agressividade, assustando monstros de LUST de nível rasteiro.",
+                "As glândulas produzem uma película espessa e lubrificada. Inimigos escorregam pateticamente nos seus ombros ao tentar agarrões forçados.",
+                "Mutações Químicas Profundas. Seu sangue ou suor puro quebram as barreiras químicas da mente: dão debuffs na geração LUST de inimigos que as beberem/tomarem espirrado.",
+                "Ovo de Stase Crisálido. No limite do colapso de MindBreak ou Morte Iminente, secreta uma cúpula de cristal opaco em volta de si para dormir por 24 horas e reemergir zerado de debuffs."
+            ]
         }
     },
     vig: {
@@ -630,17 +774,27 @@ if (inpTemplate) {
             
             // Auto-create and attach skills
             for(let sk of tpl.skillsToCreate) {
-                const newSk = { id: generateId(), ...sk };
-                await saveToDB('global_skills', newSk, globalSkills, 'bd_skills');
+                let existingSk = globalSkills.find(s => s.name === sk.name && (currentUser ? s.ownerId === currentUser.uid : true));
+                if (!existingSk) {
+                    existingSk = { id: generateId(), ...sk };
+                    await saveToDB('global_skills', existingSk, globalSkills, 'bd_skills');
+                }
                 
-                // Add slot
-                const div = document.createElement('div');
-                div.className = 'flex gap-2 mb-2';
-                div.innerHTML = `
-                    <select class="input-dark flex-1 inp-skill-slot"><option value="${newSk.id}" selected></option></select>
-                    <button type="button" class="btn-icon text-red-400" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
-                `;
-                document.getElementById('skills-select-list').appendChild(div);
+                // Add slot only if not already in list
+                let alreadyInList = false;
+                document.querySelectorAll('.inp-skill-slot').forEach(select => {
+                    if (select.value === existingSk.id) alreadyInList = true;
+                });
+
+                if (!alreadyInList) {
+                    const div = document.createElement('div');
+                    div.className = 'flex gap-2 mb-2';
+                    div.innerHTML = `
+                        <select class="input-dark flex-1 inp-skill-slot"><option value="${existingSk.id}" selected></option></select>
+                        <button type="button" class="btn-icon text-red-400" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
+                    `;
+                    document.getElementById('skills-select-list').appendChild(div);
+                }
             }
             enforceClassConditions(); // To re-render options correctly with newly added skill
             e.target.value = '';
@@ -1120,17 +1274,18 @@ function initPerksUI() {
         const list = document.getElementById(`perks-list-${attrKey}`);
         Object.keys(attrData.perks).forEach(pName => {
             const row = document.createElement('div');
-            row.className = 'bg-black/60 p-2 rounded border border-white/5';
+            row.className = 'p-3 bg-gray-900 rounded-lg border border-gray-700 shadow-sm flex flex-col gap-2 transition-all opacity-60 grayscale-[50%]';
+            row.id = `pcard-${attrKey}-${btoa(pName).replace(/=/g, '')}`;
             row.innerHTML = `
-                <div class="flex justify-between items-center mb-1">
-                    <div class="text-sm font-bold text-gray-200">${escapeHTML(pName)}</div>
-                    <div class="flex items-center gap-2 bg-black/50 rounded px-2 py-1">
-                        <button type="button" class="text-red-400 hover:text-red-300" onclick="adjustPerk('${attrKey}', '${pName.replace(/'/g, "\\'")}', -1)"><i class="fa-solid fa-minus"></i></button>
-                        <span class="text-xs font-mono text-gold w-8 text-center" id="plvl-${attrKey}-${btoa(pName).replace(/=/g, '')}">Nv 0</span>
-                        <button type="button" class="text-green-400 hover:text-green-300" onclick="adjustPerk('${attrKey}', '${pName.replace(/'/g, "\\'")}', 1)"><i class="fa-solid fa-plus"></i></button>
+                <div class="flex justify-between items-start gap-2">
+                    <span class="font-bold text-sm text-gold leading-tight drop-shadow-md flex-1">${escapeHTML(pName)}</span>
+                    <div class="flex items-center bg-black/60 rounded border border-gray-800 shrink-0">
+                        <button type="button" class="w-8 h-8 flex items-center justify-center text-red-400 hover:bg-white/10 transition-colors" onclick="adjustPerk('${attrKey}', '${pName.replace(/'/g, "\\'")}', -1)"><i class="fa-solid fa-minus text-xs"></i></button>
+                        <span class="font-mono text-xs w-6 text-center text-white font-bold" id="plvl-${attrKey}-${btoa(pName).replace(/=/g, '')}">0</span>
+                        <button type="button" class="w-8 h-8 flex items-center justify-center text-green-400 hover:bg-white/10 transition-colors" onclick="adjustPerk('${attrKey}', '${pName.replace(/'/g, "\\'")}', 1)"><i class="fa-solid fa-plus text-xs"></i></button>
                     </div>
                 </div>
-                <div class="text-[10px] text-gray-400 min-h-[1.5rem]" id="pdesc-${attrKey}-${btoa(pName).replace(/=/g, '')}">Desativado.</div>
+                <div class="text-[11px] md:text-xs text-gray-500 italic bg-black/40 p-2 rounded border-l-2 border-gray-700 transition-colors min-h-[36px]" id="pdesc-${attrKey}-${btoa(pName).replace(/=/g, '')}">Nenhum ponto investido. Toque em (+) para revelar.</div>
             `;
             list.appendChild(row);
         });
@@ -1160,8 +1315,16 @@ function updatePerksMath() {
             const safeName = btoa(pName).replace(/=/g, '');
             const lvlEl = document.getElementById(`plvl-${attrKey}-${safeName}`);
             const descEl = document.getElementById(`pdesc-${attrKey}-${safeName}`);
-            if (lvlEl) { lvlEl.innerText = `Nv 0`; lvlEl.classList.remove('text-purple-400'); }
-            if (descEl) descEl.innerText = 'Desativado.';
+            const cardEl = document.getElementById(`pcard-${attrKey}-${safeName}`);
+            
+            if (lvlEl) { lvlEl.innerText = `0`; }
+            if (descEl) { 
+                descEl.innerText = 'Nenhum ponto investido. Toque em (+) para revelar os poderes.'; 
+                descEl.className = 'text-[11px] md:text-xs text-gray-500 italic bg-black/40 p-2 rounded border-l-2 border-gray-700 transition-colors min-h-[36px]';
+            }
+            if (cardEl) {
+                cardEl.className = 'p-3 bg-gray-900 rounded-lg border border-gray-700 shadow-sm flex flex-col gap-2 transition-all opacity-60 grayscale-[50%]';
+            }
         });
 
         if (draftPerks[attrKey]) {
@@ -1172,10 +1335,19 @@ function updatePerksMath() {
                     const safeName = btoa(pName).replace(/=/g, '');
                     const lvlEl = document.getElementById(`plvl-${attrKey}-${safeName}`);
                     const descEl = document.getElementById(`pdesc-${attrKey}-${safeName}`);
-                    if (lvlEl && descEl && PERKS_DB[attrKey].perks[pName]) {
-                        lvlEl.innerText = `Nv ${lvl}`;
+                    const cardEl = document.getElementById(`pcard-${attrKey}-${safeName}`);
+                    
+                    if (lvlEl && descEl && cardEl && PERKS_DB[attrKey].perks[pName]) {
+                        lvlEl.innerText = `${lvl}`;
                         descEl.innerText = PERKS_DB[attrKey].perks[pName][lvl-1];
-                        if(lvl === 5) lvlEl.classList.add('text-purple-400');
+                        
+                        cardEl.className = 'p-3 bg-gray-800 rounded-lg border border-gold/40 shadow-[0_0_10px_rgba(218,165,32,0.1)] flex flex-col gap-2 transition-all';
+                        descEl.className = 'text-[11px] md:text-xs text-gray-200 bg-black/60 p-2 rounded border-l-2 border-purple-500 transition-colors min-h-[36px] font-medium leading-relaxed';
+                        
+                        if(lvl === 5) {
+                            cardEl.classList.add('border-purple-500', 'shadow-[0_0_15px_rgba(168,85,247,0.3)]');
+                            descEl.classList.add('text-purple-300', 'font-bold');
+                        }
                     }
                 }
             });
