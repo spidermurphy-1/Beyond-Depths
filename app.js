@@ -252,86 +252,446 @@ const PERKS_DB = {
     vig: {
         name: "Vigor", icon: "fa-bolt",
         perks: {
-            "Fôlego Inesgotável": ["+10 Max Stamina", "+20 Max Stamina", "Custo de movimento cortado pela metade", "+50 Max Stamina", "Regen passiva massiva de Stamina/turno"],
-            "Corredor Incansável": ["+2m Movimento base", "Atravessa terrenos difíceis normal", "Ignora penalidade de Carga/Armadura no mov", "Investida não custa ação", "Mobilidade teleportada em curtas distâncias"],
-            "Coração Resiliente": ["Recupera 5 St ao sofrer Dano", "Recupera 10 St ao sofrer Dano", "Pode converter Stamina em HP 1x por combate", "Dobra regeneração base", "Imunidade a Exaustão máxima"],
-            "Repelir Êxtase": ["+5 Limiar de Êxtase", "+10 Limiar de Êxtase", "+20 Limiar de Êxtase", "Ganha buff de FOR ao passar do Limiar", "Nunca sofre debuff por atingir Limiar"],
-            "Adaptação Erótica": ["Ações de Alívio custam -5 St", "Ações de Alívio custam 0 St", "Ações de Alívio restauram St", "Causa dano LUST ao usar Alívio em si", "Êxtase restaura todos os seus recursos"],
-            "Tolerância Adrenalínica": ["Ignora debuffs de Estágio 1 LUST", "Ignora debuffs de Estágio 2 LUST", "Converte debuff em buff temporário", "Imune a paralisia por dor/êxtase", "Atinge auge físico sob Mind Break"],
-            "Capacidade Pulmonar": ["Prende respiração por 10min", "Imune a gases fracos", "Não precisa respirar por 1h", "Imune a nuvens venenosas densas", "Pulmões adaptativos (vácuo/água infinita)"],
-            "Segundo Fôlego": ["Ao zerar St, recupera 10 (1x/dia)", "Recupera 30 (1x/dia)", "Pode gastar HP no lugar de St", "Zerar St emite onda de recuo", "Nunca cai abaixo de 10 Stamina passiva"],
-            "Atleta Divino": ["Vantagem em Acrobacia", "Salto triplicado", "Pode lutar 2 dias sem dormir", "Imune a magias de Lentidão", "Físico Inabalável: Imune a dreno de atributo"],
-            "Aura de Energia": ["Aliados ao redor +5 Max St", "Aliados +10 Max St", "Pode doar sua St pra aliados", "Aliados ignoram custo de 1 ação", "Cúpula Revigorante contínua"],
-            "Blindagem Mental": ["Ataques LUST afetam -10% sua St", "-25% impacto LUST na St", "Dano LUST aumenta sua St", "Ataques psíquicos restauram sua St", "Imune a magias de dreno mental"],
-            "Descanso Profundo": ["Dormir 2h equivale a 8h", "Dormir recupera debuffs permanentes", "Pode usar descansos curtos como longos", "Sonho curativo (Anula condições de LUST)", "Transe (Fica invulnerável enquanto dorme)"]
+            "Fôlego Inesgotável": [
+                "Pulmões de ferro. Aumenta diretamente a reserva base (+10 Max Stamina).",
+                "O cansaço diminui, os músculos aguentam mais (+20 Max Stamina).",
+                "Eficiência cardiovascular mística. Corta o custo de estamina de qualquer movimentação agressiva pela metade.",
+                "Fornalha pulmonar (+50 Max Stamina). Cansaço em combate longo passa a ser uma ilusão.",
+                "Motor Biológico Perpétuo. O corpo atinge uma regeneração absurda de Stamina a cada turno, ignorando exaustão completa."
+            ],
+            "Corredor Incansável": [
+                "Pernas densas. Aumenta a distância percorrida base em +2m no combate.",
+                "Atravessa lama, teias ou pântanos ignorando debuffs de locomoção (Terreno Difícil).",
+                "Os músculos adaptam-se ao peso. Ignora completamente a penalidade de Armaduras Pesadas na movimentação.",
+                "Investida Furiosa. Lançar-se correndo contra o inimigo não consome a Ação Principal do turno.",
+                "Mobilidade Sombria. Em velocidade máxima, seu movimento parece teletransporte em curtas distâncias."
+            ],
+            "Coração Resiliente": [
+                "Adrenalina do corte. Recupera 5 Stamina imediatamente sempre que o próprio corpo sofrer dano.",
+                "A dor se converte em oxigênio. Recupera 10 Stamina a cada ataque inimigo bem-sucedido.",
+                "Sacrifício da Carne. Permite gastar fôlego (Stamina) para recuperar Vida (HP) do próprio corpo 1x/combate.",
+                "Coração em fúria controlada. Dobra permanentemente sua regeneração de Vigor base.",
+                "Imunidade à Falha Muscular. Nunca sofre com estados de 'Exaustão Máxima' ao zerar atributos."
+            ],
+            "Repelir Êxtase": [
+                "Controle mental sádico sob o próprio corpo. Limiar de Êxtase (LUST) estendido em +5.",
+                "Treinado para bloquear tentações luxuriosas intensas (+10 no Limiar de Êxtase).",
+                "Você suporta violações mentais ou de contato que enlouqueceriam civis (+20 Limiar de Êxtase).",
+                "Masoquismo Reativo. Em vez de ceder, passar do Limiar de Êxtase te dá Buffs temporários de Força Bruta.",
+                "Ascensão da Carne. Atingir LUST Extremo nunca mais te causa debuffs, apenas foca a sua violência e destrói oponentes."
+            ],
+            "Adaptação Erótica": [
+                "Sabe aliviar a tensão oculta rapidamente. Ações táticas de Alívio (LUST) custam -5 Stamina.",
+                "Maestria do alívio em campo. Ações de purgar LUST agora custam ZERO Stamina.",
+                "Vício funcional. O Alívio no meio da batalha torna-se recompensador, restaurando 10 de Stamina extra.",
+                "Sadomasoquismo reverso. Se aliviar na frente do inimigo provoca a mente fraca dele (Aplica dano de LUST neles).",
+                "Clímax Tático. O ápice e mind-break em campo agora recarrega todos os cooldowns e habilidades vitais do personagem."
+            ],
+            "Tolerância Adrenalínica": [
+                "A adrenalina bloqueia os primeiros calafrios do prazer mágico. Ignora debuffs de Estágio 1 de LUST.",
+                "Foco sanguinário inibe a luxúria. Ignora debuffs graves de Estágio 2 de LUST.",
+                "Conversão Mística: O debuff provocado pelo tesão extremo passa a te dar um Bônus temporário de ataque e dano.",
+                "Corpo completamente imune à paralisação causada por espasmos de dor física ou dor luxuriosa (Orgasmos).",
+                "Mind Break Assassino. Quebrar a mente de LUST apenas ativa um Transe Feroz letal sem limite de Stamina (Berserk)."
+            ],
+            "Capacidade Pulmonar": [
+                "Consegue segurar o oxigênio por até 10 minutos sob esforço extenuante.",
+                "Os pulmões filtram passivamente magias e toxinas pelo ar, garantindo imunidade a gases de controle mental fracos.",
+                "Sobrevive ativamente sem respirar por mais de 1 hora inteira na água/veneno.",
+                "Caixa torácica protetora. Nuvens tóxicas letais ou névoas ácidas não causam dano por inalação.",
+                "Pulmões de Titã Adaptativo. Pode respirar indefinidamente em áreas vácuas, ambientes mortos e pântanos abissais venenosos."
+            ],
+            "Segundo Fôlego": [
+                "Quando as forças acabam (Zerar Stamina), o corpo busca energia reserva devolvendo 10 ST (1x ao dia).",
+                "O instinto dobra a reserva. Recupera 30 ST ao colapsar (1x ao dia).",
+                "Sacrifício sangrento. Pode usar o próprio Sangue (HP) para conjurar habilidades se a barra de Stamina esgotar.",
+                "A quebra do limite muscular emite uma Onda de Choque e Vento bruto afastando alvos próximos em volta.",
+                "Vigor Imortal. O corpo se recusa a falhar, tornando impossível a barra de Stamina descer abaixo de 10 permanentemente."
+            ],
+            "Atleta Divino": [
+                "Alongamento contorcionista que garante grande Vantagem em saltos, fugas, Acrobacias e Escalada livre.",
+                "Fibras elásticas divinas. Seus saltos naturais são multiplicados por 3 em altura e distância.",
+                "A máquina perfeita: não precisa dormir por 48 horas inteiras e jamais ganha fadiga passiva por lutar dia e noite.",
+                "Biorritmo Intocável. Ignora e corta toda magia inimiga cujo alvo seja impor Lentidão ou paralisia tática.",
+                "Físico Puro e Inabalável. Maldições macabras ou drenos arcanos jamais podem roubar os seus atributos base (FOR, AGI, etc)."
+            ],
+            "Aura de Energia": [
+                "Aliados ao redor se inspiram na sua determinação (+5 Max Stamina passivo pra party em raio curto).",
+                "Sua energia contagiante eleva todos a guerreiros imparáveis (+10 Max Stamina passiva aliados).",
+                "Permite transferir e doar grandes porções da sua própria Estamina para revigorar com o toque.",
+                "Inspirar Fúria. Grita comandos de vida, fazendo 1 Aliado próximo não gastar custo de Estamina naquela rodada.",
+                "Cúpula Revigorante Sombria. Uma aura persistente pulsa de você, purificando e dobrando a regeneração natural na área inteira."
+            ],
+            "Blindagem Mental": [
+                "Reduz instintivamente em 10% todo impacto sombrio de magias de LUST na barra de Estamina.",
+                "Sua psiquê resiste forte. Subtrai passivamente 25% do impacto de estresse LUST sobre a Stamina global.",
+                "Sadismo convertido. O Dano de LUST tentado contra você passa a recuperar ativamente e aumentar a sua própria Stamina.",
+                "Ataques telepáticos contra a mente alimentam seus músculos e enchem a barra do corpo em lutas místicas.",
+                "Vigor Psíquico Indomável. Completamente Invulnerável a feitiços de roubo de magia, controle mental sugador e dreno."
+            ],
+            "Descanso Profundo": [
+                "O corpo adormece letalmente como pedra. Dormir curtas 2h recupera os efeitos equivalentes a sonos lentos de 8h.",
+                "Transe celular. Dormir remove a maioria das pequenas doenças e debuffs físicos contínuos acumulados.",
+                "Tática de Guerrilha. Transforma descansos curtos e fáceis (20 min) em descansos completos para recuperação total de fichas.",
+                "Sonho lúcido purgante mágico. Enquanto dorme, zera resquícios persistentes psíquicos de corrupção ou tentação mágica (LUST).",
+                "Estase de Cristal Escuro. Enquanto repousa os olhos, torna-se literalmente invulnerável a facadas e dano mundano furtivo covarde."
+            ]
         }
     },
     for: {
         name: "Força", icon: "fa-dumbbell",
         perks: {
-            "Golpes Esmagadores": ["+1 Dano Bruto (Corpo-a-Corpo)", "+3 Dano Bruto", "+5 Dano e Knockback", "Causa dano em área (Cleave)", "Golpes ignoram 50% das defesas físicas"],
-            "Agarre Titânico": ["Vantagem para Iniciar Agarrão", "Alvo sofre desvantagem ao escapar", "Imobilizar causa asfixia (Dano turno)", "Quebra braços do alvo ao agarrar", "Esmagamento letal instantâneo em alvos fracos"],
-            "Músculos Fibrosos": ["Vantagem contra Agarrões inimigos", "Dano de contusão reduzido em 2", "Inimigo pequeno não consegue te levantar", "Quebra cordas/algemas mágicas na força", "Imune a imobilização física mundana"],
-            "Quebra-Defesas": ["Ignora 1 armadura", "Ignora 3 armadura", "Destrói escudos mundanos ao bater", "Golpes reduzem Defesa do alvo pra aliados", "Estilhaça armaduras lendárias com as mãos"],
-            "Arremesso Brutal": ["Pode jogar objetos de 50kg a 10m", "Joga inimigos menores", "Arremessa aliados com segurança tática", "Arremessa pedregulhos pesados (+dano área)", "Joga inimigos colossais para trás"],
-            "Força de Impacto": ["Armas causam lentidão", "Golpe causa tontura", "Golpes atordoam", "Acertos críticos quebram o chão (terreno difícil)", "Dano sônico (Golpes rompem a barreira do som)"],
-            "Violência Bruta": ["+2 Dano em alvos caídos", "+5 Dano em alvos imobilizados", "Vantagem contra alvos agarrados", "Execução: 2x Dano contra alvo rendido", "Grito de Fúria ao matar aterroriza"],
-            "Tensão Muscular Mágica": ["Pode usar FOR em vez de VON (resistir magia)", "Quebra prisões mágicas com FOR", "Golpes dissipam invocações arcanas fraca", "Pode segurar lâminas mágicas sem dano", "Punhos rebatem feitiços primários"],
-            "Saltador Colossal": ["Pula 5m vertical", "Pula 10m e causa dano na queda", "Pode pular com 1 aliado gigante", "Queda sísmica atordoa", "Meteor Strike (Desce de órbitas causando catástrofe)"],
-            "Carregador de Fardo": ["Inventário não sofre peso", "Pode andar com 1x mais peso", "Pode carregar aliados mortos/vivos sem debuff", "Pode lutar carregando grandes pedras como escudo", "Pode sustentar desabamentos inteiros nas costas"],
-            "Machado Humano": ["Ganhe +1 Dano a cada rodada de combate", "+2 Dano/rodada", "+Dano aplica Sangramento pesado", "Limiar de Sangramento atinge ossos", "Cortar membros vira algo rotineiro"],
-            "Impacto Sísmico": ["Soco no chão causa tremores", "Derruba alvos em raio curto", "Ergue paredes de terra ao socar chão", "Causa fissuras letais em área média", "Terremoto local dirigido a um alvo"]
+            "Golpes Esmagadores": [
+                "Músculos rasgados aplicam brutalidade extra. Adiciona +1 de Dano Fixo (Corpo-a-Corpo).",
+                "Impactos maciços desestabilizam bloqueios fracos do inimigo. (+3 de Dano Bruto)",
+                "Força de Aríete. Seu golpe joga os oponentes leves para trás, causando +5 Dano absoluto e recuo.",
+                "Golpes amplos ganham a violência do efeito 'Cleave' (Dano colateral atinge alvos adjacentes menores).",
+                "Estilhaçar Blindagem. Seus acertos ignoram brutalmente 50% de todas as defesas físicas inimigas grossas."
+            ],
+            "Agarre Titânico": [
+                "Dedos grossos como torniquetes. Confere Vantagem tática garantida para iniciar Agarrões e Submissões.",
+                "Uma vez nas suas mãos, tentar fugir é um pesadelo. Alvo rola escape com Desvantagem esmagadora.",
+                "Esmagar a Garganta. Oponentes imobilizados sofrem asfixia (Dano Físico Contínuo a cada rodada sua).",
+                "Quebra-ossos Implacável. Agarrões bem sucedidos em alvos fracos fraturam braços fisicamente.",
+                "Abraço do Gigante. Consegue estalar a espinha ou decapitar alvos pequenos na força bruta instantaneamente."
+            ],
+            "Músculos Fibrosos": [
+                "Enrijecer o corpo dificulta que predadores te derrubem (Vantagem para evitar Submissões inimigas).",
+                "Contração muscular brutal reduz dano contundente de maças ou punhos em 2 pontos fixos na pele.",
+                "Monstros médios ou humanos normais simplesmente não conseguem te erguer ou mover do chão.",
+                "Tensionar a carne rompe correntes, cipós ou cordas comuns sem exigir testes múltiplos demorados.",
+                "Colosso Imóvel de Sangue. Torna você perfeitamente Imune a agarrões, redes mágicas e amarras místicas."
+            ],
+            "Quebra-Defesas": [
+                "Sua força oblitera pequenos escudos. Ignora passivamente 1 ponto de proteção física do alvo.",
+                "O aço cede sob os punhos. Seus golpes puros já não respeitam e furam 3 de defesa física inimiga.",
+                "Sua selvageria destrói bloqueios convencionais, partindo escudos menores de madeira em pedaços.",
+                "Amasse Crítico de Metal. Bater reduz permanentemente a armadura do alvo, facilitando o acerto dos seus aliados.",
+                "Demolição Estrutural. Estilhaça carapaças de dragão encouraçado ou escudos mágicos divinos no soco."
+            ],
+            "Arremesso Brutal": [
+                "Mãos calejadas atiram objetos de 50Kg a longas distâncias como se fossem adagas de arremesso.",
+                "Pode erguer inimigos fracos pelo pescoço e atirá-los contra outros nobres/soldados (Dano colateral).",
+                "Transporte Aéreo Tático. Arremessa aliados pesados para fora do perigo com precisão sem machucá-los.",
+                "Catapulta Macabra. Lança pilastras de pedra esmagando inimigos e causando Atordoamento em Área.",
+                "Impacto da Fera. Alvos enormes ou Chefes colossais podem ser empurrados e nocauteados pelas costas."
+            ],
+            "Força de Impacto": [
+                "O peso das suas armas faz inimigos tremerem os braços (aplica Lentidão fraca a quem defende).",
+                "Pancadas pesadas contundentes sacodem o cérebro da vítima, infligindo Tontura.",
+                "Esmagamento Cerebral. Impactos na cabeça/tronco geram confusão profunda (Atordoamento) em lacaios.",
+                "Dano de Terremoto. Acertos Críticos quebram o piso onde o inimigo está, criando terreno difícil.",
+                "Barreira do Som. Golpes rompem o ar tão violentamente que causam Dano Sônico ao redor, estourando tímpanos."
+            ],
+            "Violência Bruta": [
+                "Predador. Bater num oponente já no chão ou ajoelhado te garante +2 de Dano Fixo sádico.",
+                "Massacre. Inimigos presos/agarrados recebem +5 de Dano extra direto no corpo indefeso.",
+                "Vantagem massiva de acerto sempre que bater em alvos sofrendo de atordoamento ou imobilizados.",
+                "Execução Sumária de Carniceiro. O primeiro golpe contra um inimigo rendido dá 2x o Dano e pode mutilar.",
+                "Grito de Guerra Colossal. Matar alguém barbaramente aterroriza monstros e faz os fracos fugirem apavorados."
+            ],
+            "Tensão Muscular Mágica": [
+                "Músculos contra Magia: Pode rolar Força no lugar de Vontade para resistir a empurrões arcanos.",
+                "Suporta a dor divina: Consegue quebrar prisões arcanas ou paredes invisíveis à força dos punhos.",
+                "Bater com os punhos dissipa invocações frageis e golem elementais no puro impacto físico cego.",
+                "Ignora o calor/raios: Pode segurar a lâmina de espadas mágicas inimigas sem perder os dedos.",
+                "Rebote Titânico de Feitiços. Rebate as bolas de fogo de conjuradores primários dando socos nelas no ar."
+            ],
+            "Saltador Colossal": [
+                "O chão racha quando você salta: Pula 5 metros verticalmente sem impulso prévio.",
+                "Saltos de 10 metros de distância rasgando o ar; a inércia dá bônus para ataques aéreos caindo.",
+                "Impulso de Transporte. Consegue saltar grandes abismos segurando e salvando um aliado junto no peito.",
+                "Queda Sísmica. A aterrissagem violenta atordoa quem estiver num raio de 3m ao seu redor.",
+                "Meteoro Humano. Cair intencionalmente de altitudes letais no inimigo o esmaga obliterando 99% da sua vida."
+            ],
+            "Carregador de Fardo": [
+                "Carregar espadas pesadas ou poções simplesmente não pesa nas costas maciças do personagem.",
+                "Pode carregar o dobro do limite de peso racial no grid sem sofrer debuff algum de agilidade.",
+                "Arrastar cadáveres, rochas de barreiras ou parceiros mortos não interfere no gasto de Ação do turno.",
+                "Usa pilastras ou portas pesadas de madeira/metal arrancadas como grandes escudos com uma só mão.",
+                "Pilar do Mundo (Atlas). O personagem sustenta desabamentos inteiros de masmorras enormes sob os ombros sozinhos."
+            ],
+            "Machado Humano": [
+                "Entrando no Eixo de Morte. Cada rodada seguida em combate te garante passivamente +1 de Dano Fixo.",
+                "A Fúria Sangrenta escala rápido. Ganha +2 Dano progressivo a cada rodada golpeando (Limpa se parar).",
+                "Golpes certeiros agora atingem artérias. O seu Dano Físico aplica 'Sangramento Pesado' aos inimigos.",
+                "Limiar da Carnificina. Cortar a carne vira rotina; seus golpes diminuem as curas do inimigo atingido.",
+                "Amputador Instintivo. Braços, asas e membros finos de Monstros são arrancados rotineiramente em acertos críticos limpos."
+            ],
+            "Impacto Sísmico": [
+                "Socar a terra pura cria pequenos tremores que desequilibram lacaios inimigos corpo a corpo.",
+                "Um pisão brutal de pé levanta detritos e derruba todos os inimigos menores no raio de 2m em volta.",
+                "Esmurrar o chão ergue uma placa protetora temporária de terra densa (Escudo de Cobertura Meia).",
+                "Socos Tectônicos em área média causam fissuras letais afundando as pernas dos zumbis na fenda.",
+                "Doutrina do Terremoto. Seus murros direcionam ondas pelo solo demolindo uma muralha ou blindado específico à frente."
+            ]
         }
     },
     agi: {
         name: "Agilidade", icon: "fa-person-running",
         perks: {
-            "Reflexos Apurados": ["+2 Iniciativa", "+5 Iniciativa", "Nunca é pego de surpresa", "Pode trocar lugar na iniciativa com aliado", "Sempre joga primeiro no combate"],
-            "Esquiva Acrobática": ["+1 Esquiva base", "+3 Esquiva base", "Vantagem natural para esquivar projéteis", "+5 Esquiva e pode desviar no ar", "Esquiva perfeita garante quebra de postura inimiga"],
-            "Deslize Furtivo": ["Movimento silencioso", "Invisível em sombras médias", "Não aciona armadilhas de pressão", "Mover escondido custa metade da ação", "Ataque furtivo ganha multiplicador massivo de dano"],
-            "Precisão Letal": ["Margem de Crítico aumenta em 1", "Crítico aumenta em 2", "Críticos causam cegueira/sangramento", "Crítico ignora 100% armadura", "Acertos certeiros decaptam alvos não-elites"],
-            "Queda de Gato": ["Reduz dano de queda pela metade", "Ignora danos de até 20m", "Sempre cai de pé e saca a arma", "Pode planar usando roupas largas", "Ignora dano de queda terminal (aterrissagem de herói)"],
-            "Escapar de Agarrões": ["+2 teste de fuga", "+5 teste de fuga", "Pode fugir como ação bônus rápida", "Fugir deixa alvo desequilibrado", "Mestre Escape: Se solta e desarma/despe o alvo junto"],
-            "Ataque em Foco": ["Armas ágeis dão +1 dano", "Ataque adicional fraco", "Pode gastar Stamina pra 3º ataque", "Ataques consecutivos dão stacking de dano", "Tempestade de Lâminas (Ataque em Área)"],
-            "Contra-Ataque Rápido": ["Se inimigo errar, pode atacar com faca", "Contra-ataque dá dano normal", "Contra-ataque pode ser usado 2x por turno", "Pode aparar e revidar simultaneamente", "Contra-ataque fatal (Causa lentidão e sangramento)"],
-            "Passo Fantasma": ["Corrida concede +1 ESQ", "Não causa ataques de oportunidade", "Pode passar por dentro do grid inimigo", "Pode correr na parede ou água", "Teleporte de sombras curtas"],
-            "Mobilidade Extrema": ["Ataque + recuo de 2m", "Recuo de 5m", "Pode gastar estamina pra pular pra trás", "Movimentos são borrados (-2 chance inimigo acertar)", "Flashstep (Ataca múltiplos alvos movendo)"],
-            "Reação Ocular": ["Apara flechas (50%)", "Apara flechas (100%)", "Rebate flecha no inimigo", "Rebate balas e magias projétil fracas", "Rebate feitiços de dano alto de volta pra origem"],
-            "Dança da Morte": ["Dançar confunde visão inimiga", "Esquivar aumenta ESQ aliada", "Ficar cercado aumenta ESQ (+1 por ini)", "Ação de Dança força errar tudo nela", "Esquiva em área: Retira aliado da área da magia (Fogo/Gelo)"]
+            "Reflexos Apurados": [
+                "Percepção leve. Ganha +2 nos lances de Iniciativa.",
+                "Reação de aranha. Ganha +5 Iniciativa, movendo-se no instante em que pensam em atacar.",
+                "Mente acelerada. Impossível de ser pego de surpresa enquanto dorme ou de olhos vendados.",
+                "Antecipação Tática. Uma vez por combate, troque seu lugar na ordem de turnos com um aliado.",
+                "Flash Constante. Você é invariavelmente o primeiro a agir em qualquer combate."
+            ],
+            "Esquiva Acrobática": [
+                "Ginga fluida de corpo que melhora em +1 a sua Esquiva base.",
+                "Rolamentos diminuem ataques longos e te dão +3 de Esquiva natural.",
+                "Olhos afiados focados, garantindo Vantagem natural para desviar de lanças e flechas.",
+                "Contorcionista aéreo (+5 Esquiva base). Pode desviar de golpes no ar.",
+                "Aparar do Vento. Esquiva perfeita não só evita o dano, mas faz o inimigo perder a arma."
+            ],
+            "Deslize Furtivo": [
+                "Passos sutis; seu peso raramente emite ruídos mesmo sobre vidro quebrado.",
+                "Camuflagem instintiva. Torna-se invisível a olho nu quando em sombras densas.",
+                "Os pés ignoram o atrito natural, imune a armadilhas de placa de pressão.",
+                "Aproximação Letal. Mover-se escondido consome apenas meia Ação no turno.",
+                "Fantasma Assassino. Se não for visto, o primeiro ataque decupla o dano em pontos vitais."
+            ],
+            "Precisão Letal": [
+                "Olhar calculista (Margem de Crítico aumentada em 1; acerta Crítico com 19/20).",
+                "Punhaladas nos vasos aumentam a Margem Crítica em 2 (Acerta com 18+).",
+                "Golpes perfeitamente aplicados. Críticos agora também cegam ou sangram pesado.",
+                "Ponto fraco exposto. Seu Dano Crítico ignora 100% da Armadura Física do alvo.",
+                "Ceifador Silencioso. Todo ataque Crítico contra entidades menores resulta em Abate Sumário."
+            ],
+            "Queda de Gato": [
+                "Articulações elásticas cortam pela metade qualquer dano recebido por quedas livres.",
+                "Quedas acidentais de até 20m tornam-se inofensivas.",
+                "Mesmo empurrado ou atordoado no ar, você sempre pousa equilibrado e em pé.",
+                "Pode abrir asas de pano largas ou planar suavemente manipulando as roupas.",
+                "Aterrissagem Heróica. Ignora Dano de Queda terminal caindo do céu completamente ileso."
+            ],
+            "Escapar de Agarrões": [
+                "Corpo escorregadio. Recebe bônus de +2 para escapar de imobilizações e agarrões LUST.",
+                "Articulações deslocáveis. +5 Absoluto em testes para fugir de garras firmes.",
+                "Escape Rápido. Tentar soltar-se vira uma Ação Bônus rápida em vez da Principal.",
+                "O reflexo sujo do contorcionista deixa quem tentou te agarrar atordoado ao falhar.",
+                "Ilusionista do Escape. Quando se solta, consegue roubar a arma e itens leves do alvo."
+            ],
+            "Ataque em Foco": [
+                "Armas pequenas ganham letalidade sutil nos cortes rápidos (+1 Dano).",
+                "Suas mãos são um borrão. Ganha a capacidade de um Ataque Extra fraco (Ação Bônus).",
+                "Acelera os pulmões gastando Stamina para desferir um Terceiro Ataque na rodada.",
+                "Aceleração Sanguínea. Cada ataque seguido no alvo acumula Bônus de Dano massivo.",
+                "Vendaval Mortal. Gira como um pião e ataca todas as unidades em área adjacente."
+            ],
+            "Contra-Ataque Rápido": [
+                "Abertura oportunista. Se um inimigo errar, você pode riscar de volta rapidamente.",
+                "O revide se torna letal. O seu Contra-Ataque de reação dá o Dano integral forte.",
+                "Velocidade de reação dupla. Pode contra-atacar e usar oportunidades 2x por turno inimigo.",
+                "Aparar e Perfurar. Prevê a investida, apara e espeta a garganta no exato mesmo segundo.",
+                "Contra-Ataque Fatal. O alvo revidado sofre sangramento severo e lentidão pelo golpe rápido."
+            ],
+            "Passo Fantasma": [
+                "Correr pelo campo ofusca seus contornos, concedendo +1 Esquiva natural passiva.",
+                "Mover-se em velocidade não aciona Ataques de Oportunidade contra você.",
+                "Fase etérea passageira. Pode usar a corrida para atravessar 1 inimigo no grid sem bater.",
+                "Corre livremente sobre superfícies verticais ou por cima da água mantendo impulso.",
+                "Se esconder na escuridão teleporta seu corpo para outra área de breu no limite visual."
+            ],
+            "Mobilidade Extrema": [
+                "O famoso Bater e Correr. Após bater, você desliza magicamente 2 metros para trás limpo.",
+                "Pirueta elástica de recuo de até 5 metros automaticamente sem gerar reações inimigas.",
+                "Impulso de Stamina. Gastar pontos extras permite recuos táticos insanos de longas distâncias.",
+                "Passos borrados aplicam -2 na Chance de Acerto dos inimigos embaraçando a visão deles.",
+                "Flashstep Múltiplo. Pode atacar três alvos espalhados em cantos opostos saltando entre eles."
+            ],
+            "Reação Ocular": [
+                "Rastreia flechas a tempo de aparar projéteis leves no ar (50% de sucesso).",
+                "Aparagem e desvio de flechas instintivo e absoluto (100% de sucesso).",
+                "Domínio cinético nos punhos rebate a flecha desviada com exatidão mortal de volta.",
+                "Reflexo Arcano. Pode bloquear balas e projéteis elementais fracos com precisão.",
+                "Devolução do Caos. Gira feitiços e magias lendárias ofensivas refletindo de volta ao feitor."
+            ],
+            "Dança da Morte": [
+                "Pés ágeis mesclam ritmos que atrapalham arqueiros inimigos e dão +1 Esquiva.",
+                "A graciosidade do movimento empolga. Esquivar confere Buffs menores aos aliados perto.",
+                "Ganha Bônus defensivos se cercado (Lutadores múltiplos ativam seus reflexos).",
+                "Frenesi Ritmado. Gira abrindo a guarda: todos tentam te acertar e falham, quebrando postura.",
+                "Manto da Esquiva Protetiva. No milissegundo de explosões mágicas, retira você e 1 aliado da zona fatal ilesos."
+            ]
         }
     },
     von: {
         name: "Vontade", icon: "fa-brain",
         perks: {
-            "Mente Inabalável": ["Vantagem resistir Intimidação", "+2 Defesa contra Mind Control", "Ignora medos/fobias mundanos", "Resiste a charme e domínio demoníaco", "Aura mental (Inimigo sofre choque psíquico se tentar invadir)"],
-            "Estoicismo Carcerário": ["+2 Defesa LUST (DLUST)", "+5 DLUST", "Reduz pela metade o bônus de SED inimigo", "Ignora debuffs de Estágio 3 LUST", "Converte 50% de todo dano LUST em HP"],
-            "Clarividência": ["Sente mentiras", "Vê através de magias de invisibilidade fracas", "Imune a Ilusões e Miragens", "Enxerga a intenção hostil ou carnal passivamente", "Olho de Deus (Vê aura, alinhamento e invulnerabilidades)"],
-            "Presença Imponente": ["+2 Intimidação (INT)", "Inimigos de nível baixo hesitam", "Grito gela o sangue (-1 Iniciativa global)", "Imposição aterroriza forçando alvo a recuar", "Comando de Soberano (Força rendição de alvos fracos)"],
-            "Meditação Tática": ["Respirar 1 turno recupera foco", "Ação de cura remove 1 debuff mental", "Pode ignorar debuff físico através da fé", "Meditando atinge regeneração psíquica alta", "Recupera companheiros num raio apenas pela sua paz"],
-            "Foco Implacável": ["Magias não são interrompidas por Dano Leve", "Ignora dor para conjurar", "Pode conjurar cego ou surdo", "Se sofrer Crítico, Magia sai potencializada", "O corpo conjura mesmo desmaiado (Transe mágico)"],
-            "Disciplina Carnal": ["Regenera passivamente -2 LUST/turno", "-5 LUST/turno", "Sexo forçado não causa Limiar imediato", "Pode purgar LUST gastando Stamina brutalmente", "Nega Mind Break por completo 1x por combate"],
-            "Barreira Psíquica": ["Reduz 1 dano psíquico/magia", "Reduz 5 dano mágico", "Cria escudo bolha que protege aliados do medo", "Pode focar a barreira p/ rebater charme", "Mente Diamantina (Imune a corrupção de deuses)"],
-            "Quebra-Amarras": ["Liberta-se de controle mental em 2 turnos", "Liberta-se em 1 turno", "Pode quebrar controle mental aliado tocando neles", "Imune passivo a magias de sono e feitiço de bruxa", "Desfaz ilusões de chefes/territórios apenas pela negação"],
-            "Avatar da Mente": ["Ganha +1 Dano mágico p/ VON", "Dano desarmado usa VON", "Armas brilham com determinação (+Dano Divino/Mental)", "Pode atingir espíritos e fantasmas com socos puros", "Projeta corpo astral colossal"],
-            "Vontade de Sobreviver": ["Se 1 aliado cair, ganha +2 Dano", "Se todos caírem, dobra HP", "Imune a desmaio se o objetivo não foi cumprido", "Concede Último Suspiro (revive o time c/ 1HP ao gritar)", "Recusa-se a morrer enquanto o chefão viver"],
-            "Telecinese Latente": ["Levita itens 1kg", "Joga pedras na força da mente", "Enforca inimigos à distância", "Vôo psíquico temporário", "Massa Telecinética: Arremessa casas, esmaga armaduras."]
+            "Mente Inabalável": [
+                "Postura de veterano carrancudo: Vantagem para resistir a Intimidações e chantagens.",
+                "Cérebro blindado. Bônus de +2 na Defesa base contra dominação mental hipnótica.",
+                "Claridade Racional Fria. Ignora completamente histerias mágicas de Fobias induzidas.",
+                "Carisma Inverso e Vazio. Impermeável a encantos demoníacos e vozes de súcubos.",
+                "Aura Mental Estilhaçadora. Almas que tentarem forçar a entrada na sua mente sofrem Choque Psíquico bruto."
+            ],
+            "Estoicismo Carcerário": [
+                "Acostumado à sujeira moral e física. +2 Base no teste de Defesa contra corrupções LUST.",
+                "Castidade Bruta. O espírito afasta tentações; +5 direto em qualquer Defesa LUST.",
+                "Inversão do Papel. Corta pela metade os bônus mágicos de Sedução do inimigo em combate.",
+                "Mente Dissociativa. No Estágio 3 de LUST, sua mente ignora a paralisação do prazer e age normalmente.",
+                "Doutrina do Masoquismo Divino. Dano Massivo de LUST em vez de doer ou corromper, te cura HP."
+            ],
+            "Clarividência": [
+                "Intuição quase divina. Sabe pelos micro-sinais quando NPCs estão mentindo.",
+                "Vê borrões nítidos através de magias menores de invisibilidade e camuflagem.",
+                "Ilusões primárias mágicas perdem consistência de imediato aos seus olhos frios.",
+                "Sentido Assassino Primordial. Vibração no crânio te avisa 1 turno antes do oponente tentar agressão letal.",
+                "Olho de Deus. Foca a aura e enxerga segredos vitais, alinhamento sombrio e invulnerabilidades ocultas."
+            ],
+            "Presença Imponente": [
+                "Postura intimidadora colossal. +2 direto nas rolagens de Persuasão por meio de ameaça.",
+                "Predador Nato. Lacaios e oponentes machucados hesitam e paralisam de medo só de te ver.",
+                "Grito Sangrento que Gela as Veias. Rugir e bater no próprio peito impõe -1 de Iniciativa a todos os inimigos.",
+                "Aterroriza taticamente inimigos normais para dar passos para trás ou quebrarem a postura defensiva.",
+                "Comando Soberano Seco. Força NPCs não-chefes a renderem suas armas tremendo, implorando pela vida."
+            ],
+            "Meditação Tática": [
+                "Respira um turno no meio do combate abrindo mão do ataque para recuperar Foco e Stamina massiva.",
+                "Calmante Interior. Ao se concentrar, estabiliza e remove 1 Debuff Mental contínuo (Veneno/LUST).",
+                "Desprezo Divino pelas Falhas da Carne. Medita brevemente para ignorar as dores de mutilação física na hora.",
+                "Transe de Batalha. No caos, sua energia LUST esvazia gradualmente enquanto seu HP regenera focado.",
+                "Farol de Paz Santificada. Ao meditar no caos sexual/mágico, os companheiros num raio médio sentem sanidade pura voltando."
+            ],
+            "Foco Implacável": [
+                "Arranhões leves ou ataques rápidos não quebram sua conjuração letal em andamento.",
+                "Ignora espasmos de dor para garantir invocações lentas ao som das lâminas.",
+                "Pode continuar rituais surdo e amordaçado apenas com o tato, olhos fechados e coragem pura.",
+                "Máquina Mística. Se sofrer Crítico conjurando, o feitiço absorve a raiva e explode com dano em dobro.",
+                "Transe de Conjuração Cadavérico. A mente desmaiada continua segurando as âncoras arcanas salvando o grupo no solo limpo."
+            ],
+            "Disciplina Carnal": [
+                "A mente suprime passivamente LUST reprimido latente (-2 LUST no medidor por turno de descanso livre).",
+                "Afastar-se do combate permite purgar passivamente e drenar -5 LUST em suor limpo purificado.",
+                "Abusos mentais e toques imundos não causam gatilhos imediatos; barra limite de prazer esticada massivamente.",
+                "Flagelo Purificador. Pode sacrificar muito HP com cortes no próprio corpo para purgar a barra inteira de LUST letal.",
+                "Veto Moral Impiedoso. Impede que sua mente se quebre em Mind Break negando rendição total 1x por batalha brutal."
+            ],
+            "Barreira Psíquica": [
+                "Reduz em 1 ponto limpo toda e qualquer magia psíquica que colide contra seus ombros estáticos.",
+                "Escudo Mágico Espesso mental anula e retém pancadas pesadas mágicas diminuindo o dano limpo em 5.",
+                "Projeta o escudo como proteção empática invisível anulando magias de pânico cego de mortais aliados perto.",
+                "Transforma a aura mental defensiva concentrando ricochete em súcubos: devolvendo feitiço mental do próprio algoz.",
+                "Mente de Diamante Lapidado. Totalmente inabalável contra tentativas de possessão e corrupção vindas de falsos Deuses."
+            ],
+            "Quebra-Amarras": [
+                "Liberta-se de feitiços de controle mental frouxos mais rapidamente (Quebra amarras em 2 turnos).",
+                "Desdém mental imediato. Magias de controle duram não mais que 1 turno em sua cabeça.",
+                "Toque de Despertar. Sendo um pilar mental, um tapa seu acorda aliados do controle inimigo instantaneamente.",
+                "Veto do Feitiço Enfraquecedor. Completamente Imune ao Sono Arcano e feitiços primitivos de Preguiça.",
+                "Supremacia Real Perante a Mentira. Anula completamente a existência de ilusões ou labirintos mágicos na pura negação."
+            ],
+            "Avatar da Mente": [
+                "Sua Vontade empodera conjurações: Soma de base +1 a todos os danos Divinos ou Psíquicos causados.",
+                "Guerreiro Monge das artes ocultas. Seus Ataques Desarmados abandonam Força e escalam baseados em Vontade.",
+                "Canalização Divina pelas armas seguradas. Lâminas passam a dar +Dano do tipo Mental ou Divino nos cortes.",
+                "Exorcismo Brutal no Soco Físico. Seus punhos rasgam a fronteira, atordoando e esmurrando espíritos intangíveis no vazio.",
+                "Alma Projetada em Fúria. O corpo dorme selado enquanto o espírito massivo luta e conjura de forma astral impiedosamente."
+            ],
+            "Vontade de Sobreviver": [
+                "Recusa a morte dos amigos. Se 1 Aliado for massacrado, ganha +2 Dano imediato pela vingança focada.",
+                "A Party no Limite. Se todos os aliados caírem nocauteados, dobra seu próprio HP máximo para fúria de resgate.",
+                "Senso de Dever Inumano. Imune ao Desmaio; se a barra zerar, você continua lutando contanto que o Chefe esteja de pé.",
+                "Grito do Último Suspiro. Berra do fundo da alma e impede a execução dos aliados, restaurando-os com 1HP salvador.",
+                "Recusa a Morte Escrita. Simplesmente ignora e cancela dano de Execução Sumária e Insta-Kill sobre você."
+            ],
+            "Telecinese Latente": [
+                "Balanço suave das sinapses do Córtex. Levita e atrai itens normais (copos, adagas, chaves) até as suas mãos.",
+                "Atirar pedras e estilhaços invisíveis, causando dano decente batendo objetos pesados contra o oponente à distância.",
+                "Dedos da Mente Apertando Pescoços fracos. Pode enforcar inimigos distantes cortando a fala ou sufocando o oxigênio.",
+                "Levitação da própria gravidade. Realiza vôos psíquicos curtos ou levita para ignorar terreno acidentado venenosos.",
+                "Massa da Destruição Telecinética Mestra. Arremessa vagões, cavalos de metal ou esmaga crânios de ursos blindados com opressão psíquica."
+            ]
         }
     },
     mis: {
         name: "Misticismo", icon: "fa-wand-magic-sparkles",
         perks: {
-            "Afinidade Elemental": ["+1 Dano (Magias Elementais)", "+3 Dano Magias", "Aplica Burn/Freeze de Nível 1", "Dano Mágico ignora resistências comuns", "Dano Puro Elemental: Destrói imunidade total"],
-            "Controle de Mana/Energia": ["Reduz 1 Custo Energia", "Magias de Custo 1 viram Passivas", "Magias pesadas custam metade", "Gasto de energia acima do cap consome só HP leve", "Reservatório Infinito: 1x ao dia joga magia lendária de graça"],
-            "Canalização Rápida": ["Magias de longo cast castam -1 turno", "Pode conjurar andando sem penalidade", "Pode conjurar como ação bônus", "Dual Cast (Duas magias nível baixo num turno)", "Magias cataclísmicas conjuradas instantaneamente"],
-            "Escudo Arcano": ["Conjura escudo de 10HP", "Escudo 30 HP", "Escudo devolve LUST ao atacante", "Escudo quebra explodindo Dano em Área", "Aegis Absoluta (Invulnerabilidade a 1 golpe)"],
-            "Raio Aumentado": ["Alcance mágico +5m", "Alcance +10m", "Magias em Área dobram o raio", "Magias tocam múltiplos alvos à escolha", "Sniper Arcano (Acerta de quilômetros de distância visual)"],
-            "Percepção Arcana": ["Sente magias próximas", "Vê auras mágicas e itens ocultos", "Identifica tipo e elemento da magia antes dela bater", "Lê mentes fracas/pensamentos de superfície", "Onisciência Arcana: Enxerga tudo no território mágico"],
-            "Manipulação de Fluidos": ["Cura extra +5 ao usar poções", "Transmuta água em vinho/veneno", "Extrai água do ar/inimigo para matar a sede", "Pode buffar aliado usando os próprios fluidos mágicos", "Mestre da Secreção Divina (Lágrimas revivem mortos)"],
-            "Cura Amplificada": ["Feitiços de cura dão +10 HP", "+20 HP", "Curam LUST ao mesmo tempo que curam HP", "Podem recriar tendões rasgados", "Ressurreição Perfeita (Sem perda de nível/alma)"],
-            "Pacto de Sangue": ["Pode gastar HP pra castar", "Troca 1 HP por 2 Energia", "O Dano Sofrido aumenta o Próximo feitiço", "Magias de Sangue dão Lifesteal (Roubo de Vida)", "Pacto com Entidade: Pode usar HP do inimigo controlado pra magias"],
-            "Absorção Mística": ["Recebe Magia: Recupera 2 Energia", "Receber magias LUST recupera 5 Energia", "Absorve magias elementais fracas anulando dano", "Drena mana do inimigo ao tocá-lo", "Buraco Negro Arcano (Engole magias lendárias inimigas)"],
-            "Mestre Ritualístico": ["Rituais levam metade do tempo", "Não precisa de círculos mágicos materiais", "Pode ancorar rituais grandes na própria alma", "Atua por 3 magos em feitiços de congregação", "Reescreve leis arcanas temporariamente (Troca elementos do mundo)"],
-            "Invocação Vinculante": ["Pode invocar 1 Familiar pequeno", "Familiar pode entregar ataques/mensagens", "Invoca Demônios/Espíritos médios", "Familiar pode absorver LUST destinado a você", "Pacto de Sangue Colossal (Invoca Avatar Mítico controlável)"]
+            "Afinidade Elemental": [
+                "Magia Primal escorre com naturalidade. Concede +1 base de Dano Mágico fixo.",
+                "Sintonia com a tempestade de chamas. +3 direto a danos de magia elementais e curas sombrias.",
+                "Impacto residual impregna no feitiço, aplicando pequenos debuffs (Queimadura ou Congelamento) na conjuração base.",
+                "Rasga a consistência inimiga. O Dano Mágico ignora resistências secundárias rasteiras do alvo comum.",
+                "Purificador Supremo. Converte magias em Dano Divino, destruindo demônios e bestas que antes tinham resistência imune."
+            ],
+            "Controle de Mana/Energia": [
+                "Enxuga e reduz desperdício de energia arcana. Magias médias diminuem 1 do seu Custo Base em MP.",
+                "Feitiços menores de 1 Custo transformam-se puramente em Habilidades Grátis que podem ser atiradas sempre.",
+                "Condensa rituais de custo imenso pela metade, permitindo que magias muito pesadas entrem na sua carteira.",
+                "Magia de Sangue de Sacrifício. Ultrapassar seu limite mágico consumirá Vida do seu HP no lugar sem te impedir.",
+                "Reservatório Arcano Infinito Antigo. Uma vez por dia, permite ignorar todo o limite conjurando Magias Lendárias destrutivas de graça."
+            ],
+            "Canalização Rápida": [
+                "Acelera feitiços pesados de fogo contínuo e cura extensa cortando e adiantando 1 Turno inteiro do preparo.",
+                "Corpo em sinergia com runas. Permite conjurar magias complexas andando e evadindo normalmente no grid tático.",
+                "Mãos independentes. Magias ofensivas ou proteções menores viram uma Ação Rápida secundária bônus no combate.",
+                "Dual-Cast Arcano Mestre. Tece magia de cura na esquerda e fogo na direita atirando 2 magias rasas independentes no mesmo turno.",
+                "Corte temporal e controle absoluto. Feitiços finais gigantes que demoram batalhas inteiras são conjurados instantaneamente no estalar dos dedos."
+            ],
+            "Escudo Arcano": [
+                "Condensação de pequenos hexágonos roxos em uma barreira que absorve os primeiros frágeis 10 HP de dano mágico recebido.",
+                "Parede de Força prismática densa e pesada que amortece até 30 HP do dano de machadadas ou bolas de luz inimigas.",
+                "Carapaça Empática. Romper a barreira enlouquece quem atacou, causando um grande Dano Reativo Mental (LUST) ao agressor que o tocou.",
+                "Bomba Protetora Retaliatória. Quando a defesa quebra as runas explodem em um leque AOE (dano em área) massivo ao redor do seu corpo.",
+                "Aegis Cúpula de Prata Pura. Defesa divina invulnerável perfeita que absorve 1 Golpe Cataclísmico e Final que obliteraria cidades ileso."
+            ],
+            "Raio Aumentado": [
+                "Expansão Mística Focada. Alonga raios curtos e alvos isolados pra atingir e afetar em um círculo de até +5 Metros extra.",
+                "Domínio Míssil Longo de Artilharia Mágica das Florestas. Amplia com +10 metros sem perder potência da zona de chamas e fumaça.",
+                "Cúpulas Massivas Dobradas. Magias como chuva venenosa e círculos de cura curativos simples simplesmente dobram suas escalas de raio total.",
+                "Metralhadora Ramificada Dividida. Qualquer magia focada numa flecha atômica de luz se ramifica na cabeça batendo múltiplos parceiros adjacentes à força.",
+                "Balística do Sniper Arcano Sábio. Mágicas focais lentas atravessam os vales por milhas e batem de longe em batalhas a distâncias gigantescas do horizonte visual da masmorra."
+            ],
+            "Percepção Arcana": [
+                "Terceiro Olho Aberto nas Sombras. Permite reconhecer magia ativa perto e perceber portões de ilusão secretos na madeira.",
+                "Visão da Aura Sombria. Identifica Auras e relíquias mágicas invisíveis ou possuídas sob o tecido dos camponeses.",
+                "Reação de Super-Computador Lógico. Identifica exatamente que tipo de elemento foi usado no ataque inimigo antes de colidir no seu corpo.",
+                "Lê os Segredos Rasteiros. Arranca memórias e informações ocultas ou superficiais da mente apenas no toque ou combate.",
+                "Onisciência Completa no Território. O olhar divino enxerga sem esforço toda a movimentação furtiva e mágica invisível da masmorra."
+            ],
+            "Manipulação de Fluidos": [
+                "Poções e fluidos ingeridos ou injetados são processados melhor (+5 de Cura passiva para itens).",
+                "Transmutação alquímica. Converte fluidos ou poças d'água nojentas em vinho sedutor afrodisíaco ou veneno violento ralo.",
+                "Sanguessuga. Pode drenar umidade vital de oponentes lentos ou extrair do próprio corpo para hidratação total imediata em desertos.",
+                "Transferência de Vitalidade. Corta o próprio pulso ou mistura sangue em feitiços curativos, doando seus atributos buffados a aliados caídos.",
+                "Lágrimas de Ressurreição Purificadoras. Fluidos que escorrem de milagres e magias finais curam instantaneamente a morte ou Mutações Demoníacas incuráveis."
+            ],
+            "Cura Amplificada": [
+                "Feitiços de cura simples agora ganham reforço passivo estabilizador bruto (+10 HP curado extra em qualquer aliado).",
+                "Rios vigorosos de luz. Adiciona +20 HP direto para feitiços curativos mantendo companheiros de pé contra Chefões.",
+                "Terapia Oculta Purificante. Os seus feitiços de cura em aliados agora simultaneamente retiram passivamente o tesão sombrio e os debuffs de LUST deles.",
+                "Regeneração Celular Arcana Letal. Os feitiços superam o limite de pontos colando fraturas reais e recriando braços decepados durante as batalhas longas.",
+                "Ressurreição da Luz Completa Imaculada. Restaura parceiros aniquilados que viraram apenas pó com toda vida, memória, atributos e Alma ilesos e perfeitos da Morte Limbo."
+            ],
+            "Pacto de Sangue": [
+                "Magia pelo Fio da Faca. Permite que você pague o custo absurdo de mana dos feitiços ignorando estamina arrombando seu próprio HP (Vida).",
+                "Conversão Mística Densa Sombria. Ofertar um corte macabro em si próprio converte 1HP em 2 Energia Arcana massiva taticamente para o grupo.",
+                "A dor é Fúria Atômica Vingativa. O dano mágico bruto recebido no seu corpo é convertido diretamente dobrando o alcance/dano da sua PRÓXIMA Magia vingadora cega de luz.",
+                "Lifesteal Sanguinário Passivo Macabro Letal. Suas magias sombrias passam a roubar vampiricamente a barra vermelha vital de Chefões curando suas próprias veias estouradas de batalha e fadiga.",
+                "Parasitismo Oculto das Almas de Batalha Mortas do Caos. Consegue roubar, arrastar e usar à força o HP (Vida) de Inimigos controlados ou aliados fracos desavisados nas costas pra pagar suas contas mortais de feitiços colossais insanos."
+            ],
+            "Absorção Mística": [
+                "Esponja Mágica. Ser atingido por qualquer feitiço devolve +2 de Energia mágica recarregando suas baterias passivamente.",
+                "Devorador de Luxúria. Absorver magias súcubos e ilusões não te quebra: pelo contrário, zera +5 Energia Arcana na sua barra.",
+                "Buraco Negro Reflexivo. Magias elementares fracas apenas desaparecem sugadas na sua couraça, anulando o dano completamente.",
+                "Dreno Vampírico Oculto. Um toque no inimigo seca e drena passivamente o MP/Stamina mágica da reserva dele para a sua.",
+                "Engolidor do Caos Sideral. Engole literalmente magias nucleares e lendárias inimigas colossais, anulando ataques de Chefe Absoluto."
+            ],
+            "Mestre Ritualístico": [
+                "Rapidez Sombria. Reduz pela metade o tempo letárgico e perigoso que rituais frouxos de magia demoram para conjurar.",
+                "Libertação Material. Não necessita do peso de giz, incenso ou pedras arcanas de pó para focar os círculos mágicos.",
+                "Âncora Ambulante. Consegue manter feitiços gigantes ou domínios ativados andando, sem precisar fixá-los em castelos parados.",
+                "Coro Macabro Único. Você emite força mística equivalente a 3 Magos para conjurar qualquer feitiço massivo de guilda sozinho.",
+                "Falsificador de Leis da Realidade. A sua palavra e grimório anulam as gravidades, convertendo lava em gelo num piscar tático."
+            ],
+            "Invocação Vinculante": [
+                "Familiar Espião. Invoca criaturas etéreas e sombrias menores que espiam a masmorra e carregam recados simples.",
+                "Mensageiro Kamikaze. Pode invocar morcegos de fogo ou corvos para entregar feitiços explodindo nos inimigos de longe.",
+                "Invocação Sombria Média. Chama demônios medianos ou lobos das cinzas para linha de frente do combate caótico sangrento.",
+                "Boi de Piranha Mental. O Familiar absorve ativamente tentações, mind-breaks, fobias e o Dano LUST que era focado para você.",
+                "Pacto Colossal Avatar de Sangue. Assina contrato infernal massivo invocando Bestas e Deuses Primários Destruidores sob seu controle."
+            ]
         }
     }
 };
