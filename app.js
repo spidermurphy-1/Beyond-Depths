@@ -69,6 +69,129 @@ const CONDITIONS_DB = {
     "enfeiticado": { name: "Enfeitiçado", desc: "Defesa de Lust é zerada.", mods: { dlust_set: 0 } }
 };
 
+const PERK_COSTS = [0, 1, 2, 3, 5, 9];
+const PERKS_DB = {
+    sed: {
+        name: "Sedução", icon: "fa-heart",
+        perks: {
+            "Volúpia Anatômica: Seios": ["Estético leve", "Formato perfeito (+1 distração)", "Volume gerador de LUST", "Dimensões hipertróficas (LUST passivo)", "Proporções extremas (Transe)"],
+            "Volúpia Anatômica: Glúteos e Quadris": ["Curvas acentuadas", "Quadril hipnótico (+1 persuasão)", "Ataques de submissão com bônus SED", "Absorve impacto e amplifica LUST", "Proporções colossais inescapáveis"],
+            "Magnificência Genital": ["Alteração estética e calor", "Tamanho/profundidade ideais (+2 provocação)", "Ignora dores, +50% LUST no parceiro", "Drena Energia/LUST pelo contato", "Alvos paralisados pelo êxtase"],
+            "Feromônios Inebriantes": ["Perfume adocicado", "Impõe -1 VON corpo a corpo", "Névoa afrodisíaca (+2 LUST área)", "Densa: Alvos perdem 10% Resistência LUST", "Nuvem de Cio: Frenesi incontrolável"],
+            "Beijo Sugador": ["Lábios instigantes", "Confusão mental por 1 turno", "Drena 10 Stamina", "Drena HP e Stamina", "Dreno de Alma: Maximiza LUST, debuff atributos"],
+            "Olhar da Perdição": ["Olhos magnéticos", "Impõe Hesitação (atrasa iniciativa)", "Força dano de LUST visual", "Quebra DLUST do alvo pela metade", "Submissão Ocular telepática"],
+            "Voz de Sereia": ["Timbre aveludado", "Vantagem (+1) imobilização sexual", "Excitação forçada (Dano LUST à distância)", "Anula buffs mentais/Fúria", "Cântico: Paralisa alvos em área"],
+            "Toque Corruptor": ["Dedos indutores de calafrios", "Debuff leve de Agilidade no toque", "Golpes físicos causam 50% dano LUST", "Ignora 50% armadura para Despir", "Dissolve roupas e armaduras mundanas"],
+            "Graça Felina": ["Movimentação elegante", "Esquiva usa SED (leves)", "Dança gera LUST passivo na área", "Imune penalidade de agarrão/submissão", "Intangível se provocar (ataques erram)"],
+            "Imunidade à Vergonha": ["Exibicionismo leve", "Nudez parcial = +1 DLUST", "Nudez Total = +3 testes SED", "Ganha buffs ao atingir Limiar de Êxtase", "Avatar Luxúria: Força dobrada no Mind Break"],
+            "Secreções Afetivas": ["Fluidos revigorantes", "Fluidos curam +5 HP ao aliado", "Fluido viciante (facilita comandos)", "Fluidos purificam venenos", "Névoa que protege área de Mind Break"],
+            "Domínio do Vínculo": ["Empatia imediata após sexo", "Pode marcar alvo (sabe direção)", "Alvo marcado sofre LUST se te atacar", "Telepatia de Prazer", "Contrato Subserviência: Controle mental e HP share"]
+        }
+    },
+    con: {
+        name: "Constituição", icon: "fa-shield-heart",
+        perks: {
+            "Couro Resistente": ["Redução dano: 1", "Redução dano: 3", "Ignora sangramento e ataques rasantes", "Dobra redução de dano (Ativação 1 turno)", "Impenetrável (Anula ataques abaixo de limiar)"],
+            "Tolerância à Dor": ["Ignora feridas superficiais", "Penalidades só em 30% de HP", "Imune tortura não-luxuriosa", "Adrenalina da Dor: Bônus FOR em Crítico", "Luta 3 turnos com 0 HP"],
+            "Sistema Imunológico Implacável": ["Raramente adoece", "Vantagem contra doenças comuns", "Corta duração de venenos fortes pela metade", "Cura envenenamento aliados via doação de sangue", "Imunidade total (veneno/parasita/gravidez)"],
+            "Sangue Fervente (Regeneração)": ["Feridas fecham rápido no descanso", "Recupera 1 HP/turno (passivo fora combate)", "Regeneração ativa (cura baseada no VIG)", "Cicatrização mágica (anula sangramento na hora)", "Recoloca membros decepados"],
+            "Densidade Óssea": ["Ossos pesados", "Proteção extra contra impacto", "Ossos inquebráveis (+bônus ataque desarmado)", "Imune a quedas de 15 metros", "Imune a dano contundente e fratura"],
+            "Termorregulação Perfeita": ["Não se incomoda com sol/neve", "Resistência Fogo/Gelo Nv1", "Sobrevive nú em extremos sem perder HP/Stamina", "Gelo/Fogo curam HP em vez de ferir", "Isolamento Absoluto a extremos e magias elementais"],
+            "Estômago de Ogro": ["Come carne crua", "Comida cura o dobro", "Come lixo/poção corrompida pra curar", "Come materiais duros = cura massiva e buff", "Fornalha Gástrica: Absorve atributo do inimigo engolido"],
+            "Firmeza de Montanha": ["Postura equilibrada", "Vantagem para evitar quedas/rasteiras", "Não pode ser movido por tamanho Médio/Grande", "Dano de recuo ao tentarem quebrar postura", "Gravidade Pessoal: Imune telecinese/knockback"],
+            "Vitalidade Descomunal": ["+10% HP Máx", "+20% HP Máx", "+30% HP Máx e ganha cura passiva", "+50% HP Máx", "+100% HP Máx (Coração Dragão: revive com 50% HP)"],
+            "Estase Carnal": ["Envelhece devagar", "Segura respiração 3x", "Hibernação profunda (sobrevive sem nada por semanas)", "Controle hemorrágico (isola veneno)", "Imortalidade biológica (não envelhece/maldições)"],
+            "Escudo Físico Reativo": ["Músculos tencionam", "Atacante sofre desvantagem no próximo golpe", "Onda de choque derruba entorno se dano > 30", "Dobra CON base no turno abrindo mão do movimento", "Reflete 50% dano físico direto sem dados"],
+            "Glândulas Adaptativas": ["Suor limpante", "Suor afasta monstros LUST fracos", "Expele gosma adesiva/escorregadia", "Fluidos anulam LUST do alvo que os ingere", "Casulo em 0 HP/MindBreak para recuperação 24h"]
+        }
+    },
+    vig: {
+        name: "Vigor", icon: "fa-bolt",
+        perks: {
+            "Fôlego Inesgotável": ["+10 Max Stamina", "+20 Max Stamina", "Custo de movimento cortado pela metade", "+50 Max Stamina", "Regen passiva massiva de Stamina/turno"],
+            "Corredor Incansável": ["+2m Movimento base", "Atravessa terrenos difíceis normal", "Ignora penalidade de Carga/Armadura no mov", "Investida não custa ação", "Mobilidade teleportada em curtas distâncias"],
+            "Coração Resiliente": ["Recupera 5 St ao sofrer Dano", "Recupera 10 St ao sofrer Dano", "Pode converter Stamina em HP 1x por combate", "Dobra regeneração base", "Imunidade a Exaustão máxima"],
+            "Repelir Êxtase": ["+5 Limiar de Êxtase", "+10 Limiar de Êxtase", "+20 Limiar de Êxtase", "Ganha buff de FOR ao passar do Limiar", "Nunca sofre debuff por atingir Limiar"],
+            "Adaptação Erótica": ["Ações de Alívio custam -5 St", "Ações de Alívio custam 0 St", "Ações de Alívio restauram St", "Causa dano LUST ao usar Alívio em si", "Êxtase restaura todos os seus recursos"],
+            "Tolerância Adrenalínica": ["Ignora debuffs de Estágio 1 LUST", "Ignora debuffs de Estágio 2 LUST", "Converte debuff em buff temporário", "Imune a paralisia por dor/êxtase", "Atinge auge físico sob Mind Break"],
+            "Capacidade Pulmonar": ["Prende respiração por 10min", "Imune a gases fracos", "Não precisa respirar por 1h", "Imune a nuvens venenosas densas", "Pulmões adaptativos (vácuo/água infinita)"],
+            "Segundo Fôlego": ["Ao zerar St, recupera 10 (1x/dia)", "Recupera 30 (1x/dia)", "Pode gastar HP no lugar de St", "Zerar St emite onda de recuo", "Nunca cai abaixo de 10 Stamina passiva"],
+            "Atleta Divino": ["Vantagem em Acrobacia", "Salto triplicado", "Pode lutar 2 dias sem dormir", "Imune a magias de Lentidão", "Físico Inabalável: Imune a dreno de atributo"],
+            "Aura de Energia": ["Aliados ao redor +5 Max St", "Aliados +10 Max St", "Pode doar sua St pra aliados", "Aliados ignoram custo de 1 ação", "Cúpula Revigorante contínua"],
+            "Blindagem Mental": ["Ataques LUST afetam -10% sua St", "-25% impacto LUST na St", "Dano LUST aumenta sua St", "Ataques psíquicos restauram sua St", "Imune a magias de dreno mental"],
+            "Descanso Profundo": ["Dormir 2h equivale a 8h", "Dormir recupera debuffs permanentes", "Pode usar descansos curtos como longos", "Sonho curativo (Anula condições de LUST)", "Transe (Fica invulnerável enquanto dorme)"]
+        }
+    },
+    for: {
+        name: "Força", icon: "fa-dumbbell",
+        perks: {
+            "Golpes Esmagadores": ["+1 Dano Bruto (Corpo-a-Corpo)", "+3 Dano Bruto", "+5 Dano e Knockback", "Causa dano em área (Cleave)", "Golpes ignoram 50% das defesas físicas"],
+            "Agarre Titânico": ["Vantagem para Iniciar Agarrão", "Alvo sofre desvantagem ao escapar", "Imobilizar causa asfixia (Dano turno)", "Quebra braços do alvo ao agarrar", "Esmagamento letal instantâneo em alvos fracos"],
+            "Músculos Fibrosos": ["Vantagem contra Agarrões inimigos", "Dano de contusão reduzido em 2", "Inimigo pequeno não consegue te levantar", "Quebra cordas/algemas mágicas na força", "Imune a imobilização física mundana"],
+            "Quebra-Defesas": ["Ignora 1 armadura", "Ignora 3 armadura", "Destrói escudos mundanos ao bater", "Golpes reduzem Defesa do alvo pra aliados", "Estilhaça armaduras lendárias com as mãos"],
+            "Arremesso Brutal": ["Pode jogar objetos de 50kg a 10m", "Joga inimigos menores", "Arremessa aliados com segurança tática", "Arremessa pedregulhos pesados (+dano área)", "Joga inimigos colossais para trás"],
+            "Força de Impacto": ["Armas causam lentidão", "Golpe causa tontura", "Golpes atordoam", "Acertos críticos quebram o chão (terreno difícil)", "Dano sônico (Golpes rompem a barreira do som)"],
+            "Violência Bruta": ["+2 Dano em alvos caídos", "+5 Dano em alvos imobilizados", "Vantagem contra alvos agarrados", "Execução: 2x Dano contra alvo rendido", "Grito de Fúria ao matar aterroriza"],
+            "Tensão Muscular Mágica": ["Pode usar FOR em vez de VON (resistir magia)", "Quebra prisões mágicas com FOR", "Golpes dissipam invocações arcanas fraca", "Pode segurar lâminas mágicas sem dano", "Punhos rebatem feitiços primários"],
+            "Saltador Colossal": ["Pula 5m vertical", "Pula 10m e causa dano na queda", "Pode pular com 1 aliado gigante", "Queda sísmica atordoa", "Meteor Strike (Desce de órbitas causando catástrofe)"],
+            "Carregador de Fardo": ["Inventário não sofre peso", "Pode andar com 1x mais peso", "Pode carregar aliados mortos/vivos sem debuff", "Pode lutar carregando grandes pedras como escudo", "Pode sustentar desabamentos inteiros nas costas"],
+            "Machado Humano": ["Ganhe +1 Dano a cada rodada de combate", "+2 Dano/rodada", "+Dano aplica Sangramento pesado", "Limiar de Sangramento atinge ossos", "Cortar membros vira algo rotineiro"],
+            "Impacto Sísmico": ["Soco no chão causa tremores", "Derruba alvos em raio curto", "Ergue paredes de terra ao socar chão", "Causa fissuras letais em área média", "Terremoto local dirigido a um alvo"]
+        }
+    },
+    agi: {
+        name: "Agilidade", icon: "fa-person-running",
+        perks: {
+            "Reflexos Apurados": ["+2 Iniciativa", "+5 Iniciativa", "Nunca é pego de surpresa", "Pode trocar lugar na iniciativa com aliado", "Sempre joga primeiro no combate"],
+            "Esquiva Acrobática": ["+1 Esquiva base", "+3 Esquiva base", "Vantagem natural para esquivar projéteis", "+5 Esquiva e pode desviar no ar", "Esquiva perfeita garante quebra de postura inimiga"],
+            "Deslize Furtivo": ["Movimento silencioso", "Invisível em sombras médias", "Não aciona armadilhas de pressão", "Mover escondido custa metade da ação", "Ataque furtivo ganha multiplicador massivo de dano"],
+            "Precisão Letal": ["Margem de Crítico aumenta em 1", "Crítico aumenta em 2", "Críticos causam cegueira/sangramento", "Crítico ignora 100% armadura", "Acertos certeiros decaptam alvos não-elites"],
+            "Queda de Gato": ["Reduz dano de queda pela metade", "Ignora danos de até 20m", "Sempre cai de pé e saca a arma", "Pode planar usando roupas largas", "Ignora dano de queda terminal (aterrissagem de herói)"],
+            "Escapar de Agarrões": ["+2 teste de fuga", "+5 teste de fuga", "Pode fugir como ação bônus rápida", "Fugir deixa alvo desequilibrado", "Mestre Escape: Se solta e desarma/despe o alvo junto"],
+            "Ataque em Foco": ["Armas ágeis dão +1 dano", "Ataque adicional fraco", "Pode gastar Stamina pra 3º ataque", "Ataques consecutivos dão stacking de dano", "Tempestade de Lâminas (Ataque em Área)"],
+            "Contra-Ataque Rápido": ["Se inimigo errar, pode atacar com faca", "Contra-ataque dá dano normal", "Contra-ataque pode ser usado 2x por turno", "Pode aparar e revidar simultaneamente", "Contra-ataque fatal (Causa lentidão e sangramento)"],
+            "Passo Fantasma": ["Corrida concede +1 ESQ", "Não causa ataques de oportunidade", "Pode passar por dentro do grid inimigo", "Pode correr na parede ou água", "Teleporte de sombras curtas"],
+            "Mobilidade Extrema": ["Ataque + recuo de 2m", "Recuo de 5m", "Pode gastar estamina pra pular pra trás", "Movimentos são borrados (-2 chance inimigo acertar)", "Flashstep (Ataca múltiplos alvos movendo)"],
+            "Reação Ocular": ["Apara flechas (50%)", "Apara flechas (100%)", "Rebate flecha no inimigo", "Rebate balas e magias projétil fracas", "Rebate feitiços de dano alto de volta pra origem"],
+            "Dança da Morte": ["Dançar confunde visão inimiga", "Esquivar aumenta ESQ aliada", "Ficar cercado aumenta ESQ (+1 por ini)", "Ação de Dança força errar tudo nela", "Esquiva em área: Retira aliado da área da magia (Fogo/Gelo)"]
+        }
+    },
+    von: {
+        name: "Vontade", icon: "fa-brain",
+        perks: {
+            "Mente Inabalável": ["Vantagem resistir Intimidação", "+2 Defesa contra Mind Control", "Ignora medos/fobias mundanos", "Resiste a charme e domínio demoníaco", "Aura mental (Inimigo sofre choque psíquico se tentar invadir)"],
+            "Estoicismo Carcerário": ["+2 Defesa LUST (DLUST)", "+5 DLUST", "Reduz pela metade o bônus de SED inimigo", "Ignora debuffs de Estágio 3 LUST", "Converte 50% de todo dano LUST em HP"],
+            "Clarividência": ["Sente mentiras", "Vê através de magias de invisibilidade fracas", "Imune a Ilusões e Miragens", "Enxerga a intenção hostil ou carnal passivamente", "Olho de Deus (Vê aura, alinhamento e invulnerabilidades)"],
+            "Presença Imponente": ["+2 Intimidação (INT)", "Inimigos de nível baixo hesitam", "Grito gela o sangue (-1 Iniciativa global)", "Imposição aterroriza forçando alvo a recuar", "Comando de Soberano (Força rendição de alvos fracos)"],
+            "Meditação Tática": ["Respirar 1 turno recupera foco", "Ação de cura remove 1 debuff mental", "Pode ignorar debuff físico através da fé", "Meditando atinge regeneração psíquica alta", "Recupera companheiros num raio apenas pela sua paz"],
+            "Foco Implacável": ["Magias não são interrompidas por Dano Leve", "Ignora dor para conjurar", "Pode conjurar cego ou surdo", "Se sofrer Crítico, Magia sai potencializada", "O corpo conjura mesmo desmaiado (Transe mágico)"],
+            "Disciplina Carnal": ["Regenera passivamente -2 LUST/turno", "-5 LUST/turno", "Sexo forçado não causa Limiar imediato", "Pode purgar LUST gastando Stamina brutalmente", "Nega Mind Break por completo 1x por combate"],
+            "Barreira Psíquica": ["Reduz 1 dano psíquico/magia", "Reduz 5 dano mágico", "Cria escudo bolha que protege aliados do medo", "Pode focar a barreira p/ rebater charme", "Mente Diamantina (Imune a corrupção de deuses)"],
+            "Quebra-Amarras": ["Liberta-se de controle mental em 2 turnos", "Liberta-se em 1 turno", "Pode quebrar controle mental aliado tocando neles", "Imune passivo a magias de sono e feitiço de bruxa", "Desfaz ilusões de chefes/territórios apenas pela negação"],
+            "Avatar da Mente": ["Ganha +1 Dano mágico p/ VON", "Dano desarmado usa VON", "Armas brilham com determinação (+Dano Divino/Mental)", "Pode atingir espíritos e fantasmas com socos puros", "Projeta corpo astral colossal"],
+            "Vontade de Sobreviver": ["Se 1 aliado cair, ganha +2 Dano", "Se todos caírem, dobra HP", "Imune a desmaio se o objetivo não foi cumprido", "Concede Último Suspiro (revive o time c/ 1HP ao gritar)", "Recusa-se a morrer enquanto o chefão viver"],
+            "Telecinese Latente": ["Levita itens 1kg", "Joga pedras na força da mente", "Enforca inimigos à distância", "Vôo psíquico temporário", "Massa Telecinética: Arremessa casas, esmaga armaduras."]
+        }
+    },
+    mis: {
+        name: "Misticismo", icon: "fa-wand-magic-sparkles",
+        perks: {
+            "Afinidade Elemental": ["+1 Dano (Magias Elementais)", "+3 Dano Magias", "Aplica Burn/Freeze de Nível 1", "Dano Mágico ignora resistências comuns", "Dano Puro Elemental: Destrói imunidade total"],
+            "Controle de Mana/Energia": ["Reduz 1 Custo Energia", "Magias de Custo 1 viram Passivas", "Magias pesadas custam metade", "Gasto de energia acima do cap consome só HP leve", "Reservatório Infinito: 1x ao dia joga magia lendária de graça"],
+            "Canalização Rápida": ["Magias de longo cast castam -1 turno", "Pode conjurar andando sem penalidade", "Pode conjurar como ação bônus", "Dual Cast (Duas magias nível baixo num turno)", "Magias cataclísmicas conjuradas instantaneamente"],
+            "Escudo Arcano": ["Conjura escudo de 10HP", "Escudo 30 HP", "Escudo devolve LUST ao atacante", "Escudo quebra explodindo Dano em Área", "Aegis Absoluta (Invulnerabilidade a 1 golpe)"],
+            "Raio Aumentado": ["Alcance mágico +5m", "Alcance +10m", "Magias em Área dobram o raio", "Magias tocam múltiplos alvos à escolha", "Sniper Arcano (Acerta de quilômetros de distância visual)"],
+            "Percepção Arcana": ["Sente magias próximas", "Vê auras mágicas e itens ocultos", "Identifica tipo e elemento da magia antes dela bater", "Lê mentes fracas/pensamentos de superfície", "Onisciência Arcana: Enxerga tudo no território mágico"],
+            "Manipulação de Fluidos": ["Cura extra +5 ao usar poções", "Transmuta água em vinho/veneno", "Extrai água do ar/inimigo para matar a sede", "Pode buffar aliado usando os próprios fluidos mágicos", "Mestre da Secreção Divina (Lágrimas revivem mortos)"],
+            "Cura Amplificada": ["Feitiços de cura dão +10 HP", "+20 HP", "Curam LUST ao mesmo tempo que curam HP", "Podem recriar tendões rasgados", "Ressurreição Perfeita (Sem perda de nível/alma)"],
+            "Pacto de Sangue": ["Pode gastar HP pra castar", "Troca 1 HP por 2 Energia", "O Dano Sofrido aumenta o Próximo feitiço", "Magias de Sangue dão Lifesteal (Roubo de Vida)", "Pacto com Entidade: Pode usar HP do inimigo controlado pra magias"],
+            "Absorção Mística": ["Recebe Magia: Recupera 2 Energia", "Receber magias LUST recupera 5 Energia", "Absorve magias elementais fracas anulando dano", "Drena mana do inimigo ao tocá-lo", "Buraco Negro Arcano (Engole magias lendárias inimigas)"],
+            "Mestre Ritualístico": ["Rituais levam metade do tempo", "Não precisa de círculos mágicos materiais", "Pode ancorar rituais grandes na própria alma", "Atua por 3 magos em feitiços de congregação", "Reescreve leis arcanas temporariamente (Troca elementos do mundo)"],
+            "Invocação Vinculante": ["Pode invocar 1 Familiar pequeno", "Familiar pode entregar ataques/mensagens", "Invoca Demônios/Espíritos médios", "Familiar pode absorver LUST destinado a você", "Pacto de Sangue Colossal (Invoca Avatar Mítico controlável)"]
+        }
+    }
+};
+
 const CLASS_TEMPLATES = {
     "Sacerdote": {
         class: "Sacerdote",
@@ -109,6 +232,7 @@ function migrateChar(char) {
     if (!char.activeConditionIds) char.activeConditionIds = [];
     if (!char.logs) char.logs = [];
     if (char.isUnlockedPoints === undefined) char.isUnlockedPoints = false;
+    if (!char.perks) char.perks = {};
     
     return char;
 }
@@ -265,9 +389,12 @@ document.getElementById('btn-new-item').addEventListener('click', () => {
         editingCharId = null;
         document.getElementById('modal-title').innerText = "Nova Ficha";
         document.getElementById('form-character').reset();
+        draftPerks = {};
+        switchCharTab('base');
         populateCharModalSelects();
         enforceClassConditions();
         document.getElementById('skills-select-list').innerHTML = ''; // reset dynamic slots
+        updatePerksMath();
         document.getElementById('modal-character').showModal();
     } else if (currentTab === 'armors') {
         document.getElementById('form-armor').reset();
@@ -444,6 +571,8 @@ function updatePointsCounter() {
     counterEl.innerText = total;
     if(total > 12) counterEl.className = 'text-red-500 font-bold';
     else counterEl.className = 'text-white';
+    
+    updatePerksMath(); // Refresh perk limits
     return total;
 }
 
@@ -508,7 +637,13 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
     
     const totalPoints = updatePointsCounter();
     if (totalPoints > 12 && !isUnlocked && !isMaster()) {
-        return alert("O limite para jogadores normais é de 12 pontos somados entre todos os atributos.");
+        return alert("O limite para jogadores normais é de 12 pontos somados entre todos os atributos base.");
+    }
+    
+    const isMasterOverride = isMaster() && isUnlocked;
+    if (!updatePerksMath() && !isMasterOverride) {
+        switchCharTab('perks');
+        return alert("Você gastou mais Pontos de Vantagem (PV) do que seus Atributos Base permitem! Reduza suas Vantagens ou aumente o Atributo (se não estiver no limite).");
     }
 
     const classNameVal = document.getElementById('inp-class').value.toLowerCase();
@@ -534,6 +669,7 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
         equippedSkillIds: selSkills,
         activeConditionIds: selConds,
         isUnlockedPoints: isUnlocked,
+        perks: JSON.parse(JSON.stringify(draftPerks)),
         attr: { 
             con: parseInt(document.getElementById('inp-con').value) || 0,
             for: parseInt(document.getElementById('inp-for').value) || 0,
@@ -665,6 +801,26 @@ function renderDashboard() {
     const canEditChar = canEdit(char);
     document.querySelectorAll('.action-btn').forEach(btn => btn.disabled = !canEditChar);
     
+    // Render Perks
+    const dashPerks = document.getElementById('dash-perks');
+    dashPerks.innerHTML = '';
+    let hasAnyPerk = false;
+    if (char.perks) {
+        Object.keys(char.perks).forEach(attr => {
+            const perksObj = char.perks[attr];
+            Object.keys(perksObj).forEach(pName => {
+                if (perksObj[pName] > 0) {
+                    hasAnyPerk = true;
+                    dashPerks.innerHTML += `<div class="bg-black/30 p-2 rounded border-l-2 border-gold/50 mb-1">
+                        <div class="flex justify-between items-center"><span class="font-bold text-gray-200">${escapeHTML(pName)}</span><span class="text-xs text-gold">Nv ${perksObj[pName]}</span></div>
+                        <div class="text-[10px] text-gray-400 mt-1">${PERKS_DB[attr].perks[pName] ? escapeHTML(PERKS_DB[attr].perks[pName][perksObj[pName]-1]) : 'Vantagem órfã.'}</div>
+                    </div>`;
+                }
+            });
+        });
+    }
+    if (!hasAnyPerk) dashPerks.innerHTML = '<div class="text-gray-500 text-sm">Nenhuma vantagem adquirida.</div>';
+
     // Render Logs
     const dashLogs = document.getElementById('dash-logs');
     dashLogs.innerHTML = '';
@@ -691,6 +847,9 @@ function renderDashboard() {
         document.getElementById('inp-name').value = char.name;
         document.getElementById('inp-class').value = char.class;
         document.getElementById('inp-avatar').value = char.avatarUrl || "";
+        
+        draftPerks = char.perks ? JSON.parse(JSON.stringify(char.perks)) : {};
+        switchCharTab('base');
         
         populateCharModalSelects();
         
@@ -894,5 +1053,136 @@ window.applyDamage = () => adjustStat('hp', -15);
 window.rest = () => adjustStat('stamina', 30);
 window.relieve = () => adjustStat('lust', -20);
 
+// --- PERKS SYSTEM ---
+let draftPerks = {};
+
+function initPerksUI() {
+    const container = document.getElementById('perks-container');
+    if (!container) return;
+    container.innerHTML = '';
+    
+    Object.keys(PERKS_DB).forEach(attrKey => {
+        const attrData = PERKS_DB[attrKey];
+        
+        const block = document.createElement('div');
+        block.className = 'border border-gold/20 rounded bg-black/40 mb-3';
+        block.innerHTML = `
+            <div class="p-3 flex justify-between items-center cursor-pointer bg-gold/10 hover:bg-gold/20 transition" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                <div class="font-cinzel text-gold font-bold"><i class="fa-solid ${attrData.icon} mr-2"></i>${attrData.name}</div>
+                <div class="text-xs text-gray-300 font-mono">PV: <span id="pv-used-${attrKey}">0</span> / <span id="pv-max-${attrKey}">0</span></div>
+            </div>
+            <div class="p-3 hidden space-y-3" id="perks-list-${attrKey}">
+                ${Object.keys(attrData.perks).length === 0 ? '<div class="text-xs text-gray-500 italic text-center">Vantagens em desenvolvimento pelo Game Designer...</div>' : ''}
+            </div>
+        `;
+        container.appendChild(block);
+
+        const list = document.getElementById(`perks-list-${attrKey}`);
+        Object.keys(attrData.perks).forEach(pName => {
+            const row = document.createElement('div');
+            row.className = 'bg-black/60 p-2 rounded border border-white/5';
+            row.innerHTML = `
+                <div class="flex justify-between items-center mb-1">
+                    <div class="text-sm font-bold text-gray-200">${escapeHTML(pName)}</div>
+                    <div class="flex items-center gap-2 bg-black/50 rounded px-2 py-1">
+                        <button type="button" class="text-red-400 hover:text-red-300" onclick="adjustPerk('${attrKey}', '${pName.replace(/'/g, "\\'")}', -1)"><i class="fa-solid fa-minus"></i></button>
+                        <span class="text-xs font-mono text-gold w-8 text-center" id="plvl-${attrKey}-${btoa(pName).replace(/=/g, '')}">Nv 0</span>
+                        <button type="button" class="text-green-400 hover:text-green-300" onclick="adjustPerk('${attrKey}', '${pName.replace(/'/g, "\\'")}', 1)"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="text-[10px] text-gray-400 min-h-[1.5rem]" id="pdesc-${attrKey}-${btoa(pName).replace(/=/g, '')}">Desativado.</div>
+            `;
+            list.appendChild(row);
+        });
+    });
+}
+
+function updatePerksMath() {
+    const attrs = {
+        con: parseInt(document.getElementById('inp-con').value) || 0,
+        for: parseInt(document.getElementById('inp-for').value) || 0,
+        vig: parseInt(document.getElementById('inp-vig').value) || 0,
+        agi: parseInt(document.getElementById('inp-agi').value) || 0,
+        von: parseInt(document.getElementById('inp-von').value) || 0,
+        sed: parseInt(document.getElementById('inp-sed').value) || 0,
+        mis: parseInt(document.getElementById('inp-mis').value) || 0
+    };
+
+    let allValid = true;
+
+    Object.keys(PERKS_DB).forEach(attrKey => {
+        const maxPV = Math.max(0, attrs[attrKey] * 3);
+        let usedPV = 0;
+        
+        // Reset Visuals
+        Object.keys(PERKS_DB[attrKey].perks).forEach(pName => {
+            const safeName = btoa(pName).replace(/=/g, '');
+            const lvlEl = document.getElementById(`plvl-${attrKey}-${safeName}`);
+            const descEl = document.getElementById(`pdesc-${attrKey}-${safeName}`);
+            if (lvlEl) { lvlEl.innerText = `Nv 0`; lvlEl.classList.remove('text-purple-400'); }
+            if (descEl) descEl.innerText = 'Desativado.';
+        });
+
+        if (draftPerks[attrKey]) {
+            Object.keys(draftPerks[attrKey]).forEach(pName => {
+                const lvl = draftPerks[attrKey][pName];
+                if (lvl > 0) {
+                    usedPV += PERK_COSTS[lvl];
+                    const safeName = btoa(pName).replace(/=/g, '');
+                    const lvlEl = document.getElementById(`plvl-${attrKey}-${safeName}`);
+                    const descEl = document.getElementById(`pdesc-${attrKey}-${safeName}`);
+                    if (lvlEl && descEl && PERKS_DB[attrKey].perks[pName]) {
+                        lvlEl.innerText = `Nv ${lvl}`;
+                        descEl.innerText = PERKS_DB[attrKey].perks[pName][lvl-1];
+                        if(lvl === 5) lvlEl.classList.add('text-purple-400');
+                    }
+                }
+            });
+        }
+        
+        const usedEl = document.getElementById(`pv-used-${attrKey}`);
+        const maxEl = document.getElementById(`pv-max-${attrKey}`);
+        if(usedEl && maxEl) {
+            usedEl.innerText = usedPV;
+            maxEl.innerText = maxPV;
+            if(usedPV > maxPV) {
+                usedEl.className = 'text-red-500 font-bold';
+                allValid = false;
+            } else {
+                usedEl.className = 'text-white';
+            }
+        }
+    });
+    
+    return allValid;
+}
+
+window.adjustPerk = function(attrKey, perkName, delta) {
+    if(!draftPerks[attrKey]) draftPerks[attrKey] = {};
+    let lvl = draftPerks[attrKey][perkName] || 0;
+    lvl += delta;
+    if(lvl < 0) lvl = 0;
+    if(lvl > 5) lvl = 5;
+    draftPerks[attrKey][perkName] = lvl;
+    updatePerksMath();
+}
+
+window.switchCharTab = function(tab) {
+    document.getElementById('char-tab-base').classList.add('hidden');
+    document.getElementById('char-tab-perks').classList.add('hidden');
+    document.getElementById('btn-tab-base').className = 'px-3 py-1 text-sm border-b-2 border-transparent text-gray-400 hover:text-white';
+    document.getElementById('btn-tab-perks').className = 'px-3 py-1 text-sm border-b-2 border-transparent text-gray-400 hover:text-white';
+    
+    if (tab === 'base') {
+        document.getElementById('char-tab-base').classList.remove('hidden');
+        document.getElementById('btn-tab-base').className = 'px-3 py-1 text-sm border-b-2 border-gold text-white';
+    } else {
+        document.getElementById('char-tab-perks').classList.remove('hidden');
+        document.getElementById('btn-tab-perks').className = 'px-3 py-1 text-sm border-b-2 border-gold text-white';
+        updatePerksMath();
+    }
+}
+
 // INIT
+initPerksUI();
 loadData();

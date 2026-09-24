@@ -239,6 +239,12 @@
                     <div id="dash-conditions" class="text-sm text-gray-300 whitespace-pre-wrap">Nenhuma condição ativa.</div>
                 </div>
 
+                <!-- Perks -->
+                <div class="glass-panel p-6 rounded-lg">
+                    <h3 class="font-cinzel text-xl text-gold border-b border-gold/20 pb-2 mb-4">Vantagens Ativas</h3>
+                    <div id="dash-perks" class="text-sm text-gray-300 space-y-2">Nenhuma vantagem adquirida.</div>
+                </div>
+
                 <!-- System Logs -->
                 <div class="glass-panel p-6 rounded-lg">
                     <h3 class="font-cinzel text-xl text-gold border-b border-gold/20 pb-2 mb-4"><i class="fa-solid fa-scroll text-gray-500 mr-2"></i> Registro do Sistema</h3>
@@ -262,12 +268,16 @@
     </main>
 
     <!-- Modal Character Creation / Edit -->
-    <dialog id="modal-character" class="glass-panel rounded-xl shadow-2xl p-0">
-        <div class="p-6 border-b border-gold/20">
+    <dialog id="modal-character" class="glass-panel rounded-xl shadow-2xl p-0 w-full max-w-2xl">
+        <div class="p-4 border-b border-gold/20 flex flex-col gap-3">
             <h2 class="text-2xl font-cinzel text-gold" id="modal-title">Nova Ficha</h2>
+            <div class="flex gap-2">
+                <button type="button" id="btn-tab-base" class="px-3 py-1 text-sm border-b-2 border-gold text-white" onclick="switchCharTab('base')">Atributos e Base</button>
+                <button type="button" id="btn-tab-perks" class="px-3 py-1 text-sm border-b-2 border-transparent text-gray-400 hover:text-white" onclick="switchCharTab('perks')">Vantagens</button>
+            </div>
         </div>
         <form method="dialog" id="form-character" class="p-6 max-h-[70vh] overflow-y-auto">
-            <div class="space-y-5">
+            <div id="char-tab-base" class="space-y-5">
                 <div>
                     <label class="block text-xs font-bold text-gray-400 uppercase mb-1">URL da Imagem de Perfil (Opcional)</label>
                     <input type="url" id="inp-avatar" class="input-dark" placeholder="https://exemplo.com/imagem.png">
@@ -359,7 +369,16 @@
                         <span>Desbloquear Limite de 12 Pontos para esta ficha</span>
                     </label>
                 </div>
-            </div>
+            </div> <!-- End Tab Base -->
+            
+            <div id="char-tab-perks" class="hidden space-y-4">
+                <div class="text-xs text-gray-400 bg-black/30 p-3 rounded mb-2">
+                    <i class="fa-solid fa-circle-info text-blue-400 mr-1"></i> Cada ponto de Atributo base fornece <strong>3 Pontos de Vantagem (PV)</strong> para distribuir exclusivamente nas vantagens daquele atributo.
+                </div>
+                <div id="perks-container" class="space-y-3">
+                    <!-- Gerado pelo JS -->
+                </div>
+            </div> <!-- End Tab Perks -->
         </form>
         <div class="p-4 border-t border-gold/20 flex justify-end gap-3 bg-black/20">
             <button id="btn-modal-cancel" class="px-4 py-2 text-sm text-gray-400 hover:text-white transition">Cancelar</button>
