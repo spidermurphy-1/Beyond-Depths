@@ -781,7 +781,18 @@ function saveToDB(collection, item, localArray, storageKey) {
 
 function deleteFromDB(collection, id, localArray, storageKey) {
     if (db && currentUser) {
-        db.collection(collection).doc(id).delete();
+        db.collection(collection).doc(id).delete().then(() => {
+            if(collection === 'characters') { renderSidebar(); renderDashboard(); }
+        }).catch(err => {
+            console.error("Erro ao deletar: ", err);
+            alert("Erro ao excluir. Sem permissão ou erro de rede.");
+        });
+        
+        // Optimistic UI update for immediate feedback
+        if (collection === 'characters') {
+            renderSidebar();
+            renderDashboard();
+        }
     } else {
         const arr = localArray.filter(x => x.id !== id);
         if (collection === 'characters') characters = arr;
