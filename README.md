@@ -41,7 +41,7 @@ Este projeto não exige node.js, portanto pode ser publicado de graça no GitHub
 1. **Crie um repositório no GitHub** e faça o push dos arquivos.
 2. **Ative o GitHub Pages:**
    - No repositório, clique na aba **"Settings"** e depois em **"Pages"**.
-   - Em **"Build and deployment"**, selecione **Source:** `Deploy from a branch`.
+   - Em **"Build and deploayment"**, selecione **Source:** `Deploy from a branch`.
    - Em **"Branch"**, selecione `main` e a pasta `/(root)`.
    - Clique em **Save**.
 3. Em alguns minutos, seu painel multiplayer estará no ar!
