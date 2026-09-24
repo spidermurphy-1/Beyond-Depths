@@ -1213,9 +1213,16 @@ document.getElementById('btn-save-g-skill').addEventListener('click', (e) => {
     const form = document.getElementById('form-skill');
     if(!form.checkValidity()) { form.reportValidity(); return; }
     
+    const nameVal = document.getElementById('inp-g-skill-name').value.trim();
+    
+    if (globalSkills.some(s => s.name.toLowerCase() === nameVal.toLowerCase())) {
+        alert("Já existe uma habilidade cadastrada com esse nome!");
+        return;
+    }
+    
     const obj = {
         id: generateId(),
-        name: document.getElementById('inp-g-skill-name').value,
+        name: nameVal,
         type: document.getElementById('inp-g-skill-type').value,
         cost: document.getElementById('inp-g-skill-cost').value,
         test: document.getElementById('inp-g-skill-test').value,
@@ -2247,55 +2254,59 @@ document.getElementById('btn-combat-add').onclick = () => {
 };
 
 document.getElementById('btn-combat-confirm').onclick = () => {
-    const val = document.getElementById('inp-combat-select').value;
-    if(!val) return;
-    
-    const type = val.split('_')[0];
-    const id = val.split('_')[1];
-    
-    let source = null;
-    if (type === 'char') source = characters.find(c => c.id === id);
-    if (type === 'monster') source = monsters.find(m => m.id === id);
-    
-    if(!source) return;
-    
-    const iniVal = document.getElementById('inp-combat-ini').value;
-    let roll = parseInt(iniVal);
-    const isMon = type === 'monster';
-    
-    if (isNaN(roll)) {
-        const baseIni = isMon ? (source.ini || 10) : (source.attr?.agi || 0);
-        roll = baseIni + Math.floor(Math.random() * 20) + 1;
+    try {
+        const val = document.getElementById('inp-combat-select').value;
+        if(!val) return;
+        
+        const type = val.split('_')[0];
+        const id = val.split('_')[1];
+        
+        let source = null;
+        if (type === 'char') source = characters.find(c => c.id === id);
+        if (type === 'monster') source = monsters.find(m => m.id === id);
+        
+        if(!source) return;
+        
+        const iniVal = document.getElementById('inp-combat-ini').value;
+        let roll = parseInt(iniVal);
+        const isMon = type === 'monster';
+        
+        if (isNaN(roll)) {
+            const baseIni = isMon ? (source.ini || 10) : (source.attr?.agi || 0);
+            roll = baseIni + Math.floor(Math.random() * 20) + 1;
+        }
+        
+        const cStats = isMon ? null : getClassStats(source.class);
+        const mods = isMon ? null : getCharModifiers(source);
+        
+        const attr = source.attr || { con: 0, vig: 0, agi: 0 };
+        let mhp = isMon ? source.hp : Math.max(1, Math.floor((cStats.hp + (attr.con * 10)) * mods.hp_mult));
+        let mst = isMon ? source.stamina : Math.max(1, Math.floor((cStats.st + (attr.vig * 5)) * mods.st_mult));
+        let mlu = isMon ? source.lust : cStats.lust;
+        
+        const combatant = {
+            cid: generateId(),
+            refId: source.id,
+            isMonster: isMon,
+            name: source.name,
+            avatar: isMon ? (source.avatar || '') : (source.avatarUrl || ''),
+            ini: roll,
+            hp: source.hp,
+            maxHp: mhp,
+            stamina: source.stamina,
+            maxSt: mst,
+            lust: source.lust || 0,
+            maxLust: mlu
+        };
+        
+        combatState.combatants.push(combatant);
+        sortCombatants();
+        document.getElementById('modal-combat-add').close();
+        renderRPG();
+    } catch (err) {
+        alert("Erro no botão Adicionar: " + err.message + "\nStack: " + err.stack);
+        console.error(err);
     }
-    
-    const cStats = isMon ? null : getClassStats(source.class);
-    const mods = isMon ? null : getCharModifiers(source);
-    
-    const attr = source.attr || { con: 0, vig: 0, agi: 0 };
-    let mhp = isMon ? source.hp : Math.max(1, Math.floor((cStats.hp + (attr.con * 10)) * mods.hp_mult));
-    let mst = isMon ? source.stamina : Math.max(1, Math.floor((cStats.st + (attr.vig * 5)) * mods.st_mult));
-    let mlu = isMon ? source.lust : cStats.lust;
-    
-    const combatant = {
-        cid: generateId(),
-        refId: source.id,
-        isMonster: isMon,
-        name: source.name,
-        avatar: source.avatar || '',
-        ini: roll,
-        hp: source.hp,
-        maxHp: mhp,
-        stamina: source.stamina,
-        maxSt: mst,
-        lust: source.lust,
-        maxLust: mlu
-    };
-    
-    combatState.combatants.push(combatant);
-    sortCombatants();
-    saveCombatState();
-    document.getElementById('modal-combat-add').close();
-    renderRPG();
 };
 
 document.getElementById('btn-combat-next').onclick = () => {
