@@ -75,6 +75,15 @@ const PERK_COSTS = [0, 1, 2, 3, 5, 9, 14, 20];
         "name": "Sedução",
         "icon": "fa-heart",
         "perks": {
+            "Dotação / Membro": [
+                "1: Tamanho notável. Dano LUST em penetração +1.",
+                "2: Volume que distrai por baixo das roupas. Dano LUST +1d2.",
+                "3: Formato e espessura perfeitamente estimulantes. Dano LUST +1d3.",
+                "4: Penetração Profunda: Libera Habilidade de causar Atordoamento ao penetrar. Dano LUST +1d4.",
+                "5: Inesgotável e pulsante, não perde a rigidez por dor. Dano LUST +2d2.",
+                "6: Proporções monstruosas que distendem a razão do alvo. Dano LUST +2d3.",
+                "7: O pilar absoluto do prazer. Destrói a sanidade (Mind Break) rapidamente. Dano LUST +3d4, Testes +3."
+            ],
             "Peitos/Peitoral": [
                 "1: Seu busto chama atenção. Dano de LUST +1",
                 "2: O balanço hipnotiza. Dano de LUST +1d2",
@@ -898,7 +907,7 @@ document.getElementById('btn-new-item').addEventListener('click', () => {
         populateCharModalSelects();
         enforceClassConditions();
         document.getElementById('skills-select-list').innerHTML = ''; // reset dynamic slots
-        updatePerksMath();
+        updatePointsCounter();
         document.getElementById('modal-character').showModal();
     } else if (currentTab === 'monsters') {
         editingMonsterId = null;
@@ -1556,6 +1565,7 @@ function renderDashboard() {
         document.getElementById('inp-sed').value = char.attr.sed;
         document.getElementById('inp-mis').value = char.attr.mis;
         
+        updatePointsCounter();
         document.getElementById('modal-character').showModal();
     };
 
