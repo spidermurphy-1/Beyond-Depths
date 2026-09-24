@@ -1418,47 +1418,53 @@ function enforceClassConditions() {
 
 document.getElementById('inp-class').addEventListener('input', enforceClassConditions);
 
-function getClassBonusSum() {
+function updatePointsCounter() {
     const className = document.getElementById('inp-class').value.trim();
     const tplKey = Object.keys(CLASS_TEMPLATES).find(k => k.toLowerCase() === className.toLowerCase());
-    let sum = 0;
-    if (tplKey) {
-        const mods = CLASS_TEMPLATES[tplKey].attrMods || {};
-        Object.values(mods).forEach(v => sum += v);
-    }
-    return sum;
-}
-
-function updatePointsCounter() {
-    const attrs = [
-        parseInt(document.getElementById('inp-con').value) || 0,
-        parseInt(document.getElementById('inp-for').value) || 0,
-        parseInt(document.getElementById('inp-vig').value) || 0,
-        parseInt(document.getElementById('inp-agi').value) || 0,
-        parseInt(document.getElementById('inp-von').value) || 0,
-        parseInt(document.getElementById('inp-sed').value) || 0,
-        parseInt(document.getElementById('inp-mis').value) || 0
-    ];
+    const baseMods = tplKey && CLASS_TEMPLATES[tplKey].attrMods ? CLASS_TEMPLATES[tplKey].attrMods : {};
     
-    let isOver5 = false;
-    for (let v of attrs) {
-        if (v > 5) isOver5 = true;
-    }
+    const attrKeys = ['con', 'for', 'vig', 'agi', 'von', 'sed', 'mis'];
+    const attrs = attrKeys.map(k => parseInt(document.getElementById(`inp-${k}`).value) || 0);
+    
+    let isInvalidDistribution = false;
+    let overLimitStr = "";
+    let totalDistributed = 0;
+    
+    attrs.forEach((v, idx) => {
+        const k = attrKeys[idx];
+        const base = baseMods[k] || 0;
+        const distributed = v - base;
+        
+        totalDistributed += distributed;
+        
+        if (distributed > 3) {
+            isInvalidDistribution = true;
+            overLimitStr = " (Máx +3/atrb)";
+        }
+        if (distributed < 0) {
+            isInvalidDistribution = true;
+            overLimitStr = " (Abaixo base)";
+        }
+    });
 
-    const total = attrs.reduce((a, b) => a + b, 0);
-    const limit = 8 + getClassBonusSum();
+    const limit = 8;
     
     const counterEl = document.getElementById('points-counter');
-    counterEl.innerText = total;
+    counterEl.innerText = totalDistributed;
     
     const limitEl = document.getElementById('points-limit-display');
-    if (limitEl) limitEl.innerText = limit;
+    if (limitEl) limitEl.innerText = limit + overLimitStr;
 
-    if(total !== limit || isOver5) counterEl.className = 'text-red-500 font-bold';
-    else counterEl.className = 'text-white';
+    if(totalDistributed !== limit || isInvalidDistribution) {
+        counterEl.className = 'text-red-500 font-bold';
+        if (limitEl) limitEl.className = 'text-red-500 text-xs';
+    } else {
+        counterEl.className = 'text-white';
+        if (limitEl) limitEl.className = '';
+    }
     
-    updatePerksMath(); // Refresh perk limits
-    return { total, limit, isOver5 };
+    updatePerksMath();
+    return { total: totalDistributed, limit, isInvalidDistribution };
 }
 
 document.querySelectorAll('.inp-attr-group input').forEach(inp => {
@@ -1513,11 +1519,11 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
     if (!isMasterOverride) {
         if (pts.total !== pts.limit) {
             switchCharTab('base');
-            return alert(`Você deve distribuir exatamente todos os pontos de atributo! O total deve ser ${pts.limit} (8 Base + Bônus de Classe).`);
+            return alert(`Você deve distribuir exatamente todos os ${pts.limit} pontos de atributo! (Distribuiu: ${pts.total})`);
         }
-        if (pts.isOver5) {
+        if (pts.isInvalidDistribution) {
             switchCharTab('base');
-            return alert("Nenhum atributo individual pode ser maior que 5!");
+            return alert("Distribuição inválida: você não pode adicionar mais de +3 pontos em um único atributo (ou reduzir os atributos base da classe).");
         }
     }
     
