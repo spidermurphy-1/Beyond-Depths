@@ -769,10 +769,13 @@ const CLASS_TEMPLATES = {
 
 // --- STATE ---
 let characters = [];
+let monsters = [];
+let combatState = { round: 1, combatants: [] };
 let globalArmors = [];
 let globalSkills = [];
 let activeCharId = null;
-let currentTab = 'chars'; // chars, armors, skills
+let currentTab = 'chars'; // chars, armors, skills, monsters, rpg
+let unsubscribeMonsters = null;
 
 function generateId() { return 'id_' + Math.random().toString(36).substr(2, 9); }
 
@@ -823,6 +826,7 @@ function deleteFromDB(collection, id, localArray, storageKey) {
     } else {
         const arr = localArray.filter(x => x.id !== id);
         if (collection === 'characters') characters = arr;
+        if (collection === 'monsters') monsters = arr;
         if (collection === 'global_armors') globalArmors = arr;
         if (collection === 'global_skills') globalSkills = arr;
         localStorage.setItem(storageKey, JSON.stringify(arr));
@@ -857,8 +861,13 @@ function loadData() {
                     if(currentTab === 'skills') renderSidebar();
                     renderDashboard();
                 });
+                unsubscribeMonsters = db.collection('monsters').onSnapshot(snap => {
+                    monsters = snap.docs.map(doc => doc.data());
+                    if(currentTab === 'monsters') renderSidebar();
+                    if(currentTab === 'rpg') renderRPG();
+                });
             } else {
-                characters = []; globalArmors = []; globalSkills = []; activeCharId = null;
+                characters = []; monsters = []; globalArmors = []; globalSkills = []; activeCharId = null;
                 renderSidebar(); renderDashboard();
             }
         });
@@ -869,9 +878,11 @@ function loadData() {
         if (da) globalArmors = JSON.parse(da);
         const ds = localStorage.getItem('bd_skills');
         if (ds) globalSkills = JSON.parse(ds);
+        const dm = localStorage.getItem('bd_monsters');
+        if (dm) monsters = JSON.parse(dm);
         
         if (activeCharId && !characters.find(c => c.id === activeCharId)) activeCharId = null;
-        updateAuthUI(); renderSidebar(); renderDashboard();
+        updateAuthUI(); renderSidebar(); renderDashboard(); renderRPG();
     }
 }
 
@@ -934,18 +945,30 @@ document.getElementById('btn-login-submit').addEventListener('click', (e) => {
 
 // --- SIDEBAR TABS ---
 document.getElementById('tab-chars').onclick = () => { currentTab = 'chars'; updateTabsUI(); renderSidebar(); }
+document.getElementById('tab-monsters').onclick = () => { currentTab = 'monsters'; updateTabsUI(); renderSidebar(); }
+document.getElementById('tab-rpg').onclick = () => { currentTab = 'rpg'; updateTabsUI(); renderSidebar(); renderRPG(); }
 document.getElementById('tab-armors').onclick = () => { currentTab = 'armors'; updateTabsUI(); renderSidebar(); }
 document.getElementById('tab-skills').onclick = () => { currentTab = 'skills'; updateTabsUI(); renderSidebar(); }
 
 function updateTabsUI() {
-    ['chars','armors','skills'].forEach(t => {
+    ['chars','monsters','rpg','armors','skills'].forEach(t => {
         const el = document.getElementById(`tab-${t}`);
+        if (!el) return;
         if(t === currentTab) {
-            el.className = `flex-1 py-3 bg-gold/10 text-gold font-bold transition`;
+            el.className = t === 'rpg' ? `flex-1 py-3 text-purple-400 bg-purple-900/20 font-bold transition` : `flex-1 py-3 bg-gold/10 text-gold font-bold transition`;
         } else {
-            el.className = `flex-1 py-3 text-gray-400 hover:text-gold transition`;
+            el.className = t === 'rpg' ? `flex-1 py-3 text-purple-400 hover:text-purple-300 transition font-bold` : `flex-1 py-3 text-gray-400 hover:text-gold transition`;
         }
     });
+
+    if (currentTab === 'rpg') {
+        document.getElementById('dashboard-container').classList.add('hidden');
+        document.getElementById('no-char-selected').classList.add('hidden');
+        document.getElementById('rpg-dashboard-container').classList.remove('hidden');
+    } else {
+        document.getElementById('rpg-dashboard-container').classList.add('hidden');
+        renderDashboard();
+    }
 }
 
 document.getElementById('btn-new-item').addEventListener('click', () => {
@@ -961,6 +984,10 @@ document.getElementById('btn-new-item').addEventListener('click', () => {
         document.getElementById('skills-select-list').innerHTML = ''; // reset dynamic slots
         updatePerksMath();
         document.getElementById('modal-character').showModal();
+    } else if (currentTab === 'monsters') {
+        editingMonsterId = null;
+        document.getElementById('form-monster').reset();
+        document.getElementById('modal-monster').showModal();
     } else if (currentTab === 'armors') {
         document.getElementById('form-armor').reset();
         document.getElementById('modal-armor').showModal();
@@ -977,6 +1004,11 @@ function renderSidebar() {
     let arr = [];
     if (currentTab === 'chars') {
         arr = characters;
+    } else if (currentTab === 'monsters') {
+        arr = monsters;
+    } else if (currentTab === 'rpg') {
+        listEl.innerHTML = '<div class="text-center text-sm text-purple-400 mt-10">Tracker ativo.</div>';
+        return;
     } else if (currentTab === 'armors') {
         arr = globalArmors;
     } else if (currentTab === 'skills') {
@@ -1001,6 +1033,14 @@ function renderSidebar() {
                     <div class="font-bold text-sm ${isAct ? 'text-gold' : 'text-gray-200'}">${escapeHTML(item.name)}</div>
                     <div class="text-xs text-gray-400">${escapeHTML(item.class)}</div>
                 </div>
+            `;
+        } else if (currentTab === 'monsters') {
+            div.innerHTML = `
+                <div class="flex-1 cursor-pointer" onclick="openEditMonster('${item.id}')">
+                    <div class="font-bold text-sm text-gray-200">${escapeHTML(item.name)}</div>
+                    <div class="text-xs text-gray-400">HP: ${item.hp} | LUST: ${item.lust}</div>
+                </div>
+                ${canEdit(item) ? `<button onclick="deleteFromDB('monsters', '${item.id}', monsters, 'bd_monsters')" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-trash"></i></button>` : ''}
             `;
         } else {
             const sub = currentTab === 'armors' ? `DF: +${item.mods.df}` : `Tipo: ${item.type}`;
@@ -1830,6 +1870,268 @@ window.switchCharTab = function(tab) {
     }
 }
 
+// --- MONSTER LOGIC ---
+document.getElementById('form-monster').addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!canEdit(null)) return alert("Sem permissão.");
+    
+    const newMonster = {
+        id: editingMonsterId || generateId(),
+        ownerId: currentUser ? currentUser.uid : null,
+        name: document.getElementById('inp-monster-name').value,
+        avatar: document.getElementById('inp-monster-avatar').value,
+        hp: parseInt(document.getElementById('inp-monster-hp').value) || 50,
+        stamina: parseInt(document.getElementById('inp-monster-st').value) || 50,
+        lust: parseInt(document.getElementById('inp-monster-lust').value) || 100,
+        ini: parseInt(document.getElementById('inp-monster-ini').value) || 10,
+        desc: document.getElementById('inp-monster-desc').value,
+        isMonster: true
+    };
+    
+    if (editingMonsterId) {
+        const m = monsters.find(x => x.id === editingMonsterId);
+        if (m) Object.assign(m, newMonster);
+    } else {
+        monsters.push(newMonster);
+    }
+    
+    saveToDB('monsters', editingMonsterId ? monsters.find(x => x.id === editingMonsterId) : newMonster, monsters, 'bd_monsters');
+    document.getElementById('modal-monster').close();
+    renderSidebar();
+});
+
+window.openEditMonster = function(id) {
+    const m = monsters.find(x => x.id === id);
+    if (!m) return;
+    editingMonsterId = id;
+    document.getElementById('inp-monster-name').value = m.name;
+    document.getElementById('inp-monster-avatar').value = m.avatar || '';
+    document.getElementById('inp-monster-hp').value = m.hp;
+    document.getElementById('inp-monster-st').value = m.stamina;
+    document.getElementById('inp-monster-lust').value = m.lust;
+    document.getElementById('inp-monster-ini').value = m.ini || 10;
+    document.getElementById('inp-monster-desc').value = m.desc || '';
+    document.getElementById('modal-monster').showModal();
+};
+
+
+// --- RPG TRACKER LOGIC ---
+document.getElementById('btn-combat-add').onclick = () => {
+    const sel = document.getElementById('inp-combat-select');
+    sel.innerHTML = '<option value="">-- Selecione --</option>';
+    
+    const optGroupChars = document.createElement('optgroup');
+    optGroupChars.label = 'Personagens';
+    characters.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = 'char_' + c.id;
+        opt.innerText = c.name;
+        optGroupChars.appendChild(opt);
+    });
+    
+    const optGroupMonsters = document.createElement('optgroup');
+    optGroupMonsters.label = 'Monstros';
+    monsters.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = 'monster_' + m.id;
+        opt.innerText = m.name;
+        optGroupMonsters.appendChild(opt);
+    });
+    
+    sel.appendChild(optGroupChars);
+    sel.appendChild(optGroupMonsters);
+    
+    document.getElementById('inp-combat-ini').value = '';
+    document.getElementById('modal-combat-add').showModal();
+};
+
+document.getElementById('btn-combat-confirm').onclick = () => {
+    const val = document.getElementById('inp-combat-select').value;
+    if(!val) return;
+    
+    const type = val.split('_')[0];
+    const id = val.split('_')[1];
+    
+    let source = null;
+    if (type === 'char') source = characters.find(c => c.id === id);
+    if (type === 'monster') source = monsters.find(m => m.id === id);
+    
+    if(!source) return;
+    
+    const iniVal = document.getElementById('inp-combat-ini').value;
+    let roll = parseInt(iniVal);
+    if (isNaN(roll)) {
+        const baseIni = source.isMonster ? (source.ini || 10) : (source.attr?.agi || 0);
+        roll = baseIni + Math.floor(Math.random() * 20) + 1;
+    }
+    
+    const cStats = source.isMonster ? null : getClassStats(source.class);
+    const mods = source.isMonster ? null : getCharModifiers(source);
+    
+    let mhp = source.isMonster ? source.hp : Math.max(1, Math.floor((cStats.hp + (source.attr.con * 10)) * mods.hp_mult));
+    let mst = source.isMonster ? source.stamina : Math.max(1, Math.floor((cStats.st + (source.attr.vig * 5)) * mods.st_mult));
+    let mlu = source.isMonster ? source.lust : cStats.lust;
+    
+    const combatant = {
+        cid: generateId(),
+        refId: source.id,
+        isMonster: !!source.isMonster,
+        name: source.name,
+        avatar: source.avatar || '',
+        ini: roll,
+        hp: source.hp,
+        maxHp: mhp,
+        stamina: source.stamina,
+        maxSt: mst,
+        lust: source.lust,
+        maxLust: mlu
+    };
+    
+    combatState.combatants.push(combatant);
+    sortCombatants();
+    document.getElementById('modal-combat-add').close();
+    renderRPG();
+};
+
+document.getElementById('btn-combat-next').onclick = () => {
+    if(combatState.combatants.length === 0) return;
+    const first = combatState.combatants.shift();
+    combatState.combatants.push(first);
+    combatState.round++;
+    renderRPG();
+};
+
+document.getElementById('btn-combat-clear').onclick = () => {
+    if(confirm("Deseja encerrar o combate e limpar a mesa?")) {
+        combatState.combatants = [];
+        combatState.round = 1;
+        renderRPG();
+    }
+};
+
+function sortCombatants() {
+    combatState.combatants.sort((a, b) => b.ini - a.ini);
+}
+
+window.adjustCombatStat = function(cid, stat, delta) {
+    const c = combatState.combatants.find(x => x.cid === cid);
+    if(!c) return;
+    
+    c[stat] += delta;
+    if(c[stat] < 0) c[stat] = 0;
+    
+    if(stat === 'hp' && c[stat] > c.maxHp) c[stat] = c.maxHp;
+    if(stat === 'stamina' && c[stat] > c.maxSt) c[stat] = c.maxSt;
+    if(stat === 'lust' && c[stat] > c.maxLust) c[stat] = c.maxLust;
+    
+    let ref = null;
+    let col = '';
+    let arr = null;
+    let storageKey = '';
+    
+    if (c.isMonster) {
+        ref = monsters.find(m => m.id === c.refId);
+        col = 'monsters'; arr = monsters; storageKey = 'bd_monsters';
+    } else {
+        ref = characters.find(ch => ch.id === c.refId);
+        col = 'characters'; arr = characters; storageKey = 'bd_characters';
+    }
+    
+    if (ref && canEdit(ref)) {
+        ref[stat] = c[stat];
+        saveToDB(col, ref, arr, storageKey);
+    }
+    
+    renderRPG();
+};
+
+function renderRPG() {
+    document.getElementById('rpg-round-counter').innerText = Math.floor((combatState.round - 1) / Math.max(1, combatState.combatants.length)) + 1;
+    
+    const listEl = document.getElementById('combat-tracker-list');
+    listEl.innerHTML = '';
+    
+    if(combatState.combatants.length === 0) {
+        listEl.innerHTML = '<div class="text-center text-gray-500 py-10 glass-panel rounded-lg">Nenhum combatente na mesa. Adicione personagens ou monstros para começar.</div>';
+        return;
+    }
+    
+    combatState.combatants.forEach((c, idx) => {
+        const isTurn = idx === 0;
+        const div = document.createElement('div');
+        div.className = `glass-panel p-4 rounded-lg flex flex-col md:flex-row items-center gap-4 border-2 transition-all ${isTurn ? 'border-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.4)]' : 'border-transparent opacity-80'}`;
+        
+        div.innerHTML = `
+            <div class="flex items-center gap-4 min-w-[200px]">
+                <div class="font-bold text-xl text-purple-400 w-8 text-center">${c.ini}</div>
+                ${c.avatar ? `<img src="${escapeHTML(c.avatar)}" class="w-12 h-12 rounded-full border border-gold object-cover">` : `<div class="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center border border-gold"><i class="fa-solid ${c.isMonster ? 'fa-ghost' : 'fa-user'}"></i></div>`}
+                <div>
+                    <div class="font-bold text-white">${escapeHTML(c.name)}</div>
+                    <div class="text-xs text-gray-400">${c.isMonster ? 'Monstro' : 'Personagem'}</div>
+                </div>
+            </div>
+            
+            <div class="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4 w-full">
+                <!-- HP -->
+                <div class="flex flex-col gap-1">
+                    <div class="flex justify-between text-xs font-bold text-gray-300">
+                        <span>HP</span><span>${c.hp} / ${c.maxHp}</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button class="btn-icon bg-red-900/50 text-red-300 px-2 py-1 rounded hover:bg-red-900" onclick="adjustCombatStat('${c.cid}', 'hp', -5)">-5</button>
+                        <button class="btn-icon bg-red-900/50 text-red-300 px-2 py-1 rounded hover:bg-red-900" onclick="adjustCombatStat('${c.cid}', 'hp', -1)">-1</button>
+                        <div class="flex-1 h-3 bg-gray-800 rounded overflow-hidden shadow-inner relative">
+                            <div class="h-full bg-red-500 transition-all duration-300" style="width: ${(c.hp/c.maxHp)*100}%"></div>
+                        </div>
+                        <button class="btn-icon bg-green-900/50 text-green-300 px-2 py-1 rounded hover:bg-green-900" onclick="adjustCombatStat('${c.cid}', 'hp', 1)">+1</button>
+                        <button class="btn-icon bg-green-900/50 text-green-300 px-2 py-1 rounded hover:bg-green-900" onclick="adjustCombatStat('${c.cid}', 'hp', 5)">+5</button>
+                    </div>
+                </div>
+                
+                <!-- Stamina -->
+                <div class="flex flex-col gap-1">
+                    <div class="flex justify-between text-xs font-bold text-gray-300">
+                        <span>Stamina</span><span>${c.stamina} / ${c.maxSt}</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button class="btn-icon bg-blue-900/50 text-blue-300 px-2 py-1 rounded hover:bg-blue-900" onclick="adjustCombatStat('${c.cid}', 'stamina', -5)">-5</button>
+                        <button class="btn-icon bg-blue-900/50 text-blue-300 px-2 py-1 rounded hover:bg-blue-900" onclick="adjustCombatStat('${c.cid}', 'stamina', -1)">-1</button>
+                        <div class="flex-1 h-3 bg-gray-800 rounded overflow-hidden shadow-inner relative">
+                            <div class="h-full bg-blue-400 transition-all duration-300" style="width: ${(c.stamina/c.maxSt)*100}%"></div>
+                        </div>
+                        <button class="btn-icon bg-blue-900/50 text-blue-300 px-2 py-1 rounded hover:bg-blue-900" onclick="adjustCombatStat('${c.cid}', 'stamina', 1)">+1</button>
+                        <button class="btn-icon bg-blue-900/50 text-blue-300 px-2 py-1 rounded hover:bg-blue-900" onclick="adjustCombatStat('${c.cid}', 'stamina', 5)">+5</button>
+                    </div>
+                </div>
+                
+                <!-- Lust -->
+                <div class="flex flex-col gap-1">
+                    <div class="flex justify-between text-xs font-bold text-gray-300">
+                        <span>Lust</span><span>${c.lust} / ${c.maxLust}</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button class="btn-icon bg-pink-900/50 text-pink-300 px-2 py-1 rounded hover:bg-pink-900" onclick="adjustCombatStat('${c.cid}', 'lust', -5)">-5</button>
+                        <button class="btn-icon bg-pink-900/50 text-pink-300 px-2 py-1 rounded hover:bg-pink-900" onclick="adjustCombatStat('${c.cid}', 'lust', -1)">-1</button>
+                        <div class="flex-1 h-3 bg-gray-800 rounded overflow-hidden shadow-inner relative">
+                            <div class="h-full bg-pink-500 transition-all duration-300" style="width: ${(c.lust/c.maxLust)*100}%"></div>
+                        </div>
+                        <button class="btn-icon bg-pink-900/50 text-pink-300 px-2 py-1 rounded hover:bg-pink-900" onclick="adjustCombatStat('${c.cid}', 'lust', 1)">+1</button>
+                        <button class="btn-icon bg-pink-900/50 text-pink-300 px-2 py-1 rounded hover:bg-pink-900" onclick="adjustCombatStat('${c.cid}', 'lust', 5)">+5</button>
+                    </div>
+                </div>
+            </div>
+            <button class="text-gray-500 hover:text-red-400 ml-0 md:ml-4" onclick="removeCombatant('${c.cid}')" title="Remover"><i class="fa-solid fa-xmark"></i></button>
+        `;
+        listEl.appendChild(div);
+    });
+}
+
+window.removeCombatant = function(cid) {
+    combatState.combatants = combatState.combatants.filter(c => c.cid !== cid);
+    renderRPG();
+};
+
 // INIT
 initPerksUI();
 loadData();
+
