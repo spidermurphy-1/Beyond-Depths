@@ -77,107 +77,107 @@ const PERK_COSTS = [0, 1, 2, 3, 5, 9];
             perks: {
                 "Seios Grandes": [
                     "Peitos pesados e fartos. **Sistema: +1 em rolagens de Persuasão Visual.**",
-                    "Formato perfeito e macio. **Sistema: O toque inflige +2 Dano LUST instintivo ao alvo.**",
-                    "Mamilos sempre duros. **Sistema: Inimigos corpo a corpo sofrem -1 de Iniciativa por distração LUST.**",
-                    "Sufocamento de peitos. **Sistema: Agarrões causam Dano LUST passivo e abaixam a Defesa LUST do alvo em -2.**",
-                    "Transe do Despir. **Sistema: Ação completa para nu frontal. Alvos num raio de 5m fazem teste (VON CD 15) ou perdem o turno babando.**"
+                    "Formato perfeito e macio. **Sistema: O toque inflige +2 Dano LUST instintivo. (Sem teste, contato direto).**",
+                    "Mamilos sempre duros. **Sistema: Inimigos corpo a corpo sofrem -1 de Iniciativa (Requer falha em Teste de Resistência: VON vs SED do usuário).**",
+                    "Sufocamento de peitos. **Sistema: Agarrões causam Dano LUST passivo e reduzem a Defesa LUST em -2 (Teste para Escapar: FOR/AGI vs FOR do usuário).**",
+                    "Transe do Despir. **Sistema: Ação completa. Alvos (raio 5m) rolam Teste Oposto (VON vs SED do usuário) ou perdem o turno atordoados de tesão.**"
                 ],
                 "Bunda e Quadris Largos": [
-                    "Bunda grande e redonda. **Sistema: Ataques inimigos por trás sofrem Desvantagem (rola 2d20, pega menor).**",
-                    "Molejo provocante. **Sistema: +1 em Sedução; quem estiver na sua retaguarda sofre 1 Dano LUST passivo.**",
-                    "Montaria de Coxas. **Sistema: Vantagem em testes para Imobilizar. Alvo imobilizado toma Dano LUST contínuo.**",
-                    "Carne absorvente. **Sistema: Dano Físico contundente nas costas reduzido em 1; converte em 1 Dano LUST em Área.**",
-                    "Onda de Rebolado. **Sistema: Ação em Área. Todos no raio de visão (VON CD 16) ficam 'Atordoados por LUST' por 1 turno.**"
+                    "Bunda grande. **Sistema: Ataques inimigos por trás sofrem Desvantagem (rola 2d20, pega o menor).**",
+                    "Molejo provocante. **Sistema: +1 em Sedução; quem estiver na sua retaguarda sofre 1 Dano LUST passivo no turno dele.**",
+                    "Montaria de Coxas. **Sistema: Vantagem (Teste: FOR/AGI vs AGI) para Imobilizar. Alvo imobilizado toma Dano LUST contínuo.**",
+                    "Carne absorvente. **Sistema: Dano Físico nas costas reduzido em 1; converte em 1 Dano LUST em Área (Teste: VON vs SED para ignorar LUST).**",
+                    "Onda de Rebolado. **Sistema: Ação em Área. Todos no raio visual fazem Teste Oposto (VON vs SED) ou ficam 'Atordoados por LUST' (1 turno).**"
                 ],
                 "Sexo Dominante": [
-                    "Cheiro quente. **Sistema: Entrar em raio de 2m força 1 Dano LUST ambiente no inimigo.**",
+                    "Cheiro quente. **Sistema: Inimigo entrar em raio de 2m sofre 1 Dano LUST ambiente (Teste Oposto: VON vs SED anula).**",
                     "Sensibilidade extrema. **Sistema: +2 Provocação (Taunt LUST). Apanhar aumenta seu dano LUST no turno seguinte.**",
-                    "Penetração Implacável. **Sistema: Acertar submissão/penetração ignora 50% da Defesa LUST do alvo.**",
-                    "Vampirismo Seminal. **Sistema: Se o alvo zerar o LUST perto de você, absorve a energia curando seu HP em 3d6.**",
-                    "A Primeira Metida. **Sistema: Executar um ataque LUST crítico aplica Mind Break instantâneo no oponente.**"
+                    "Penetração Implacável. **Sistema: Acertar submissão/penetração ignora 50% da Defesa LUST do alvo (Teste Oposto: FOR/AGI vs FOR).**",
+                    "Vampirismo Seminal. **Sistema: Se o alvo sofrer Mind Break perto de você, absorve a energia curando seu HP em 3d6.**",
+                    "A Primeira Metida. **Sistema: Acertar um ataque LUST crítico aplica Mind Break instantâneo (Teste Oposto: VON vs SED com Desvantagem do alvo para evitar).**"
                 ],
                 "Cheiro Viciante": [
-                    "Suor sedutor. **Sistema: NPCs neutros ganham status 'Amigável'. +1 em Interações Sociais base.**",
-                    "Feromônio confuso. **Sistema: Inimigos a 2m de distância rolam testes de Vontade com Desvantagem.**",
-                    "Névoa de Tesão. **Sistema: Passiva (+2 Dano LUST Área). Inimigos no raio perdem 1 de Chance de Acerto.**",
-                    "Aura Pesada. **Sistema: Inimigos engajados com você têm sua Resistência Base a LUST permanentemente diminuída em 25%.**",
-                    "Frenesi Bestial. **Sistema: LUST em área brutal (VON CD 17). Se falhar, NPCs e Monstros atacam uns aos outros dominados.**"
+                    "Suor sedutor. **Sistema: NPCs neutros rolam Teste Oposto (VON vs SED) ou ganham status 'Amigável'. +1 Interações.**",
+                    "Feromônio confuso. **Sistema: Inimigos a 2m de distância rolam todos os testes de Vontade com Desvantagem.**",
+                    "Névoa de Tesão. **Sistema: Passiva (+2 Dano LUST Área). Inimigos no raio perdem 1 de Acerto (Teste Oposto: VON vs SED resiste).**",
+                    "Aura Pesada. **Sistema: Inimigos engajados com você perdem 25% da Resistência LUST Base (Teste Oposto: VON vs SED para negar).**",
+                    "Frenesi Bestial. **Sistema: LUST em área (Teste Oposto: VON vs SED). Se falhar, NPCs e Monstros atacam uns aos outros dominados.**"
                 ],
                 "Beijo que Drena": [
-                    "Lábios úmidos. **Sistema: Beijar impõe estado 'Obediente' a lacaios fora de combate, acatando ordens simples.**",
-                    "Beijo Confuso. **Sistema: Ação de Combate. Alvo perde 1 Turno inteiro (Stun Mental) por pura letargia.**",
+                    "Lábios úmidos. **Sistema: Beijar impõe estado 'Obediente' a lacaios fora de combate (Teste Oposto: VON vs SED).**",
+                    "Beijo Confuso. **Sistema: Alvo beijado após agarrão perde 1 Turno (Stun Mental) (Teste Oposto: VON vs SED para resistir).**",
                     "Sucção de Energia. **Sistema: Beijo forçado (Ataque LUST) drena passivamente 10 pontos de Stamina do alvo.**",
-                    "Beijo do Vampiro. **Sistema: O beijo rouba 2d8 HP do alvo curando você diretamente. (Lifesteal)**",
-                    "Prisão Emocional. **Sistema: Após beijar, o inimigo sofre -5 em todos os ataques se o alvo não for você.**"
+                    "Beijo do Vampiro. **Sistema: O beijo rouba 2d8 HP do alvo curando você diretamente.**",
+                    "Prisão Emocional. **Sistema: Após beijar, o inimigo sofre -5 em todos os ataques se o alvo não for você (Teste Oposto: VON vs SED para quebrar a prisão).**"
                 ],
                 "Olhar Dominador": [
                     "Olhos cheios de desejo. **Sistema: +2 direto na Habilidade de Sedução à distância.**",
-                    "Contato Travador. **Sistema: Olhar direto em NPCs reduz a Iniciativa deles em -2 no começo da luta.**",
-                    "Queima LUST ocular. **Sistema: Pode causar 1d4 de Dano LUST no alvo usando apenas Ação Bônus sem encostar.**",
+                    "Contato Travador. **Sistema: Olhar direto em NPCs reduz a Iniciativa deles em -2 (Requer Falha em Teste: VON vs SED).**",
+                    "Queima LUST ocular. **Sistema: Pode causar 1d4 de Dano LUST no alvo com Ação Bônus (Teste Oposto: VON vs SED resiste metade).**",
                     "Olhar Transpassante. **Sistema: Mirar ativamente (Ação) corta a Defesa Mágica LUST do oponente pela metade.**",
-                    "Ajoelhar. **Sistema: (Ação) Força teste VON CD 18. Falha faz o inimigo largar armas e implorar no chão.**"
+                    "Ajoelhar. **Sistema: (Ação) Força Teste Oposto (VON vs SED). Falha faz o inimigo largar armas e implorar no chão.**"
                 ],
                 "Voz Sensual": [
-                    "Voz rouca. **Sistema: NPCs desarmam. Garante Vantagem em testes para mentir ou pedir favores.**",
-                    "Sussurro. **Sistema: Oferece +1 de Bônus Absoluto em testes cruzados de Agarrão/Submissão se sussurrar na orelha.**",
-                    "Palavras Sujas. **Sistema: Permite usar Ataques de LUST à distância (Raio de 10m).**",
-                    "Gemido Alto. **Sistema: Cancelamento em Área. Anula qualquer buff de 'Fúria' ou buffs mentais num raio de 5m.**",
-                    "Canção da Sereia. **Sistema: Paralisa todos os inimigos (VON CD 16) num raio de 15m. Passam o turno babando pela voz.**"
+                    "Voz rouca. **Sistema: Garante Vantagem em testes (SED) para mentir ou pedir favores a NPCs.**",
+                    "Sussurro. **Sistema: Oferece +1 de Bônus em testes cruzados de Agarrão/Submissão se sussurrar na orelha.**",
+                    "Palavras Sujas. **Sistema: Permite usar Ataques de LUST à distância (Raio de 10m) rolando SED vs VON.**",
+                    "Gemido Alto. **Sistema: Cancelamento (Ação). Anula buffs mentais ou Fúria em 5m (Teste Oposto: VON vs SED do alvo para manter os buffs).**",
+                    "Canção da Sereia. **Sistema: Paralisa todos os inimigos (raio 15m) que falharem no Teste (VON vs SED). Passam o turno babando.**"
                 ],
                 "Sem Vergonha Nenhuma": [
-                    "Mente suja orgulhosa. **Sistema: Ignora penalidades de armadura rasgada e debuffs de 'Desconforto'.**",
+                    "Mente suja orgulhosa. **Sistema: Ignora penalidades de armadura rasgada e debuffs mentais de 'Desconforto'.**",
                     "Pele Orgulhosa. **Sistema: Estar nu/semi-nu garante +1 de Defesa LUST base.**",
-                    "Nudez Absoluta Tática. **Sistema: Nu garante +3 Rolagem Base para todas interações Sociais e Corpo-a-Corpo.**",
-                    "Masoquismo Ascendente. **Sistema: Receber Dano LUST concede um Bônus temporário de +1 de Dano Físico para si mesmo.**",
-                    "Indomável e Nu. **Sistema: Barra LUST cheia não te dá Mind Break; ativa invulnerabilidade mental e dobra sua Força.**"
+                    "Nudez Absoluta Tática. **Sistema: Estar nu garante +3 Rolagem Base para interações Sociais e Corpo-a-Corpo baseadas em SED.**",
+                    "Masoquismo Ascendente. **Sistema: Receber Dano LUST concede um Bônus temporário de +1 Dano Físico para si mesmo.**",
+                    "Indomável e Nu. **Sistema: Barra LUST cheia não te dá Mind Break; ativa invulnerabilidade mental (Imune a LUST) e dobra sua Força.**"
                 ],
                 "Fluidos Viciantes": [
-                    "Sabor doce. **Sistema: Qualquer fluido seu atua como item; aliados curam +2 HP ao ingerir.**",
-                    "Soro do sangue/suor. **Sistema: Cura ativa de aliados ampliada (+5 HP base extra de cura).**",
-                    "Néctar de Controle. **Sistema: NPCs que ingerirem seu fluido rolam resistências contra você com Desvantagem por dias.**",
-                    "Fluido Purificador. **Sistema: Fazer sexo anula status de Veneno ou Doenças no parceiro.**",
+                    "Sabor doce. **Sistema: Qualquer fluido seu atua como item consumível; aliados curam +2 HP ao ingerir.**",
+                    "Soro do sangue/suor. **Sistema: Cura ativa recebida/dada envolvendo seus fluidos é ampliada (+5 HP extra).**",
+                    "Néctar de Controle. **Sistema: NPCs que ingerirem seu fluido rolam resistências contra você com Desvantagem (VON).**",
+                    "Fluido Purificador. **Sistema: Fazer sexo/submissão anula imediatamente status de Veneno ou Doenças no parceiro.**",
                     "Banho Sagrado Súcubo. **Sistema: Sexo molhado torna o aliado Imune a ataques LUST inimigos por 24 horas.**"
                 ],
                 "Pau Enorme": [
                     "Volume visual. **Sistema: Ganha +1 bônus direto em rolagens conjuntas de Sedução e Intimidação.**",
-                    "Intimidar LUST. **Sistema: Expôr ereção (Ação Bônus) causa +2 Dano LUST no campo visual aos não-imunes.**",
-                    "Arma Contundente. **Sistema: Pode usá-lo como arma física inquebrável concedendo +1 de Dano Desarmado.**",
-                    "Aprisionamento Interno. **Sistema: Acertar submissão paralisa ativamente os movimentos do parceiro por 1 Turno cravado.**",
-                    "Monstruosidade Implacável. **Sistema: Ignora imunidade racial/tamanho, infligindo Dano LUST massivo em monstros colossais.**"
+                    "Intimidar LUST. **Sistema: Expor (Ação Bônus) causa +2 Dano LUST visual (Teste Oposto: VON vs SED anula).**",
+                    "Arma Contundente. **Sistema: Pode usar como arma física concedendo +1 de Dano Desarmado.**",
+                    "Aprisionamento Interno. **Sistema: Acertar submissão paralisa ativamente o parceiro por 1 Turno cravado (Teste: VON vs SED para agir com desvantagem).**",
+                    "Monstruosidade Implacável. **Sistema: Ignora imunidade racial/tamanho contra monstros colossais em ataques LUST.**"
                 ],
                 "Língua Extensível": [
-                    "Língua fina. **Sistema: Concede Vantagem passiva para destrancar ferrolhos ou nós usando a boca.**",
-                    "Alcance de 30cm. **Sistema: Pode aplicar golpes de Dano LUST (Ação Bônus) até a média distância do grid.**",
-                    "Músculo Adicional. **Sistema: Concede bônus de +2 em testes de Imobilização se focados em zonas erógenas.**",
-                    "Língua como chicote. **Sistema: Alcance de 1 Metro. Permite Ataques de Oportunidade LUST.**",
-                    "Língua Preênsil. **Sistema: Funciona como Terceiro Braço. Permite manipular itens pesados ou desarmar inimigos de longe.**"
+                    "Língua fina. **Sistema: Concede Vantagem (AGI) para destrancar ferrolhos ou nós usando a boca.**",
+                    "Alcance de 30cm. **Sistema: Pode aplicar golpes de Dano LUST (Ação Bônus) a média distância.**",
+                    "Músculo Adicional. **Sistema: Bônus de +2 em testes Opostos Físicos (FOR) de Imobilização se focados em zonas erógenas.**",
+                    "Língua como chicote. **Sistema: Alcance de 1 Metro. Permite Ataques de Oportunidade LUST (SED vs VON) contra quem recuar.**",
+                    "Língua Preênsil. **Sistema: Funciona como Terceiro Braço. Permite manipular itens pesados ou desarmar inimigos a distância.**"
                 ],
                 "Buceta Hiperflexível": [
-                    "Adaptação tática. **Sistema: Imune a qualquer forma de Dano Físico letal oriundo de empalamento/penetração.**",
-                    "Controle de pressão. **Sistema: Adiciona +1 Dano LUST direto em golpes de Sexo ou Submissão sexual montada.**",
-                    "Parede Rugosa. **Sistema: Qualquer ataque LUST contra penetrador tem seu resultado final aumentado em 50%.**",
-                    "Buraco Negro Carnal. **Sistema: Funciona como inventário oculto inesgotável para armas leves e itens e ouro.**",
-                    "Recipiente Sagrado. **Sistema: Pode guardar líquidos (Poções Mágicas) vivos dentro sem que estraguem.**"
+                    "Adaptação tática. **Sistema: Imune a qualquer forma de Dano Físico letal oriundo de empalamento/penetração na região.**",
+                    "Controle de pressão. **Sistema: Adiciona +1 Dano LUST direto e passivo em golpes de Sexo ou Submissão.**",
+                    "Parede Rugosa. **Sistema: Qualquer dano LUST causado a um penetrador é ampliado passivamente em 50%.**",
+                    "Buraco Negro Carnal. **Sistema: Funciona como inventário oculto e inesgotável para armas leves e relíquias.**",
+                    "Recipiente Sagrado. **Sistema: Permite guardar líquidos vitais e Poções Mágicas dentro sem que estraguem.**"
                 ],
                 "Pele de Látex": [
-                    "Textura lisa brilhante. **Sistema: Ganha +1 Defesa Física natural passiva contra arranhões/lâminas fracas.**",
-                    "Borracha Humana. **Sistema: Bônus de Vantagem (+3) em testes de Acrobacia e Escape de apertos (Esquiva).**",
-                    "Fricção Zero. **Sistema: Inimigos tem penalidade de -1 para acertar socos em você (deslizam).**",
-                    "Pele Grudenta de Sucção. **Sistema: Se o inimigo rolar falha crítica batendo em você, a arma ou mão fica travada por 1 Turno.**",
-                    "Corpo Brinquedo. **Sistema: Sofrer ataques físicos aleatórios devolve 1 ponto de Cura de LUST residual.**"
+                    "Textura lisa brilhante. **Sistema: Ganha +1 Defesa Física natural contra arranhões e lâminas fracas.**",
+                    "Borracha Humana. **Sistema: Vantagem (+3) em Testes Opostos de Acrobacia e Escape de apertos (AGI vs FOR).**",
+                    "Fricção Zero. **Sistema: Inimigos têm penalidade passiva de -1 para acertar socos em você (deslizam).**",
+                    "Pele Grudenta de Sucção. **Sistema: Se o inimigo rolar Falha Crítica atacando você, a mão dele fica travada (Teste Físico: FOR vs AGI para soltar).**",
+                    "Corpo Brinquedo. **Sistema: Sofrer ataques físicos corpo-a-corpo devolve 1 ponto de Cura de LUST residual.**"
                 ],
                 "Dedos Longos e Flexíveis": [
-                    "Alcance extra leve. **Sistema: Ganha +1 nos testes de Prestidigitação ou roubo de bolsos.**",
-                    "Articulação Dupla. **Sistema: Permite re-rolar qualquer teste manual que falhou na tentativa de escape de algemas.**",
-                    "Dedos de Ouro. **Sistema: Aplica +2 de Dano LUST absoluto extra em qualquer submissão erótica.**",
-                    "Mãos independentes. **Sistema: Permite usar dois itens (ex: 2 poções de cura) usando uma única Ação.**",
-                    "Esticador de 25cm. **Sistema: Permite alcance cego de alavancas atrás de grades e dano LUST extremo interno longo.**"
+                    "Alcance extra leve. **Sistema: Ganha +1 passivo em testes de Prestidigitação (AGI) ou roubo furtivo.**",
+                    "Articulação Dupla. **Sistema: Permite re-rolar 1 falha diária em teste manual para escape de algemas.**",
+                    "Dedos de Ouro. **Sistema: Aplica +2 de Dano LUST absoluto extra em golpes de submissão erótica contínua.**",
+                    "Mãos independentes. **Sistema: Permite sacar e usar dois itens (ex: 2 poções) usando apenas 1 Ação.**",
+                    "Esticador de 25cm. **Sistema: Permite alcance cego de mecanismos e dano LUST interno extremo (Ignora 50% da Defesa LUST nestes ataques).**"
                 ],
                 "Pés Ágeis e Sensuais": [
-                    "Pés com força braçal. **Sistema: Impede você de perder movimentação ou cair fácil (+1 Equilíbrio de terreno).**",
-                    "Dedos de Mão do Pé. **Sistema: Vantagem em Prestidigitação usando pernas, permitindo roubar embaixo da mesa sem mãos.**",
-                    "Footjob Profissional. **Sistema: Permite causar Dano LUST mantendo as mãos da Action normais livres para espadas.**",
-                    "Pisada Esmagadora. **Sistema: Permite dominar/pisar Inimigos atordoados ignorando testes repetidos de fuga.**",
+                    "Pés com força braçal. **Sistema: Ganha +1 Equilíbrio (Vantagem passiva para resistir a Empurrões de FOR).**",
+                    "Dedos de Mão do Pé. **Sistema: Vantagem em Prestidigitação usando as pernas, permitindo roubar embaixo da mesa sem usar as mãos.**",
+                    "Footjob Profissional. **Sistema: Permite causar Dano LUST (1 Ação Bônus) usando os pés enquanto ataca normalmente com armas nas mãos.**",
+                    "Pisada Esmagadora. **Sistema: Vantagem em Testes de Dominação/Controle (FOR) contra inimigos atordoados/caídos no chão.**",
                     "Sentido Tremor Tátil. **Sistema: Nunca é pego desprevenido; percebe furtividade no piso concedendo +1 Iniciativa passiva.**"
                 ],
                 "Quadris Largos": [
