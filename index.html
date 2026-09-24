@@ -314,9 +314,17 @@
                     <input type="url" id="inp-avatar" class="input-dark" placeholder="https://exemplo.com/imagem.png">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div>
+                    <div class="col-span-2">
                         <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Nome</label>
                         <input type="text" id="inp-name" required class="input-dark" placeholder="Ex: Valerius">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Raça</label>
+                        <select id="inp-race" class="input-dark w-full">
+                            <option value="">-- Nenhuma --</option>
+                            <option value="Humano">Humano</option>
+                            <option value="Tiefling">Tiefling</option>
+                        </select>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Classe Livre</label>
@@ -328,6 +336,7 @@
                                 <option value="Curandeiro">Curandeiro</option>
                                 <option value="Oferenda">Oferenda</option>
                                 <option value="Necromante">Necromante</option>
+                                <option value="Artífice">Artífice</option>
                                 <option value="Caçador">Caçador</option>
                             </select>
                         </div>

@@ -761,6 +761,36 @@ const PERK_COSTS = [0, 1, 2, 3, 5, 9, 14, 20];
 
 
 const CLASS_TEMPLATES = {
+    "Artífice": {
+        baseStats: { hp: 110, st: 120, lust: 90, en: 30 },
+        attrMods: { agi: 3, vig: 2 },
+        skills: [
+            {
+                name: "Ligação Passada",
+                type: "Passiva",
+                cost: "-",
+                test: "-",
+                desc: "Enquanto para alguns as tecnologias esquecidas são como runas mágicas, os artífices conseguem compreender e se ligar com a antiga tecnologia humana. Recebe +2 em testes contra criaturas eletrônicas e é capaz de reunir seus pedaços para criação de itens e outros robôs."
+            },
+            {
+                name: "Pequeno Eu",
+                type: "Ativa",
+                cost: "50 turnos",
+                test: "-",
+                desc: "É possível criar criaturas e objetos com funções específicas a partir de 5 pedaços eletrônicos, com o valor aumentando conforme a complexidade, não precisando de ferramentas específicas. Usando uma bancada especializada, o Artíficie pode aprimorar equipamentos."
+            }
+        ],
+        weaknesses: [
+            {
+                name: "Descrente",
+                desc: "Os artífices acreditam que a energia sexual é apenas um tipo de energia ainda não explicado pela física... Eles não sabem que estão errados. Recebem 10% de dano extra de qualquer fonte mágica."
+            },
+            {
+                name: "Curiosidade Penitente",
+                desc: "Quando vêem um pedaço de tecnologia jamais visto, como uma criatura diferente, são obrigados a interagir com ela."
+            }
+        ]
+    },
     "Necromante": {
         baseStats: { hp: 70, st: 50, lust: 120, en: 90 },
         attrMods: { mis: 3, von: 2 },
@@ -1191,9 +1221,16 @@ document.getElementById('btn-save-g-armor').addEventListener('click', (e) => {
     const form = document.getElementById('form-armor');
     if(!form.checkValidity()) { form.reportValidity(); return; }
     
+    const nameVal = document.getElementById('inp-g-armor-name').value.trim();
+    
+    if (globalArmors.some(a => a.name.toLowerCase() === nameVal.toLowerCase())) {
+        alert("Já existe uma armadura cadastrada com esse nome!");
+        return;
+    }
+
     const obj = {
         id: generateId(),
-        name: document.getElementById('inp-g-armor-name').value,
+        name: nameVal,
         base: document.getElementById('inp-g-armor-base').value,
         desc: document.getElementById('inp-g-armor-desc').value,
         mods: {
@@ -1513,6 +1550,7 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
 
     const newCharData = {
         name: document.getElementById('inp-name').value,
+        race: document.getElementById('inp-race')?.value || '',
         class: document.getElementById('inp-class').value,
         gender: document.getElementById('inp-gender')?.value || '',
         orientation: document.getElementById('inp-orientation')?.value || '',
@@ -1696,7 +1734,7 @@ function renderDashboard() {
 
     dash.classList.remove('hidden'); noChar.classList.add('hidden');
     document.getElementById('dash-name').innerHTML = escapeHTML(char.name);
-    document.getElementById('dash-class').innerHTML = escapeHTML(char.class);
+    document.getElementById('dash-class').innerHTML = escapeHTML((char.race ? char.race + " • " : "") + char.class);
     
     const goEl = document.getElementById('dash-gender-orientation');
     let goText = [];
@@ -1776,6 +1814,7 @@ function renderDashboard() {
         editingCharId = char.id;
         document.getElementById('modal-title').innerText = "Editar Ficha";
         document.getElementById('inp-name').value = char.name;
+        const rEl = document.getElementById('inp-race'); if(rEl) rEl.value = char.race || '';
         document.getElementById('inp-class').value = char.class;
         const gEl = document.getElementById('inp-gender'); if(gEl) gEl.value = char.gender || '';
         const oEl = document.getElementById('inp-orientation'); if(oEl) oEl.value = char.orientation || '';
@@ -2183,10 +2222,17 @@ document.getElementById('form-monster').addEventListener('submit', (e) => {
     e.preventDefault();
     if (!isMaster()) return alert("Sem permissão. Apenas o Mestre pode criar monstros.");
     
+    const nameVal = document.getElementById('inp-monster-name').value.trim();
+    
+    if (!editingMonsterId && monsters.some(m => m.name.toLowerCase() === nameVal.toLowerCase())) {
+        alert("Já existe um monstro cadastrado com esse nome!");
+        return;
+    }
+    
     const newMonster = {
         id: editingMonsterId || generateId(),
         ownerId: currentUser ? currentUser.uid : null,
-        name: document.getElementById('inp-monster-name').value,
+        name: nameVal,
         avatar: document.getElementById('inp-monster-avatar').value,
         hp: parseInt(document.getElementById('inp-monster-hp').value) || 50,
         stamina: parseInt(document.getElementById('inp-monster-st').value) || 50,
