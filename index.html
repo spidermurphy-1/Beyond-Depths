@@ -107,7 +107,8 @@
             <!-- Main Stats: HP, Stamina, Lust, Energia Sexual -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- HP Card -->
-                <div class="glass-card p-5 border-t-2 border-t-red-600 relative overflow-hidden">
+                <div class="absolute left-1/2 -translate-x-1/2 top-4 w-48 bg-black/95 border border-gold/40 text-left p-3 rounded-lg text-xs opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 text-gray-300" id="tt-hp"></div>
+                <div class="glass-card p-5 border-t-2 border-t-red-600 relative overflow-hidden group cursor-help">
                     <h3 class="font-cinzel text-xl mb-3 flex items-center gap-2"><i class="fa-solid fa-heart text-red-500"></i> HP</h3>
                     <div class="progress-bar-container mb-4">
                         <div id="bar-hp" class="progress-fill fill-hp" style="width: 100%;"></div>
@@ -125,7 +126,8 @@
                 </div>
 
                 <!-- Stamina Card -->
-                <div class="glass-card p-5 border-t-2 border-t-yellow-500 relative overflow-hidden">
+                <div class="absolute left-1/2 -translate-x-1/2 top-4 w-48 bg-black/95 border border-gold/40 text-left p-3 rounded-lg text-xs opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 text-gray-300" id="tt-st"></div>
+                <div class="glass-card p-5 border-t-2 border-t-yellow-500 relative overflow-hidden group cursor-help">
                     <h3 class="font-cinzel text-xl mb-3 flex items-center gap-2"><i class="fa-solid fa-bolt text-yellow-500"></i> Stamina</h3>
                     <div class="progress-bar-container mb-4">
                         <div id="bar-stamina" class="progress-fill fill-stamina" style="width: 100%;"></div>
@@ -143,7 +145,8 @@
                 </div>
 
                 <!-- Lust Card -->
-                <div class="glass-card p-5 border-t-2 border-t-purple-500 relative overflow-hidden">
+                <div class="absolute left-1/2 -translate-x-1/2 top-4 w-48 bg-black/95 border border-gold/40 text-left p-3 rounded-lg text-xs opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 text-gray-300" id="tt-lust"></div>
+                <div class="glass-card p-5 border-t-2 border-t-purple-500 relative overflow-hidden group cursor-help">
                     <h3 class="font-cinzel text-xl mb-3 flex items-center gap-2"><i class="fa-solid fa-eye text-purple-500"></i> Lust</h3>
                     <div class="progress-bar-container mb-2">
                         <div id="bar-lust" class="progress-fill fill-lust" style="width: 0%;"></div>
@@ -162,7 +165,8 @@
                 </div>
                 
                 <!-- Energia Sexual Card -->
-                <div class="glass-card p-5 border-t-2 border-t-pink-500 relative overflow-hidden">
+                <div class="absolute left-1/2 -translate-x-1/2 top-4 w-48 bg-black/95 border border-gold/40 text-left p-3 rounded-lg text-xs opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 text-gray-300" id="tt-energy"></div>
+                <div class="glass-card p-5 border-t-2 border-t-pink-500 relative overflow-hidden group cursor-help">
                     <h3 class="font-cinzel text-xl mb-3 flex items-center gap-2"><i class="fa-solid fa-sparkles text-pink-500"></i> Magia</h3>
                     <div class="progress-bar-container mb-4">
                         <div id="bar-energy" class="progress-fill fill-energy" style="width: 0%; background-color: #ec4899;"></div>
@@ -180,12 +184,38 @@
                 </div>
             </div>
 
-            <!-- Derived Stats (Defesas e Esquiva) -->
-            <div class="glass-panel p-6 rounded-lg flex justify-around text-center mb-6 border border-gold/10 bg-black/20 shadow-inner">
-                <div>
-                    <div class="text-xs text-gray-400 uppercase tracking-wider mb-1"><i class="fa-solid fa-shield text-gray-500"></i> Defesa Física</div>
-                    <div class="text-3xl font-cinzel text-white" id="dash-df">0</div>
+            
+            <!-- Derived Stats (Dano, Defesas, Esquiva) -->
+            <div class="glass-panel p-6 rounded-lg mb-6 border border-gold/10 bg-black/20 shadow-inner">
+                <h3 class="font-cinzel text-xl text-gold border-b border-gold/20 pb-2 mb-4">Estatísticas de Combate</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 text-center">
+                    <div class="group relative cursor-help">
+                        <div class="text-xs text-gray-400 uppercase tracking-wider mb-1"><i class="fa-solid fa-sword text-red-500"></i> Dano Físico</div>
+                        <div class="text-3xl font-cinzel text-white" id="dash-danfis">0</div>
+                        <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-48 bg-black/95 border border-gold/40 text-left p-3 rounded-lg text-xs opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 text-gray-300" id="tt-danfis"></div>
+                    </div>
+                    <div class="group relative cursor-help">
+                        <div class="text-xs text-gray-400 uppercase tracking-wider mb-1"><i class="fa-solid fa-heart-crack text-purple-500"></i> Dano Lust</div>
+                        <div class="text-3xl font-cinzel text-purple-300" id="dash-danlust">0</div>
+                        <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-48 bg-black/95 border border-gold/40 text-left p-3 rounded-lg text-xs opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 text-gray-300" id="tt-danlust"></div>
+                    </div>
+                    <div class="group relative cursor-help">
+                        <div class="text-xs text-gray-400 uppercase tracking-wider mb-1"><i class="fa-solid fa-shield text-gray-500"></i> Defesa Física</div>
+                        <div class="text-3xl font-cinzel text-white" id="dash-df">0</div>
+                        <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-48 bg-black/95 border border-gold/40 text-left p-3 rounded-lg text-xs opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 text-gray-300" id="tt-df"></div>
+                    </div>
+                    <div class="group relative cursor-help">
+                        <div class="text-xs text-gray-400 uppercase tracking-wider mb-1"><i class="fa-solid fa-brain text-purple-500"></i> Defesa Lust</div>
+                        <div class="text-3xl font-cinzel text-purple-300" id="dash-dl">0</div>
+                        <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-48 bg-black/95 border border-gold/40 text-left p-3 rounded-lg text-xs opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 text-gray-300" id="tt-dl"></div>
+                    </div>
+                    <div class="group relative cursor-help">
+                        <div class="text-xs text-gray-400 uppercase tracking-wider mb-1"><i class="fa-solid fa-person-running text-green-500"></i> Esquiva</div>
+                        <div class="text-3xl font-cinzel text-green-300" id="dash-esq">0</div>
+                        <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-48 bg-black/95 border border-gold/40 text-left p-3 rounded-lg text-xs opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 text-gray-300" id="tt-esq"></div>
+                    </div>
                 </div>
+            </div>
                 <div class="w-px bg-white/10"></div>
                 <div>
                     <div class="text-xs text-gray-400 uppercase tracking-wider mb-1"><i class="fa-solid fa-brain text-purple-500"></i> Defesa Lust</div>
@@ -669,5 +699,17 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <script src="app.js"></script>
+
+    <!-- Modal View Perks -->
+    <dialog id="modal-view-perks" class="modal glass-panel border border-gold/30 rounded-xl p-0 w-full max-w-md bg-black/95 shadow-2xl backdrop-blur-md">
+        <div class="p-5 border-b border-gold/20 flex justify-between items-center bg-gradient-to-r from-black/60 to-transparent">
+            <h2 id="modal-vp-title" class="text-2xl font-cinzel text-gold drop-shadow-md">Vantagens</h2>
+            <button type="button" class="btn-icon" onclick="document.getElementById('modal-view-perks').close()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="p-5 overflow-y-auto max-h-[70vh] space-y-4" id="modal-vp-content">
+            <!-- Populated via JS -->
+        </div>
+    </dialog>
+
 </body>
 </html>
