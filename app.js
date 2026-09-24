@@ -736,10 +736,33 @@ const CLASS_TEMPLATES = {
     "Sacerdote": {
         class: "Sacerdote",
         attrMods: { mis: 3, von: 2 },
+        baseStats: { hp: 90, st: 90, en: 50, lust: 120, ecstasy: 20 },
         conditions: ["fragil_fisico", "fragil_sexual"],
         skillsToCreate: [
             { name: "Mente Consagrada", type: "Passiva", cost: "Passivo", test: "-", effect: "+5 na Defesa de Lust. Sempre que realiza ação de alívio, reduz 10 LUST do aliado mais afetado.", classRestricted: "Sacerdote" },
             { name: "Rito de Expulsão", type: "Mágica", cost: "Cooldown 3", test: "Misticismo vs DF", effect: "Requer fluidos. Aliado: Cura 15+Misticismo. Inimigo: Converte LUST em Energia Sexual (Max 3x Misticismo).", classRestricted: "Sacerdote" }
+        ]
+    },
+    "Curandeiro": {
+        class: "Curandeiro",
+        attrMods: { mis: 3, sed: 2 },
+        baseStats: { hp: 80, st: 90, en: 55, lust: 130, ecstasy: 25 },
+        conditions: [],
+        skillsToCreate: [
+            { name: "Corpo Curativo", type: "Mágica", cost: "Cooldown 3", test: "-", effect: "Cura 1d8 no toque ou 2d8 penetrando.", classRestricted: "Curandeiro" },
+            { name: "Confecção de Poções de Cura", type: "Habilidade", cost: "3 min", test: "-", effect: "Requer masturbação/orgasmo. Faz 2 poções pequenas (1d8 HP) ou 1 grande (2d6 HP) de sêmen.", classRestricted: "Curandeiro" },
+            { name: "Fraqueza: Canalização Íntima", type: "Passiva", cost: "Passivo", test: "-", effect: "Cura requer contato íntimo ininterrupto. Não pode conjurar feitiços durante a cura. Para cada 2 HP curado, recebe 1 LUST. Inimigos que beberem sêmen curam 2d3 HP.", classRestricted: "Curandeiro" }
+        ]
+    },
+    "Oferenda": {
+        class: "Oferenda",
+        attrMods: { con: 3, von: 2 },
+        baseStats: { hp: 120, st: 75, en: 50, lust: 135, ecstasy: 25 },
+        conditions: [],
+        skillsToCreate: [
+            { name: "Marionete", type: "Passiva", cost: "Passivo", test: "-", effect: "Sempre sob Bondage. Patrono escolhe descanso: Edging, Submissão (obriga Foca em mim!, -10% LUST/VON para a skill), ou Vínculo (Dobro HP Base, Dano sofrido=LUST).", classRestricted: "Oferenda" },
+            { name: "Foca em mim!", type: "Ativa", cost: "1 Ação", test: "Vontade CD 14", effect: "Corpo vulnerável torna-se irresistível. Obriga o alvo a focar a Oferenda como objetivo principal.", classRestricted: "Oferenda" },
+            { name: "Fraqueza: Corpo e Mente Cativa", type: "Passiva", cost: "Passivo", test: "-", effect: "Amarras alteram conforme o patrono. Impossível livrar-se. Sem aliados no combate, rende-se imediatamente.", classRestricted: "Oferenda" }
         ]
     }
 };
@@ -1164,8 +1187,10 @@ if (inpTemplate) {
         const tpl = CLASS_TEMPLATES[e.target.value];
         if (tpl) {
             document.getElementById('inp-class').value = tpl.class;
-            document.getElementById('inp-mis').value = parseInt(document.getElementById('inp-mis').value || 0) + (tpl.attrMods.mis || 0);
-            document.getElementById('inp-von').value = parseInt(document.getElementById('inp-von').value || 0) + (tpl.attrMods.von || 0);
+            Object.keys(tpl.attrMods).forEach(attrKey => {
+                const el = document.getElementById(`inp-${attrKey}`);
+                if (el) el.value = parseInt(el.value || 0) + tpl.attrMods[attrKey];
+            });
             
             enforceClassConditions();
             updatePointsCounter();
@@ -1284,12 +1309,11 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
     } else {
         newCharData.id = generateId();
         newCharData.logs = [];
-        const baseHp = classNameVal.includes('sacerdote') ? 90 : 10;
-        const baseSt = classNameVal.includes('sacerdote') ? 90 : 10;
-        newCharData.hp = Math.max(1, baseHp + (newCharData.attr.con * 10));
-        newCharData.stamina = Math.max(1, baseSt + (newCharData.attr.vig * 5));
+        const cStats = getClassStats(classNameVal);
+        newCharData.hp = Math.max(1, cStats.hp + (newCharData.attr.con * 10));
+        newCharData.stamina = Math.max(1, cStats.st + (newCharData.attr.vig * 5));
         newCharData.lust = 0;
-        newCharData.energy = classNameVal.includes('sacerdote') ? 50 : 35;
+        newCharData.energy = cStats.en;
         
         activeCharId = newCharData.id;
         localStorage.setItem('bd_active', activeCharId);
@@ -1304,6 +1328,18 @@ function getActiveChar() { return characters.find(c => c.id === activeCharId); }
 function getCharArmor(char) {
     if (!char.equippedArmorId) return null;
     return globalArmors.find(a => a.id === char.equippedArmorId) || null;
+}
+
+function getClassStats(className) {
+    if(!className) return { hp: 10, st: 10, en: 35, lust: 100, ecstasy: 25 };
+    const tplKey = Object.keys(CLASS_TEMPLATES).find(k => k.toLowerCase() === className.toLowerCase());
+    if (tplKey && CLASS_TEMPLATES[tplKey].baseStats) {
+        return CLASS_TEMPLATES[tplKey].baseStats;
+    }
+    if (className.toLowerCase().includes('sacerdote')) {
+        return { hp: 90, st: 90, en: 50, lust: 120, ecstasy: 20 };
+    }
+    return { hp: 10, st: 10, en: 35, lust: 100, ecstasy: 25 };
 }
 
 function getCharModifiers(char) {
@@ -1502,16 +1538,13 @@ function renderDashboard() {
 }
 
 function updateBars(char, mods) {
-    const isSacerdote = char.class && char.class.toLowerCase().includes('sacerdote');
-    
-    const baseHp = isSacerdote ? 90 : 10;
-    const baseSt = isSacerdote ? 90 : 10;
+    const cStats = getClassStats(char.class);
     
     // Apply Condition Multipliers
-    let maxHp = Math.max(1, Math.floor((baseHp + (char.attr.con * 10)) * mods.hp_mult));
-    let maxSt = Math.max(1, Math.floor((baseSt + (char.attr.vig * 5)) * mods.st_mult));
-    const maxEn = isSacerdote ? 50 : 35;
-    const maxLu = isSacerdote ? 120 : 100;
+    let maxHp = Math.max(1, Math.floor((cStats.hp + (char.attr.con * 10)) * mods.hp_mult));
+    let maxSt = Math.max(1, Math.floor((cStats.st + (char.attr.vig * 5)) * mods.st_mult));
+    const maxEn = cStats.en;
+    const maxLu = cStats.lust;
     
     const hp = Math.max(0, Math.min(maxHp, char.hp));
     document.getElementById('val-hp').innerText = hp; document.getElementById('max-hp').innerText = maxHp;
@@ -1533,7 +1566,7 @@ function updateBars(char, mods) {
     if (lu >= maxLu) barLust.classList.add('mind-break');
     else barLust.classList.remove('mind-break');
 
-    let ecstasyLimiar = mods.ecstasy_set !== null ? mods.ecstasy_set : ((isSacerdote ? 20 : 25) + char.attr.vig);
+    let ecstasyLimiar = mods.ecstasy_set !== null ? mods.ecstasy_set : (cStats.ecstasy + char.attr.vig);
     document.getElementById('dash-ecstasy-threshold').innerText = ecstasyLimiar;
     
     let ecstasyStage = Math.floor(lu / ecstasyLimiar);
@@ -1610,22 +1643,22 @@ window.adjustStat = function(stat, amount) {
     char[stat] += amount;
     
     const mods = getCharModifiers(char);
-    const isSacerdote = char.class && char.class.toLowerCase().includes('sacerdote');
+    const cStats = getClassStats(char.class);
     
     if (stat === 'lust') {
-        const mx = isSacerdote ? 120 : 100;
+        const mx = cStats.lust;
         if(char[stat] > mx) char[stat] = mx;
         if(char[stat] < 0) char[stat] = 0;
     } else if (stat === 'hp') {
-        const mx = Math.max(1, Math.floor(((isSacerdote ? 90 : 10) + (char.attr.con * 10)) * mods.hp_mult));
+        const mx = Math.max(1, Math.floor((cStats.hp + (char.attr.con * 10)) * mods.hp_mult));
         if(char[stat] > mx) char[stat] = mx;
         if(char[stat] < 0) char[stat] = 0;
     } else if (stat === 'stamina') {
-        const mx = Math.max(1, Math.floor(((isSacerdote ? 90 : 10) + (char.attr.vig * 5)) * mods.st_mult));
+        const mx = Math.max(1, Math.floor((cStats.st + (char.attr.vig * 5)) * mods.st_mult));
         if(char[stat] > mx) char[stat] = mx;
         if(char[stat] < 0) char[stat] = 0;
     } else if (stat === 'energy') {
-        const mx = isSacerdote ? 50 : 35;
+        const mx = cStats.en;
         if(char[stat] > mx) char[stat] = mx;
         if(char[stat] < 0) char[stat] = 0;
     }
