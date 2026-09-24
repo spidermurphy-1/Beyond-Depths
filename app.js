@@ -954,10 +954,22 @@ function updateTabsUI() {
     ['chars','monsters','rpg','armors','skills'].forEach(t => {
         const el = document.getElementById(`tab-${t}`);
         if (!el) return;
-        if(t === currentTab) {
-            el.className = t === 'rpg' ? `flex-1 py-3 text-purple-400 bg-purple-900/20 font-bold transition` : `flex-1 py-3 bg-gold/10 text-gold font-bold transition`;
+        if (t === currentTab) {
+            if (t === 'rpg') {
+                el.classList.add('text-purple-300', 'bg-purple-900/30');
+                el.classList.remove('text-purple-400', 'bg-purple-900/10');
+            } else {
+                el.classList.add('bg-gold/10', 'text-gold', 'font-bold');
+                el.classList.remove('text-gray-400');
+            }
         } else {
-            el.className = t === 'rpg' ? `flex-1 py-3 text-purple-400 hover:text-purple-300 transition font-bold` : `flex-1 py-3 text-gray-400 hover:text-gold transition`;
+            if (t === 'rpg') {
+                el.classList.add('text-purple-400', 'bg-purple-900/10');
+                el.classList.remove('text-purple-300', 'bg-purple-900/30');
+            } else {
+                el.classList.add('text-gray-400');
+                el.classList.remove('bg-gold/10', 'text-gold', 'font-bold');
+            }
         }
     });
 
