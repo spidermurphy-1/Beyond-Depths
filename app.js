@@ -441,6 +441,20 @@ function updateTabsUI() {
         }
     });
 
+    const btnNew = document.getElementById('btn-new-item');
+    const btnImp = document.getElementById('btn-import-char');
+    if(currentTab === 'rpg') {
+        btnNew.innerHTML = '<i class="fa-solid fa-plus mr-1"></i> Add Mesa';
+        btnNew.classList.replace('btn-gold', 'bg-purple-600');
+        btnNew.classList.add('text-white', 'hover:bg-purple-500');
+        btnImp.classList.add('hidden');
+    } else {
+        btnNew.innerHTML = '<i class="fa-solid fa-plus mr-1"></i> Novo';
+        btnNew.classList.replace('bg-purple-600', 'btn-gold');
+        btnNew.classList.remove('text-white', 'hover:bg-purple-500');
+        btnImp.classList.remove('hidden');
+    }
+
     if (currentTab === 'rpg') {
         document.getElementById('dashboard-container').classList.add('hidden');
         document.getElementById('no-char-selected').classList.add('hidden');
@@ -468,6 +482,8 @@ document.getElementById('btn-new-item').addEventListener('click', () => {
         editingMonsterId = null;
         document.getElementById('form-monster').reset();
         document.getElementById('modal-monster').showModal();
+    } else if (currentTab === 'rpg') {
+        document.getElementById('btn-combat-add').click();
     } else if (currentTab === 'armors') {
         document.getElementById('form-armor').reset();
         document.getElementById('modal-armor').showModal();
@@ -972,11 +988,12 @@ function renderDashboard() {
     
     // Combat Actions Table
     const tBody = document.getElementById('dash-actions-table');
-    tBody.innerHTML = '';
-    const sed = char.attr.sed || 0;
-    const force = char.attr.for || 0;
-    const agi = char.attr.agi || 0;
-    const mis = char.attr.mis || 0;
+    if (tBody) {
+        tBody.innerHTML = '';
+        const sed = char.attr.sed || 0;
+        const force = char.attr.for || 0;
+        const agi = char.attr.agi || 0;
+        const mis = char.attr.mis || 0;
     
     const actions = [
         { name: "Ataque Desarmado/Físico", effect: `1d8 + ${force} HP`, cost: "1 Ação" },
@@ -995,6 +1012,7 @@ function renderDashboard() {
             </tr>
         `;
     });
+    }
     
     // Skills Grid
     const gridSkills = document.getElementById('dash-skills-grid');
