@@ -69,26 +69,56 @@ const CONDITIONS_DB = {
     "enfeiticado": { name: "Enfeitiçado", desc: "Defesa de Lust é zerada.", mods: { dlust_set: 0 } }
 };
 
-const PERK_COSTS = [0, 1, 2, 3, 5, 9];
+const PERK_COSTS = [0, 1, 2, 3, 5, 9, 14, 20];
     const PERKS_DB = {
     "sed": {
         "name": "Sedução",
         "icon": "fa-heart",
         "perks": {
-            "Atributos Exuberantes (Seios/Físico)": [
-                "+1 em testes de persuasão corporal. Contato físico aplica 1 Dano LUST (Sem teste).",
-                "O formato do seu corpo distrai: inimigos em 2m têm -1 de Iniciativa.",
-                "Agarrões aplicam Vantagem para Sedução e reduzem a Defesa LUST do alvo em -2."
+            "Peitos/Peitoral": [
+                "1: Seu busto chama atenção. Dano de LUST +1",
+                "2: O balanço hipnotiza. Dano de LUST +1d2",
+                "3: O toque neles excita. Dano de LUST +1d3",
+                "4: Eles dominam a visão do alvo. Dano de LUST +1d4, Testes +1",
+                "5: Tamanho e maciez surreais. Dano de LUST +2d2, Testes +2",
+                "6: O alvo mal consegue pensar direito. Dano de LUST +2d3, Testes +2",
+                "7: Fartura divina e sufocante. Dano de LUST +3d4, Testes +3"
             ],
-            "Molejo e Quadris": [
-                "Ataques sofridos pelas costas rolam com Desvantagem para o atacante.",
-                "Montaria Sensível: Ganha Vantagem para testes de agarrar/imobilizar usando as pernas.",
-                "Ação - Rebolar (Área 5m): Inimigos fazem teste (VON vs SED) ou perdem a Ação Principal."
+            "Quadril/Glúteos": [
+                "1: Quadril largo e convidativo. Defesa LUST +1",
+                "2: Movimentos sinuosos. Defesa LUST +1, Dano +1d2",
+                "3: Uma retaguarda invejável. Defesa LUST +1, Dano +1d3",
+                "4: Rebolado que desestabiliza. Defesa LUST +2, Dano +1d4",
+                "5: Difícil tirar os olhos. Defesa LUST +2, Dano +2d2",
+                "6: Cada passo é uma provocação. Defesa LUST +3, Dano +2d3",
+                "7: Proporções perfeitas, domina ambientes. Defesa LUST +3, Dano +3d4"
             ],
-            "Feromônios Viciantes": [
-                "Inimigos a 2m sofrem 1 Dano LUST passivo no início do turno deles.",
-                "Penetração/Ação Oral ganha +1d4 de Dano LUST e cura você em 1d4 de Stamina.",
-                "Se o alvo gozar/sofrer Mind Break a 5m de você, recupere 3d6 de HP."
+            "Lábios/Fala": [
+                "1: Lábios atraentes. Dano LUST +1",
+                "2: Sussurros excitantes. Dano LUST +1d2",
+                "3: Gemidos que afetam a mente. Dano LUST +1d3",
+                "4: Beijos inesquecíveis. Dano LUST +1d4, Testes +1",
+                "5: Promessas vulgares. Dano LUST +2d2, Testes +2",
+                "6: Apenas ouvir sua voz excita. Dano LUST +2d3, Testes +2",
+                "7: Um simples beijo ou sussurro quebra mentes. Dano LUST +3d4, Testes +3"
+            ],
+            "Mãos/Dedos": [
+                "1: Toque sensível. Dano LUST +1",
+                "2: Dedos ágeis. Dano LUST +1d2",
+                "3: Carícias exatas. Dano LUST +1d3",
+                "4: Encontra todos os pontos G. Dano LUST +1d4, Testes +1",
+                "5: Mãos profanas. Dano LUST +2d2, Testes +2",
+                "6: Massagens que derretem resistências. Dano LUST +2d3, Testes +2",
+                "7: Dominância completa pelos dedos. Dano LUST +3d4, Testes +3"
+            ],
+            "Pés": [
+                "1: Pés bonitos e bem cuidados. Dano LUST +1",
+                "2: Fetiche moderado. Dano LUST +1d2",
+                "3: Toque de pernas. Dano LUST +1d3",
+                "4: Especialista em dominação por pés. Dano LUST +1d4, Testes +1",
+                "5: Capaz de levar ao delírio sem usar as mãos. Dano LUST +2d2, Testes +2",
+                "6: Pés irresistíveis para submissos. Dano LUST +2d3, Testes +2",
+                "7: Um passo em cima e o alvo já implora. Dano LUST +3d4, Testes +3"
             ]
         }
     },
@@ -96,20 +126,23 @@ const PERK_COSTS = [0, 1, 2, 3, 5, 9];
         "name": "Força",
         "icon": "fa-dumbbell",
         "perks": {
-            "Pegada Firme": [
-                "Agarrões causam 1d4 de Dano LUST extra por turno em áreas sensíveis.",
-                "Pode usar Ação Menor para forçar o alvo imobilizado a receber toque (+SED em Dano LUST).",
-                "Aumenta limite de peso e permite carregar/suspender parceiros sem penalidade."
+            "Braços": [
+                "1: Braços definidos. Dano Físico +1",
+                "2: Bíceps duros. Dano Físico +1d2",
+                "3: Capaz de levantar parceiros com facilidade. Dano Físico +1d3",
+                "4: Força esmagadora. Dano Físico +1d4, Testes +1",
+                "5: Quase quebra ossos. Dano Físico +2d2, Testes +2",
+                "6: Domina alvos na força bruta. Dano Físico +2d3, Testes +2",
+                "7: Músculos surreais, ninguém escapa. Dano Físico +3d4, Testes +3"
             ],
-            "Resistência Bruta": [
-                "Ao sofrer Dano Físico, você pode gastar 5 Stamina para reduzir o dano em 1d4.",
-                "Resistir a imobilizações ou posições indesejadas rola com Vantagem.",
-                "Dano Corpo-a-Corpo (Físico) ganha +FOR no dano."
-            ],
-            "Submissão Forçada": [
-                "Quando imobiliza alguém, o alvo perde 2 de Defesa LUST instantaneamente.",
-                "Ganha Vantagem em testes de FOR vs AGI para iniciar atos sexuais.",
-                "Alvos penetrados à força por você perdem -5 de Stamina por turno."
+            "Pegada/Mãos": [
+                "1: Aperto firme. Redução Dano +1",
+                "2: Mãos pesadas. Redução Dano +1d2",
+                "3: Difícil de soltar. Redução Dano +1d3",
+                "4: Deixa marcas fortes no corpo. Redução Dano +1d4, Testes +1",
+                "5: Quebra itens facilmente. Redução Dano +2d2, Testes +2",
+                "6: Aperto sufocante. Redução Dano +2d3, Testes +2",
+                "7: Onde você agarra, você domina. Redução Dano +2d4, Testes +3"
             ]
         }
     },
@@ -117,20 +150,23 @@ const PERK_COSTS = [0, 1, 2, 3, 5, 9];
         "name": "Agilidade",
         "icon": "fa-person-running",
         "perks": {
-            "Flexibilidade Extrema": [
-                "Consegue escapar de amarras e agarrões rolando com Vantagem.",
-                "Pode usar posições exóticas: garante +2 de Dano LUST em ações corporais.",
-                "Ao esquivar de um ataque, pode gastar Reação para aplicar Toque Sensível no atacante."
+            "Flexibilidade": [
+                "1: Corpo flexível. Defesa +1",
+                "2: Alcance em posições exóticas. Defesa +1",
+                "3: Escapa fácil de amarras. Defesa +2",
+                "4: Contorcionismo erótico. Defesa +2, Testes +1",
+                "5: Dobra o corpo em ângulos impossíveis. Defesa +3, Testes +2",
+                "6: Praticamente água. Defesa +3, Testes +2",
+                "7: Uma aberração ginástica, inagarrável. Defesa +3, Testes +3, Dano LUST +2d3"
             ],
-            "Reflexos Eróticos": [
-                "Adiciona +AGI na Defesa contra ataques corpo-a-corpo.",
-                "Movimentação sexual não gera Ataque de Oportunidade.",
-                "Pode usar uma Ação Menor para realizar masturbação/oral rápido num alvo agarrado."
-            ],
-            "Acrobata Sensual": [
-                "Ganha +AGI em testes de Sedução durante danças ou movimentos rítmicos.",
-                "Ao sofrer dano LUST, passe num teste de AGI (CD 15) para reduzir o dano pela metade.",
-                "Uma vez por combate, troque de lugar com o alvo no meio de um ato."
+            "Pernas/Acrobacia": [
+                "1: Pernas ágeis. Dano +1",
+                "2: Chutes rápidos. Dano +1d2",
+                "3: Saltos altos. Dano +1d3",
+                "4: Posições aéreas. Dano +1d4, Testes +1",
+                "5: Montaria rápida. Dano +2d2, Testes +2",
+                "6: Movimentos impossíveis de prever. Dano +2d3, Testes +2",
+                "7: Causa dano ou escapa antes de ser notado. Dano +3d4, Testes +3"
             ]
         }
     },
@@ -138,41 +174,41 @@ const PERK_COSTS = [0, 1, 2, 3, 5, 9];
         "name": "Constituição",
         "icon": "fa-shield-heart",
         "perks": {
-            "Vigor Inesgotável": [
-                "Adiciona +10 na Stamina Máxima.",
-                "Descansos rápidos curam o dobro de HP e Stamina.",
-                "Chegar a 0 Stamina não causa Exaustão imediata (suporta +1 rodada no ápice)."
+            "Abdômen/Costas": [
+                "1: Barriga firme. Redução de Dano Físico +1",
+                "2: Tanquinho. Redução de Dano Físico +1d2",
+                "3: Aguenta golpes limpos. Redução de Dano Físico +1d3",
+                "4: Parede de músculos. Redução de Dano Físico +1d4, Testes +1",
+                "5: Ignora dor moderada. Redução de Dano Físico +2d2, Testes +2",
+                "6: Costas largas, barriga de aço. Redução de Dano Físico +2d3, Testes +2",
+                "7: Corpo como uma muralha, quase indestrutível. Redução de Dano Físico +2d4, Testes +3"
             ],
-            "Corpo Sensível e Resistente": [
-                "+1 de Defesa contra Ataques Físicos.",
-                "Vantagem contra Venenos, Doenças e Fadiga Exaustiva.",
-                "Ao final de atos intensos, ganha um buff temporário de +1 FOR e +1 AGI ao invés de cansaço."
+            "Coxas": [
+                "1: Pernas grossas. Dano LUST +1",
+                "2: Esmaga rostos leves. Dano LUST +1d2",
+                "3: Alvo não escapa de montarias. Dano LUST +1d3",
+                "4: Coxas sufocantes (Thick). Dano LUST +1d4, Testes +1",
+                "5: Fetiche mortal. Dano LUST +2d2, Testes +2",
+                "6: Quebra melancias e mentes. Dano LUST +2d3, Testes +2",
+                "7: Aperto definitivo entre as pernas. Dano LUST +3d4, Testes +3"
             ],
-            "Absorção e Prazer": [
-                "Dano físico contundente pode ser resistido com Vantagem usando CON.",
-                "Ganha +CON como bônus em testes para resistir ao seu próprio orgasmo precoce.",
-                "Converter Dor em Stamina: Dano físico intenso recupera 1d4 de Stamina."
-            ]
-        }
-    },
-    "mis": {
-        "name": "Misticismo",
-        "icon": "fa-wand-magic-sparkles",
-        "perks": {
-            "Magia Carnal": [
-                "Feitiços aplicam +MIS em Dano LUST secundário.",
-                "Magias de cura restauram +1d4 HP se aplicadas através de fluidos ou beijo.",
-                "Pode conjurar magias usando LUST ao invés de Stamina (1 LUST = 2 Stamina)."
+            "Pele": [
+                "1: Pele sensível. Defesa +1",
+                "2: Suor perfumado. Defesa +1",
+                "3: Maciez absurda. Defesa +2",
+                "4: Resiste à dor convertendo em tesão. Defesa +2, Testes +1",
+                "5: Lubrificação natural extrema. Defesa +3, Testes +2",
+                "6: Não sofre assaduras ou marcas, desliza. Defesa +3, Testes +2",
+                "7: Intocável por dor, apenas prazer. Defesa +3, Testes +3, Redução Dano +2d4"
             ],
-            "Aura Sensível": [
-                "Inimigos a 3m têm Desvantagem para resistir às suas ilusões.",
-                "Feitiços de Sedução Mágica ganham +2 na Classe de Dificuldade (CD).",
-                "Atacar você corpo-a-corpo rola com Desvantagem se o atacante tiver LUST > 50%."
-            ],
-            "Laço Místico": [
-                "Pode conectar-se a 1 aliado. Vocês compartilham as barras de Stamina.",
-                "Danos (HP ou LUST) do aliado podem ser absorvidos por você.",
-                "Orgasmos Mágicos: Seu orgasmo cura 2d6 HP para todos os aliados conectados."
+            "Venenos/Fluidoss": [
+                "1: Resistência a drogas fracas. Redução de Dano Químico/Lust +1",
+                "2: Secreções com sabor doce. Redução de Dano Químico/Lust +1d2",
+                "3: Ignora efeitos alucinógenos menores. Redução de Dano Químico/Lust +1d3",
+                "4: Seu sêmen/fluido excita o alvo. Redução de Dano Químico/Lust +1d4, Testes +1",
+                "5: Pode beber veneno. Redução de Dano Químico/Lust +2d2, Testes +2",
+                "6: Drogas sexuais não funcionam em você. Redução de Dano Químico/Lust +2d3, Testes +2",
+                "7: Metabolismo imune a toxinas, seus fluidos são o veneno. Redução Dano +2d4, Testes +3"
             ]
         }
     },
@@ -180,20 +216,80 @@ const PERK_COSTS = [0, 1, 2, 3, 5, 9];
         "name": "Vontade",
         "icon": "fa-brain",
         "perks": {
-            "Mente Blindada": [
-                "+1 de Defesa Base contra ataques Mágicos e Mentais.",
-                "Vantagem em testes para resistir ao status Mind Break.",
-                "Qualquer Dano LUST que você sofra é reduzido em 2 pontos."
+            "Resistência a Provocações": [
+                "1: Difícil de provocar. Defesa LUST +1",
+                "2: Mente calma. Defesa LUST +1",
+                "3: Ignora xingamentos eróticos. Defesa LUST +2",
+                "4: Consegue manter o foco enquanto estimulado. Defesa LUST +2, Testes +1",
+                "5: Frio como gelo. Defesa LUST +3, Testes +2",
+                "6: Desligamento emocional a vontade. Defesa LUST +3, Testes +2",
+                "7: Mente de Titã, impossível de ser quebrado por palavras. Defesa LUST +3, Testes +3, Redução LUST +2d4"
             ],
-            "Masoquismo / Êxtase Curativo": [
-                "Ao receber Dano Físico, você acumula metade do dano como Energia Sexual.",
-                "Rola com Vantagem contra intimidação, dor ou medo.",
-                "Conversão de Dano (Regra): Se receber 10 ou mais de Dano LUST em um só turno, cura 1d8 do seu HP e previne Mind Break."
+            "Resistência a Ilusões": [
+                "1: Percebe ilusões fracas. Testes +1",
+                "2: Mente focada. Testes +1",
+                "3: Reconhece realidade. Testes +2",
+                "4: Imune a fumaça de súcubos. Testes +2",
+                "5: Visualiza a verdade. Testes +3",
+                "6: Destrói ilusões com a mente. Testes +3, Dano LUST de volta +2d2",
+                "7: Uma rocha contra magia mental. Testes +3, Dano LUST de volta +3d4"
             ],
-            "Controle de Êxtase": [
-                "Seu limite Máximo de LUST aumenta em +20.",
-                "Ignora penalidades de Confusão por LUST passando num teste (CD 12+VON).",
-                "Pode gastar sua Energia Sexual para buffar ataques (cada ponto = +1d6 Dano LUST)."
+            "Êxtase de Cura": [
+                "1: Dano de LUST massivo converte 10% do Dano LUST em HP em vez de Mind Break.",
+                "2: Converte 20% do Dano LUST massivo em HP.",
+                "3: Converte 30% do Dano LUST massivo em HP.",
+                "4: Converte 50% do Dano LUST em HP. Testes +1",
+                "5: Converte 70% do Dano LUST em HP. Testes +2",
+                "6: Converte 85% do Dano LUST em HP. Testes +2",
+                "7: Orgasmos curam TODO (100%) o HP ao invés de causar dano. Testes +3"
+            ]
+        }
+    },
+    "vig": {
+        "name": "Vigor",
+        "icon": "fa-battery-full",
+        "perks": {
+            "Fôlego": [
+                "1: Fôlego bom. Stamina extra.",
+                "2: Não cansa fácil.",
+                "3: Recupera fôlego rápido.",
+                "4: Mantém posições por horas. Testes +1",
+                "5: Fôlego de atleta de elite. Testes +2",
+                "6: Orgasmos múltiplos sem parar. Testes +2",
+                "7: Energia infinita em atos sexuais. Testes +3, Dano LUST contínuo +3d4"
+            ],
+            "Metabolismo": [
+                "1: Cura pequenos arranhões.",
+                "2: Recupera Stamina rápido.",
+                "3: Beber fluidos dá energia.",
+                "4: Regenera 1d4 HP por turno. Testes +1",
+                "5: Ignora efeitos de cansaço. Testes +2",
+                "6: Não sente fome ou sede. Testes +2",
+                "7: Regeneração total imediata após descanso rápido. Testes +3, Redução Dano +2d4"
+            ]
+        }
+    },
+    "mis": {
+        "name": "Misticismo",
+        "icon": "fa-book-journal-whills",
+        "perks": {
+            "Aura": [
+                "1: Presença leve. Dano Mágico +1",
+                "2: Aura brilhante. Dano Mágico +1d2",
+                "3: Assusta ou atrai fracos. Dano Mágico +1d3",
+                "4: Aura palpável que excita e queima. Dano Mágico +1d4, Testes +1",
+                "5: O ar pesa perto de você. Dano Mágico +2d2, Testes +2",
+                "6: Magia escorre pelo seu corpo. Dano Mágico +2d3, Testes +2",
+                "7: Aura divina/demoníaca que corrompe tudo em volta. Dano Mágico +3d4, Testes +3"
+            ],
+            "Controle de Energia": [
+                "1: Manipulação básica. Defesa Mágica +1",
+                "2: Escudos finos. Defesa Mágica +1",
+                "3: Absorve pequenas magias. Defesa Mágica +2",
+                "4: Converte magia em LUST. Defesa Mágica +2, Testes +1",
+                "5: Reflete ataques mentais. Defesa Mágica +3, Testes +2",
+                "6: Molda energia como argila. Defesa Mágica +3, Testes +2",
+                "7: Mestre Absoluto do Fluxo (anula ataques diretos com Testes). Defesa Mágica +3, Testes +3, Redução Mágica +2d4"
             ]
         }
     }
@@ -1340,7 +1436,7 @@ function updatePerksMath() {
     let allSpent = true;
 
     Object.keys(PERKS_DB).forEach(attrKey => {
-        const maxPV = Math.max(0, attrs[attrKey] * 3);
+        const maxPV = Math.max(0, attrs[attrKey] * 2);
         let usedPV = 0;
         
         // Reset Visuals
@@ -1377,7 +1473,7 @@ function updatePerksMath() {
                         cardEl.className = 'p-3 bg-gray-800 rounded-lg border border-gold/40 shadow-[0_0_10px_rgba(218,165,32,0.1)] flex flex-col gap-2 transition-all';
                         descEl.className = 'text-[11px] md:text-xs text-gray-200 bg-black/60 p-2 rounded border-l-2 border-purple-500 transition-colors min-h-[36px] font-medium leading-relaxed';
                         
-                        if(lvl === 3) {
+                        if(lvl === 7) {
                             cardEl.classList.add('border-purple-500', 'shadow-[0_0_15px_rgba(168,85,247,0.3)]');
                             descEl.classList.add('text-purple-300', 'font-bold');
                         }
@@ -1411,7 +1507,7 @@ window.adjustPerk = function(attrKey, perkName, delta) {
     let lvl = draftPerks[attrKey][perkName] || 0;
     lvl += delta;
     if(lvl < 0) lvl = 0;
-    if(lvl > 3) lvl = 3;
+    if(lvl > 7) lvl = 7;
     draftPerks[attrKey][perkName] = lvl;
     updatePerksMath();
 }
