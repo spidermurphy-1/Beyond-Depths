@@ -868,6 +868,8 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
     const newCharData = {
         name: document.getElementById('inp-name').value,
         class: document.getElementById('inp-class').value,
+        gender: document.getElementById('inp-gender')?.value || '',
+        orientation: document.getElementById('inp-orientation')?.value || '',
         avatarUrl: document.getElementById('inp-avatar').value,
         equippedArmorId: armorId,
         equippedSkillIds: selSkills,
@@ -974,6 +976,17 @@ function renderDashboard() {
     dash.classList.remove('hidden'); noChar.classList.add('hidden');
     document.getElementById('dash-name').innerHTML = escapeHTML(char.name);
     document.getElementById('dash-class').innerHTML = escapeHTML(char.class);
+    
+    const goEl = document.getElementById('dash-gender-orientation');
+    let goText = [];
+    if(char.gender) goText.push(char.gender);
+    if(char.orientation) goText.push(char.orientation);
+    if(goText.length > 0) {
+        goEl.innerHTML = goText.map(escapeHTML).join(' • ');
+        goEl.classList.remove('hidden');
+    } else {
+        goEl.classList.add('hidden');
+    }
     
     if (char.avatarUrl && char.avatarUrl.startsWith('http')) {
         document.getElementById('dash-avatar').src = char.avatarUrl;
@@ -1089,6 +1102,8 @@ function renderDashboard() {
         document.getElementById('modal-title').innerText = "Editar Ficha";
         document.getElementById('inp-name').value = char.name;
         document.getElementById('inp-class').value = char.class;
+        const gEl = document.getElementById('inp-gender'); if(gEl) gEl.value = char.gender || '';
+        const oEl = document.getElementById('inp-orientation'); if(oEl) oEl.value = char.orientation || '';
         document.getElementById('inp-avatar').value = char.avatarUrl || "";
         
         draftPerks = char.perks ? JSON.parse(JSON.stringify(char.perks)) : {};
@@ -1705,6 +1720,56 @@ function renderRPG() {
 window.removeCombatant = function(cid) {
     combatState.combatants = combatState.combatants.filter(c => c.cid !== cid);
     renderRPG();
+};
+
+window.openExtendedActionsModal = function() {
+    const char = getActiveChar();
+    if (!char) return;
+    
+    document.getElementById('extended-actions-char-name').innerText = char.name;
+    const tbody = document.getElementById('extended-actions-table');
+    tbody.innerHTML = '';
+    
+    const sed = char.attr.sed || 0;
+    const force = char.attr.for || 0;
+    const agi = char.attr.agi || 0;
+    const mis = char.attr.mis || 0;
+    const con = char.attr.con || 0;
+    
+    // We can add logic to check for specific perks if needed (e.g. char.perks?.sed?.["Pegada Firme"])
+    
+    const actions = [
+        { cat: "Físico", name: "Soco / Chute", effect: `1d4 + ${force} HP`, cost: "1 Ação", desc: "Ataque desarmado rápido. Teste de FOR ou AGI vs Defesa." },
+        { cat: "Físico", name: "Ataque com Arma", effect: `Dano da Arma + ${force} HP`, cost: "1 Ação", desc: "Usa uma arma corpo a corpo. Teste de FOR ou AGI vs Defesa." },
+        { cat: "Físico", name: "Agarrão Bruto", effect: `Imobiliza + 1 Dano HP/LUST`, cost: "1 Ação", desc: "Teste Oposto: FOR vs FOR/AGI. Se sucesso, alvo fica imobilizado." },
+        { cat: "ERPG", name: "Toque Sensível", effect: `1d4 + ${sed} LUST`, cost: "Ação Bônus", desc: "Tocar áreas erógenas por cima da roupa ou rapidamente. Teste: AGI vs AGI (se alvo resistir)." },
+        { cat: "ERPG", name: "Beijo Intenso", effect: `1d6 + ${Math.max(sed, mis)} LUST`, cost: "1 Ação", desc: "Beijo de língua profundo. Alvo precisa estar agarrado ou consentir. Teste: SED vs VON." },
+        { cat: "ERPG", name: "Sexo Oral / Masturbação", effect: `1d8 + ${sed} LUST`, cost: "1 Ação", desc: "Estimulação direta. Alvo deve estar desprotegido. Teste: AGI vs AGI." },
+        { cat: "ERPG", name: "Penetração Frontal", effect: `2d6 + ${sed} LUST`, cost: "20 Stamina", desc: "Requer submissão ou consentimento. Aplica LUST contínuo todo turno se mantido." },
+        { cat: "ERPG", name: "Penetração Forçada", effect: `1d8 + ${Math.max(force, sed)} LUST`, cost: "30 Stamina", desc: "Penetração contra resistência. Teste Oposto de FOR vs AGI/FOR a cada turno." },
+        { cat: "ERPG", name: "Montaria / Cavalgada", effect: `2d6 + ${agi} LUST`, cost: "20 Stamina", desc: "Usa a Agilidade para ditar o ritmo em cima do alvo. Causa grande impacto LUST no parceiro." },
+        { cat: "Suporte", name: "Provocação Verbal", effect: `1d4 + ${sed} LUST`, cost: "Ação Livre", desc: "Sussurros ou gemidos a até 5m. Teste: SED vs VON. Se falhar, inimigo foca em você." },
+        { cat: "Defesa", name: "Esquiva Ágil", effect: `Vantagem na Defesa`, cost: "Reação", desc: "Quando atacado, rola 1d20+AGI extra para tentar superar o ataque do inimigo." },
+        { cat: "Defesa", name: "Resistência de Constituição", effect: `-1d4 Dano HP`, cost: "Reação + 5 Stamina", desc: "Enrijece o corpo para absorver um golpe contundente (apenas Dano Físico)." },
+        { cat: "Defesa", name: "Blindagem Mental", effect: `Resiste LUST`, cost: "Reação + 10 Stamina", desc: "Usa Misticismo ou Vontade para criar barreira mental, rolando com Vantagem contra Testes de Sedução." }
+    ];
+    
+    actions.forEach(act => {
+        let catColor = act.cat === 'Físico' ? 'text-red-400' : act.cat === 'ERPG' ? 'text-pink-400' : act.cat === 'Defesa' ? 'text-blue-400' : 'text-green-400';
+        tbody.innerHTML += `
+            <tr class="hover:bg-gold/10 transition-colors border-b border-gold/5">
+                <td class="py-3 pr-2 align-top">
+                    <div class="font-bold text-gray-200">${act.name}</div>
+                    <div class="text-[10px] ${catColor} uppercase mt-1 tracking-wider">${act.cat}</div>
+                </td>
+                <td class="py-3 pr-2 text-purple-300 font-bold align-top">${act.effect}</td>
+                <td class="py-3 pr-2 text-gray-400 text-xs align-top">${act.cost}</td>
+                <td class="py-3 text-gray-400 text-xs align-top leading-relaxed">${act.desc}</td>
+            </tr>
+        `;
+    });
+    
+    document.getElementById('modal-extended-actions').showModal();
 };
 
 // INIT
