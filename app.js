@@ -76,378 +76,390 @@ const PERK_COSTS = [0, 1, 2, 3, 5, 9];
             icon: "fa-heart",
             perks: {
                 "Seios Grandes": [
-                    "Peitos pesados e fartos. **Sistema: +1 em rolagens de Persuasão Visual.**",
-                    "Formato perfeito e macio. **Sistema: O toque inflige +2 Dano LUST instintivo. (Sem teste, contato direto).**",
-                    "Mamilos sempre duros. **Sistema: Inimigos corpo a corpo sofrem -1 de Iniciativa (Requer falha em Teste de Resistência: VON vs SED do usuário).**",
+                    "Peitos fartos. **Sistema: +1 em rolagens de Persuasão Visual.**",
+                    "Formato macio. **Sistema: O toque inflige +2 Dano LUST instintivo. (Sem teste, contato direto).**",
+                    "Mamilos eretos. **Sistema: Inimigos corpo a corpo sofrem -1 de Iniciativa (Requer falha em Teste de Resistência: VON vs SED do usuário).**",
                     "Sufocamento de peitos. **Sistema: Agarrões causam Dano LUST passivo e reduzem a Defesa LUST em -2 (Teste para Escapar: FOR/AGI vs FOR do usuário).**",
-                    "Transe do Despir. **Sistema: Ação completa. Alvos (raio 5m) rolam Teste Oposto (VON vs SED do usuário) ou perdem o turno atordoados de tesão.**"
+                    "Transe. **Sistema: Ação completa. Alvos (raio 5m) rolam Teste Oposto (VON vs SED do usuário) ou perdem o turno atordoados.**"
                 ],
                 "Bunda e Quadris Largos": [
                     "Bunda grande. **Sistema: Ataques inimigos por trás sofrem Desvantagem (rola 2d20, pega o menor).**",
                     "Molejo provocante. **Sistema: +1 em Sedução; quem estiver na sua retaguarda sofre 1 Dano LUST passivo no turno dele.**",
                     "Montaria de Coxas. **Sistema: Vantagem (Teste: FOR/AGI vs AGI) para Imobilizar. Alvo imobilizado toma Dano LUST contínuo.**",
                     "Carne absorvente. **Sistema: Dano Físico nas costas reduzido em 1; converte em 1 Dano LUST em Área (Teste: VON vs SED para ignorar LUST).**",
-                    "Onda de Rebolado. **Sistema: Ação em Área. Todos no raio visual fazem Teste Oposto (VON vs SED) ou ficam 'Atordoados por LUST' (1 turno).**"
+                    "Onda de Rebolado. **Sistema: Ação em Área. Todos no raio visual fazem Teste Oposto (VON vs SED) ou ficam Atordoados por LUST (1 turno).**"
                 ],
                 "Sexo Dominante": [
-                    "Cheiro quente. **Sistema: Inimigo entrar em raio de 2m sofre 1 Dano LUST ambiente (Teste Oposto: VON vs SED anula).**",
-                    "Sensibilidade extrema. **Sistema: +2 Provocação (Taunt LUST). Apanhar aumenta seu dano LUST no turno seguinte.**",
-                    "Penetração Implacável. **Sistema: Acertar submissão/penetração ignora 50% da Defesa LUST do alvo (Teste Oposto: FOR/AGI vs FOR).**",
+                    "Cheiro provocante. **Sistema: Inimigo entrar em raio de 2m sofre 1 Dano LUST ambiente (Teste Oposto: VON vs SED anula).**",
+                    "Sensibilidade. **Sistema: +2 Provocação (Taunt LUST). Apanhar aumenta seu dano LUST no turno seguinte.**",
+                    "Penetração Direta. **Sistema: Acertar submissão/penetração ignora 50% da Defesa LUST do alvo (Teste Oposto: FOR/AGI vs FOR).**",
                     "Vampirismo Seminal. **Sistema: Se o alvo sofrer Mind Break perto de você, absorve a energia curando seu HP em 3d6.**",
-                    "A Primeira Metida. **Sistema: Acertar um ataque LUST crítico aplica Mind Break instantâneo (Teste Oposto: VON vs SED com Desvantagem do alvo para evitar).**"
+                    "Primeira Metida. **Sistema: Acertar um ataque LUST crítico aplica Mind Break instantâneo (Teste Oposto: VON vs SED com Desvantagem do alvo para evitar).**"
                 ],
                 "Cheiro Viciante": [
                     "Suor sedutor. **Sistema: NPCs neutros rolam Teste Oposto (VON vs SED) ou ganham status 'Amigável'. +1 Interações.**",
                     "Feromônio confuso. **Sistema: Inimigos a 2m de distância rolam todos os testes de Vontade com Desvantagem.**",
                     "Névoa de Tesão. **Sistema: Passiva (+2 Dano LUST Área). Inimigos no raio perdem 1 de Acerto (Teste Oposto: VON vs SED resiste).**",
-                    "Aura Pesada. **Sistema: Inimigos engajados com você perdem 25% da Resistência LUST Base (Teste Oposto: VON vs SED para negar).**",
-                    "Frenesi Bestial. **Sistema: LUST em área (Teste Oposto: VON vs SED). Se falhar, NPCs e Monstros atacam uns aos outros dominados.**"
+                    "Aura Intensa. **Sistema: Inimigos engajados com você perdem 25% da Resistência LUST Base (Teste Oposto: VON vs SED para negar).**",
+                    "Frenesi. **Sistema: LUST em área (Teste Oposto: VON vs SED). Se falhar, NPCs e Monstros atacam uns aos outros.**"
                 ],
                 "Beijo que Drena": [
                     "Lábios úmidos. **Sistema: Beijar impõe estado 'Obediente' a lacaios fora de combate (Teste Oposto: VON vs SED).**",
-                    "Beijo Confuso. **Sistema: Alvo beijado após agarrão perde 1 Turno (Stun Mental) (Teste Oposto: VON vs SED para resistir).**",
+                    "Beijo Confuso. **Sistema: Alvo beijado após agarrão perde 1 Turno (Teste Oposto: VON vs SED para resistir).**",
                     "Sucção de Energia. **Sistema: Beijo forçado (Ataque LUST) drena passivamente 10 pontos de Stamina do alvo.**",
                     "Beijo do Vampiro. **Sistema: O beijo rouba 2d8 HP do alvo curando você diretamente.**",
-                    "Prisão Emocional. **Sistema: Após beijar, o inimigo sofre -5 em todos os ataques se o alvo não for você (Teste Oposto: VON vs SED para quebrar a prisão).**"
+                    "Prisão Emocional. **Sistema: Após beijar, o inimigo sofre -5 em todos os ataques se o alvo não for você (Teste Oposto: VON vs SED para quebrar).**"
                 ],
                 "Olhar Dominador": [
-                    "Olhos cheios de desejo. **Sistema: +2 direto na Habilidade de Sedução à distância.**",
+                    "Olhos de desejo. **Sistema: +2 direto na Habilidade de Sedução à distância.**",
                     "Contato Travador. **Sistema: Olhar direto em NPCs reduz a Iniciativa deles em -2 (Requer Falha em Teste: VON vs SED).**",
-                    "Queima LUST ocular. **Sistema: Pode causar 1d4 de Dano LUST no alvo com Ação Bônus (Teste Oposto: VON vs SED resiste metade).**",
+                    "Provocação Ocular. **Sistema: Pode causar 1d4 de Dano LUST no alvo com Ação Bônus (Teste Oposto: VON vs SED resiste metade).**",
                     "Olhar Transpassante. **Sistema: Mirar ativamente (Ação) corta a Defesa Mágica LUST do oponente pela metade.**",
                     "Ajoelhar. **Sistema: (Ação) Força Teste Oposto (VON vs SED). Falha faz o inimigo largar armas e implorar no chão.**"
                 ],
                 "Voz Sensual": [
                     "Voz rouca. **Sistema: Garante Vantagem em testes (SED) para mentir ou pedir favores a NPCs.**",
                     "Sussurro. **Sistema: Oferece +1 de Bônus em testes cruzados de Agarrão/Submissão se sussurrar na orelha.**",
-                    "Palavras Sujas. **Sistema: Permite usar Ataques de LUST à distância (Raio de 10m) rolando SED vs VON.**",
+                    "Palavras Provocantes. **Sistema: Permite usar Ataques de LUST à distância (Raio de 10m) rolando SED vs VON.**",
                     "Gemido Alto. **Sistema: Cancelamento (Ação). Anula buffs mentais ou Fúria em 5m (Teste Oposto: VON vs SED do alvo para manter os buffs).**",
-                    "Canção da Sereia. **Sistema: Paralisa todos os inimigos (raio 15m) que falharem no Teste (VON vs SED). Passam o turno babando.**"
+                    "Canção da Sereia. **Sistema: Paralisa todos os inimigos (raio 15m) que falharem no Teste (VON vs SED).**"
                 ],
-                "Sem Vergonha Nenhuma": [
-                    "Mente suja orgulhosa. **Sistema: Ignora penalidades de armadura rasgada e debuffs mentais de 'Desconforto'.**",
-                    "Pele Orgulhosa. **Sistema: Estar nu/semi-nu garante +1 de Defesa LUST base.**",
-                    "Nudez Absoluta Tática. **Sistema: Estar nu garante +3 Rolagem Base para interações Sociais e Corpo-a-Corpo baseadas em SED.**",
-                    "Masoquismo Ascendente. **Sistema: Receber Dano LUST concede um Bônus temporário de +1 Dano Físico para si mesmo.**",
-                    "Indomável e Nu. **Sistema: Barra LUST cheia não te dá Mind Break; ativa invulnerabilidade mental (Imune a LUST) e dobra sua Força.**"
+                "Sem Vergonha": [
+                    "Mente orgulhosa. **Sistema: Ignora penalidades de armadura rasgada e debuffs mentais de 'Desconforto'.**",
+                    "Pele Exposta. **Sistema: Estar nu/semi-nu garante +1 de Defesa LUST base.**",
+                    "Nudez Tática. **Sistema: Estar nu garante +3 Rolagem Base para interações Sociais e Corpo-a-Corpo baseadas em SED.**",
+                    "Masoquismo. **Sistema: Receber Dano LUST concede um Bônus temporário de +1 Dano Físico para si mesmo.**",
+                    "Resistência e Nudez. **Sistema: Barra LUST cheia não te dá Mind Break; ativa imunidade mental (LUST) e dobra sua Força.**"
                 ],
                 "Fluidos Viciantes": [
                     "Sabor doce. **Sistema: Qualquer fluido seu atua como item consumível; aliados curam +2 HP ao ingerir.**",
                     "Soro do sangue/suor. **Sistema: Cura ativa recebida/dada envolvendo seus fluidos é ampliada (+5 HP extra).**",
                     "Néctar de Controle. **Sistema: NPCs que ingerirem seu fluido rolam resistências contra você com Desvantagem (VON).**",
                     "Fluido Purificador. **Sistema: Fazer sexo/submissão anula imediatamente status de Veneno ou Doenças no parceiro.**",
-                    "Banho Sagrado Súcubo. **Sistema: Sexo molhado torna o aliado Imune a ataques LUST inimigos por 24 horas.**"
+                    "Banho Purificador. **Sistema: Sexo torna o aliado Imune a ataques LUST inimigos por 24 horas.**"
                 ],
                 "Pau Enorme": [
                     "Volume visual. **Sistema: Ganha +1 bônus direto em rolagens conjuntas de Sedução e Intimidação.**",
                     "Intimidar LUST. **Sistema: Expor (Ação Bônus) causa +2 Dano LUST visual (Teste Oposto: VON vs SED anula).**",
                     "Arma Contundente. **Sistema: Pode usar como arma física concedendo +1 de Dano Desarmado.**",
-                    "Aprisionamento Interno. **Sistema: Acertar submissão paralisa ativamente o parceiro por 1 Turno cravado (Teste: VON vs SED para agir com desvantagem).**",
-                    "Monstruosidade Implacável. **Sistema: Ignora imunidade racial/tamanho contra monstros colossais em ataques LUST.**"
+                    "Aprisionamento Interno. **Sistema: Acertar submissão paralisa ativamente o parceiro por 1 Turno (Teste: VON vs SED para agir com desvantagem).**",
+                    "Ignora Resistência. **Sistema: Ignora imunidade racial/tamanho em ataques LUST.**"
                 ],
                 "Língua Extensível": [
-                    "Língua fina. **Sistema: Concede Vantagem (AGI) para destrancar ferrolhos ou nós usando a boca.**",
-                    "Alcance de 30cm. **Sistema: Pode aplicar golpes de Dano LUST (Ação Bônus) a média distância.**",
+                    "Precisão Oral. **Sistema: Concede Vantagem (AGI) para destrancar ferrolhos ou nós usando a boca.**",
+                    "Alcance Aumentado. **Sistema: Pode aplicar golpes de Dano LUST (Ação Bônus) a média distância.**",
                     "Músculo Adicional. **Sistema: Bônus de +2 em testes Opostos Físicos (FOR) de Imobilização se focados em zonas erógenas.**",
-                    "Língua como chicote. **Sistema: Alcance de 1 Metro. Permite Ataques de Oportunidade LUST (SED vs VON) contra quem recuar.**",
+                    "Língua de chicote. **Sistema: Alcance de 1 Metro. Permite Ataques de Oportunidade LUST (SED vs VON) contra quem recuar.**",
                     "Língua Preênsil. **Sistema: Funciona como Terceiro Braço. Permite manipular itens pesados ou desarmar inimigos a distância.**"
                 ],
                 "Buceta Hiperflexível": [
-                    "Adaptação tática. **Sistema: Imune a qualquer forma de Dano Físico letal oriundo de empalamento/penetração na região.**",
+                    "Adaptação. **Sistema: Imune a Dano Físico de empalamento/penetração na região.**",
                     "Controle de pressão. **Sistema: Adiciona +1 Dano LUST direto e passivo em golpes de Sexo ou Submissão.**",
                     "Parede Rugosa. **Sistema: Qualquer dano LUST causado a um penetrador é ampliado passivamente em 50%.**",
-                    "Buraco Negro Carnal. **Sistema: Funciona como inventário oculto e inesgotável para armas leves e relíquias.**",
-                    "Recipiente Sagrado. **Sistema: Permite guardar líquidos vitais e Poções Mágicas dentro sem que estraguem.**"
+                    "Espaço Interno. **Sistema: Funciona como inventário oculto para armas leves e pequenos itens.**",
+                    "Recipiente Seguro. **Sistema: Permite guardar líquidos vitais e Poções Mágicas dentro sem que estraguem.**"
                 ],
                 "Pele de Látex": [
-                    "Textura lisa brilhante. **Sistema: Ganha +1 Defesa Física natural contra arranhões e lâminas fracas.**",
-                    "Borracha Humana. **Sistema: Vantagem (+3) em Testes Opostos de Acrobacia e Escape de apertos (AGI vs FOR).**",
-                    "Fricção Zero. **Sistema: Inimigos têm penalidade passiva de -1 para acertar socos em você (deslizam).**",
-                    "Pele Grudenta de Sucção. **Sistema: Se o inimigo rolar Falha Crítica atacando você, a mão dele fica travada (Teste Físico: FOR vs AGI para soltar).**",
-                    "Corpo Brinquedo. **Sistema: Sofrer ataques físicos corpo-a-corpo devolve 1 ponto de Cura de LUST residual.**"
+                    "Textura lisa. **Sistema: Ganha +1 Defesa Física natural contra arranhões e lâminas.**",
+                    "Flexibilidade Humana. **Sistema: Vantagem (+3) em Testes Opostos de Acrobacia e Escape de apertos (AGI vs FOR).**",
+                    "Fricção Reduzida. **Sistema: Inimigos têm penalidade passiva de -1 para acertar socos em você (deslizam).**",
+                    "Pele de Sucção. **Sistema: Se o inimigo rolar Falha Crítica atacando você, a mão dele fica travada (Teste Físico: FOR vs AGI para soltar).**",
+                    "Corpo de Brinquedo. **Sistema: Sofrer ataques físicos corpo-a-corpo devolve 1 ponto de Cura de LUST residual.**"
                 ],
                 "Dedos Longos e Flexíveis": [
-                    "Alcance extra leve. **Sistema: Ganha +1 passivo em testes de Prestidigitação (AGI) ou roubo furtivo.**",
+                    "Alcance extra. **Sistema: Ganha +1 passivo em testes de Prestidigitação (AGI) ou roubo furtivo.**",
                     "Articulação Dupla. **Sistema: Permite re-rolar 1 falha diária em teste manual para escape de algemas.**",
-                    "Dedos de Ouro. **Sistema: Aplica +2 de Dano LUST absoluto extra em golpes de submissão erótica contínua.**",
-                    "Mãos independentes. **Sistema: Permite sacar e usar dois itens (ex: 2 poções) usando apenas 1 Ação.**",
-                    "Esticador de 25cm. **Sistema: Permite alcance cego de mecanismos e dano LUST interno extremo (Ignora 50% da Defesa LUST nestes ataques).**"
+                    "Habilidade Manual. **Sistema: Aplica +2 de Dano LUST absoluto extra em golpes de submissão erótica contínua.**",
+                    "Mãos independentes. **Sistema: Permite sacar e usar dois itens usando apenas 1 Ação.**",
+                    "Esticador. **Sistema: Permite alcance cego de mecanismos e dano LUST interno (Ignora 50% da Defesa LUST nestes ataques).**"
                 ],
                 "Pés Ágeis e Sensuais": [
-                    "Pés com força braçal. **Sistema: Ganha +1 Equilíbrio (Vantagem passiva para resistir a Empurrões de FOR).**",
+                    "Pés com força. **Sistema: Ganha +1 Equilíbrio (Vantagem passiva para resistir a Empurrões de FOR).**",
                     "Dedos de Mão do Pé. **Sistema: Vantagem em Prestidigitação usando as pernas, permitindo roubar embaixo da mesa sem usar as mãos.**",
                     "Footjob Profissional. **Sistema: Permite causar Dano LUST (1 Ação Bônus) usando os pés enquanto ataca normalmente com armas nas mãos.**",
-                    "Pisada Esmagadora. **Sistema: Vantagem em Testes de Dominação/Controle (FOR) contra inimigos atordoados/caídos no chão.**",
-                    "Sentido Tremor Tátil. **Sistema: Nunca é pego desprevenido; percebe furtividade no piso concedendo +1 Iniciativa passiva.**"
+                    "Pisada de Controle. **Sistema: Vantagem em Testes de Dominação/Controle (FOR) contra inimigos atordoados/caídos no chão.**",
+                    "Sentido Tátil. **Sistema: Nunca é pego desprevenido; percebe furtividade no piso concedendo +1 Iniciativa passiva.**"
+                ],
+                "Mamilos Sensíveis e Longos": [
+                    "Mamilos eretos. **Sistema: Visíveis sob a roupa. Concede +1 em Persuasão Visual.**",
+                    "Tamanho aumentado. **Sistema: Podem ser usados para estimulação (+1 Dano LUST em contato).**",
+                    "Hipersensibilidade. **Sistema: Estímulo nos seios (Ação de LUST aliada/inimiga) recupera 5 de sua Stamina.**",
+                    "Flexíveis. **Sistema: Conseguem ser sugados por si mesmos (Permite Auto-Cura de LUST de 1d4 como Ação).**",
+                    "Produção de fluido. **Sistema: Quando com 50% de LUST, produzem fluido que cura e excita aliados que beberem (+5 HP, +2 SED).**"
                 ],
                 "Quadris Largos": [
-                    "Centro de gravidade. **Sistema: Resistência: +1 passivo contra testes inimigos de te empurrar ou derrubar.**",
-                    "Montaria de Chumbo. **Sistema: Se Imobilizar por cima, o inimigo sofre -2 na Força bruta pra tentar escapar.**",
-                    "Pelve Blindada. **Sistema: Imune a acertos críticos vindos de pancadas e facadas diretamente no torso/quadril.**",
-                    "Rotação da Morte LUST. **Sistema: Bônus garantido de 2x Dano em qualquer rolagem natu    con: {
-        name: "Constituição", icon: "fa-shield-heart",
-        perks: {
-            "Couro Resistente": [
-                "Pele grossa rústica. **Sistema: Reduz permanentemente 1 Dano Físico recebido (Armadura Natural).**",
-                "Couraça adaptável. **Sistema: Redução base de Dano Físico aumentada para 3 absolutos.**",
-                "Fechamento capilar. **Sistema: Imunidade a status de Sangramento nível 1 e 2 (feridas rápidas).**",
-                "Armadura Viva. **Sistema: Dobra a defesa corporal contra Perfurações (flechas e estocadas têm dano reduzido à metade).**",
-                "Corpo de Aço. **Sistema: Lâminas comuns têm 25% de chance de quebrar ao te atingirem com um Crítico (ignorando Dano).**"
-            ],
-            "Tolerância à Dor": [
-                "Nervos mortos leves. **Sistema: Passivo; rola Vantagem em testes de Vontade contra efeitos de dor mental.**",
-                "Euforia na Dor. **Sistema: Penalidades mundanas por ter baixado HP só ativam quando chegar a 10% da vida total.**",
-                "Sádico de Combate. **Sistema: Completamente imune à Paralisia ou Atordoamento oriundo de ataques físicos críticos.**",
-                "Adrenalina Escarlate. **Sistema: Ao tomar um Crítico inimigo, ganha passivamente +2 de Dano Físico no próximo turno seu.**",
-                "Máquina Mortal. **Sistema: Se HP zerar, não desmaia/morre; ganha 3 Turnos perfeitos para agir antes do coma absoluto.**"
-            ],
-            "Sistema Imunológico Implacável": [
-                "Digestão Bruta. **Sistema: Vantagem suprema em testes para resistir a Náusea e Veneno injetado.**",
-                "Anticorpos de guerra. **Sistema: Imunidade passiva a todas as Doenças/Vírus de contágio comum mundano.**",
-                "Sangue Ácido. **Sistema: Corta o tempo ativo de 'Envenenamento Severo' e as rolagens de toxinas brutais pela exata metade.**",
-                "Cura Sanguínea Antitóxica. **Sistema: Seu sangue atua como item (Ação) que cura Veneno e debuffs mortais de aliados próximos.**",
-                "Muralha Biológica Absoluta. **Sistema: 100% Imune a Doenças mágicas, infestações parasitárias e Maldições biológicas sombrias.**"
-            ],
-            "Sangue Fervente (Regeneração)": [
-                "Sangue rápido. **Sistema: Descansos curtos (Short Rests) curam 50% mais a sua barra de HP que a regra habitual.**",
-                "Latente passiva. **Sistema: Fora de Batalha (Exploração), você cura passivamente 1 HP permanente a cada 10 Minutos no jogo.**",
-                "Pulsante em combate. **Sistema: No início do seu turno, recupera HP exato equivalente ao seu Modificador de Constituição (CON).**",
-                "Costura Rápida. **Sistema: Estanca automaticamente a condição Hemorragia Massiva instantâneo no turno 1, sem rolar nem gastar Ação.**",
-                "Regeneração de Titã. **Sistema: Reconecta e conserta Magicamente Membros do corpo amputados (braços/pernas) usando a ação inteira.**"
-            ],
-            "Densidade Óssea": [
-                "Massa pesada. **Sistema: Ganha +1 bônus fixo nos testes contra tentativas inimigas de Deslocamento ou Empurrões (Knockbacks).**",
-                "Caixa torácica reforçada. **Sistema: Imunidade passiva a quebra-ossos; (Armas Contundentes perdem o bônus de Dano Crítico em você).**",
-                "Esqueleto Encouraçado. **Sistema: Bater em você quebra a mão alheia. Socos Desarmados inimigos dão 1 Dano recíproco a quem bateu.**",
-                "Imóvel em Quedas. **Sistema: Nunca recebe Dano por de Queda Vertical Absurda (Livre para até 15 metros caindo de pé seco).**",
-                "Estrutura Calificada. **Sistema: Absolutamente Imune ao 'Dano Contundente' global ou mecânica de Esmagamento debaixo de Rochas pesadas.**"
-            ],
-            "Termorregulação Perfeita": [
-                "Nega incômodos. **Sistema: Ignora todo Debuff rasteiro de clima extremo (Desertos ou Neve) sem exigir roupas térmicas ativas.**",
-                "Resistência de Pele. **Sistema: Ganha Resistência Passiva (Dano total Cortado na metade) contra todos ataques de Fogo e Gelo comum.**",
-                "Metabolismo Estável. **Sistema: Imune à condição 'Fadiga por Clima'. Nunca perde Stamina por rodar mecânica ambiental de calor extremo.**",
-                "Absorção Elementar. **Sistema: Ser atingido por feitiços rasteiros/iniciais de Fogo ou Gelo cura Vida HP no lugar de machucar.**",
-                "Isolamento Titânico Absoluto. **Sistema: 100% Imunidade a tomar 'Dano de Fogo' letal. Nega chamas místicas e nevascas.**"
-            ],
-            "Estômago de Ogro": [
-                "Mastigação Bruta. **Sistema: Pode ingerir e se curar com carniça/lixo como se fossem Ração farta nos testes de Descanso do acampamento.**",
-                "Processamento dobrado. **Sistema: Toda Poção Menor de HP/Stamina tem 100% de lucro final em você, recebendo o dobro bruto recuperado.**",
-                "Corrupção Alimentar Aceita. **Sistema: Ingerir venenos propositais curam seus outros debuffs internos da ficha em vez de dano tóxico natural.**",
-                "Fome Carniceira. **Sistema: (Ação Principal) Devorar cadáveres orgânicos caídos na arena aplica bônus massivo de +20 HP temporário puro.**",
-                "Fornalha Gástrica Magica. **Sistema: Engolir miúdos de Chefes confere um Status temporário do Monstro morto (FOR ou AGI) na sua ficha.**"
-            ],
-            "Firmeza de Montanha": [
-                "Base plantada grossa. **Sistema: Impossível sofrer ataques de condição 'Surpresa' furtivos corpo-a-corpo e não cai por tropeço normal.**",
-                "Duelo de força corporal. **Sistema: Rolagem de +2 base fixo absoluto para ignorar resistências em Rasteiras ou Disputas de Agarrão Mistas.**",
-                "Enraizamento do chão. **Sistema: Imunidade completa a Knockback vindo de Forças Vivas com Tamanho 'Médio' ou inferior; não se move frouxo.**",
-                "Rebote Cinético. **Sistema: O oponente fraco ou mago que tentar dar empurrão recebe de rebote 1d4 de Dano Contundente da sua densidade imóvel.**",
-                "Gravidade Puxada. **Sistema: Cancela e imuniza todas mecânicas colossais ambientais de Telecinese Inimiga e Levitações forçadas do terreno.**"
-            ],
-            "Vitalidade Descomunal": [
-                "Sangue encorpado e grosso. **Sistema: Modificador de Multiplicação: +10% de acréscimo final calculado no seu HP Máximo Base.**",
-                "Coração espesso e violento. **Sistema: O Bônus sobe para +20% HP Máximo total da ficha ignorando os tetos capados das classes brutas.**",
-                "Veias transbordantes de fúria viva. **Sistema: O Modificador atinge +30% HP Máximo, transformando você num poço massivo e robusto biológico.**",
-                "Reservatório Vivo de Gárgula de Titânio. **Sistema: Aplica +50% no HP Máximo total absoluto e ganha peso bruto para rolar empurrões macabros.**",
-                "Coração de Titã Magico. **Sistema: Ressurreição Fenix: Uma vez em campanha se decapitado/morto em batalha ele auto-revive você com 50% HP imediato.**"
-            ],
-            "Estase Carnal": [
-                "Genética Letárgica. **Sistema: A longevidade da vida do personagem ignora os efeitos visuais comuns mecânicos de rolagem da velhice senil.**",
-                "Pulmões Controlados. **Sistema: Confere x3 no multiplicador de Fôlego mecânico debaixo d'água antes de iniciar as rolagens do Dano de asfixia cego.**",
-                "Hibernação Metálica. **Sistema: Consegue sobreviver por muitas semanas sem água/comida zerando os limites de sobrevivência adormecendo.**",
-                "Controle Hemorrágico Tático. **Sistema: (Ação Livre) Prende qualquer Veneno letal ativo em apenas 1 membro anulando a dispersão e morte letal final.**",
-                "Imortalidade Biológica Escrita. **Sistema: Completamente 100% Imune à maldição arcana final de Roubo de Idade e a mecânicas temporais puras senis.**"
-            ],
-            "Escudo Físico Reativo": [
-                "Músculos reflexos. **Sistema: +1 de CA (Classe de Armadura) contra golpes furtivos surpresa.**",
-                "Pele repulsiva. **Sistema: Quem ataca corpo-a-corpo falhando leva Desvantagem no próximo ataque.**",
-                "Onda Muscular. **Sistema: Receber +30 de dano instantâneo empurra inimigos adjacentes 2m pra trás.**",
-                "Casco da Tartaruga. **Sistema: Ação Bônus (Desistir de andar): Dobra sua Defesa Física passiva no turno.**",
-                "Abalo Refletor. **Sistema: Ignora a defesa alheia: Todo dano físico recebido reflete 50% como Dano Verdadeiro de volta.**"
-            ],
-            "Glândulas Adaptativas": [
-                "Suor ácido. **Sistema: Ganha +2 em testes para escapar de amarras de corda mundanas.**",
-                "Suor Sombrio. **Sistema: Inimigos num raio de 2m têm desvantagem para lançar efeitos de Medo/LUST.**",
-                "Película Deslizante. **Sistema: Imunidade passiva permanente contra a condição agarrado ou 'Grappled'.**",
-                "Mutações Químicas. **Sistema: Oponentes que tomarem o seu Sangue/Suor sofrem o status Envenenamento e -2 Vontade.**",
-                "Crisálida do Sono. **Sistema: Em MindBreak ou HP zero, vira um Ovo inquebrável por 24h e revive com HP max/LUST zero.**"
-            ]
-        }
-    },
+                    "Estrutura óssea. **Sistema: Facilita posições de montar. +1 Bônus passivo para manter submissão superior.**",
+                    "Amplitude profunda. **Sistema: Amplitude permite movimento mais focado. (+1 de Dano LUST fixo e +1 de Bônus em testes Opostos de Agarrão: FOR vs AGI).**",
+                    "Pelve absorvente. **Sistema: Pode receber golpes fortes sem dor (Reduz 1 Dano Físico de impacto na região inferior).**",
+                    "Rotação de quadril. **Sistema: Movimentos circulares durante sexo causam Dano LUST extra (Inimigo Rola VON vs SED ou toma dobro de Dano LUST).**",
+                    "Estrutura resiliente. **Sistema: Cura acelerada após parir ou recuperar o fôlego (Descanso Curto concede +50% de eficácia).**"
+                ]
+            }
+        },
+        con: {
+            name: "Constituição", icon: "fa-shield-heart",
+            perks: {
+                "Couro Resistente": [
+                    "Pele grossa. **Sistema: Reduz permanentemente 1 Dano Físico recebido (Armadura Natural).**",
+                    "Couraça adaptável. **Sistema: Redução base de Dano Físico aumentada para 3 absolutos.**",
+                    "Fechamento capilar. **Sistema: Imunidade a status de Sangramento nível 1 e 2 (feridas rápidas).**",
+                    "Armadura Natural Reforçada. **Sistema: Dobra a defesa corporal contra Perfurações (flechas e estocadas têm dano reduzido à metade).**",
+                    "Corpo Rígido. **Sistema: Lâminas comuns têm 25% de chance de quebrar ao te atingirem com um Crítico (Teste Oposto de FOR do atacante vs sua CON para não quebrar a arma).**"
+                ],
+                "Tolerância à Dor": [
+                    "Nervos mortos leves. **Sistema: Passivo; rola Vantagem em Testes de Resistência (VON) contra efeitos de dor mental.**",
+                    "Foco na Dor. **Sistema: Penalidades por HP baixo só ativam quando chegar a 10% da vida total.**",
+                    "Combatente. **Sistema: Imune à Paralisia ou Atordoamento oriundo de ataques físicos críticos.**",
+                    "Adrenalina. **Sistema: Ao tomar um Crítico inimigo, ganha passivamente +2 de Dano Físico no seu próximo ataque.**",
+                    "Resistência Final. **Sistema: Se HP zerar, não desmaia; ganha 3 Turnos para agir antes de cair inconsciente.**"
+                ],
+                "Sistema Imunológico Forte": [
+                    "Digestão Forte. **Sistema: Vantagem em Testes de Resistência (CON) para resistir a Náusea e Veneno injetado.**",
+                    "Anticorpos de guerra. **Sistema: Imunidade passiva a todas as Doenças de contágio comum mundano.**",
+                    "Sangue Reativo. **Sistema: Corta o tempo ativo de 'Envenenamento Severo' e as rolagens de toxinas pela metade.**",
+                    "Cura Sanguínea. **Sistema: Seu sangue atua como item (Ação) que cura Veneno de aliados próximos.**",
+                    "Muralha Biológica. **Sistema: Imune a Doenças mágicas e infestações parasitárias.**"
+                ],
+                "Regeneração Acelerada": [
+                    "Sangue rápido. **Sistema: Descansos curtos (Short Rests) curam 50% mais a sua barra de HP que a regra habitual.**",
+                    "Latente passiva. **Sistema: Fora de Batalha (Exploração), você cura passivamente 1 HP permanente a cada 10 Minutos no jogo.**",
+                    "Pulsante em combate. **Sistema: No início do seu turno, recupera HP exato equivalente ao seu Modificador de Constituição (CON).**",
+                    "Costura Rápida. **Sistema: Estanca automaticamente a condição Hemorragia Massiva instantâneo no turno 1, sem rolar nem gastar Ação.**",
+                    "Regeneração Avançada. **Sistema: Reconecta e conserta Magicamente Membros do corpo amputados usando a ação inteira.**"
+                ],
+                "Densidade Óssea": [
+                    "Massa pesada. **Sistema: Ganha +1 bônus fixo nos Testes Opostos (CON/FOR) contra tentativas inimigas de Empurrões.**",
+                    "Caixa torácica reforçada. **Sistema: Imunidade passiva a quebra-ossos; (Armas Contundentes perdem o bônus de Dano Crítico em você).**",
+                    "Esqueleto Encouraçado. **Sistema: Bater em você machuca o oponente. Socos Desarmados inimigos dão 1 Dano a quem bateu.**",
+                    "Imóvel em Quedas. **Sistema: Nunca recebe Dano de Queda (Livre para até 15 metros caindo de pé).**",
+                    "Estrutura Óssea Densa. **Sistema: Imune ao 'Dano Contundente' global e mecânica de Esmagamento.**"
+                ],
+                "Termorregulação Perfeita": [
+                    "Nega incômodos. **Sistema: Ignora Debuff de clima extremo (Desertos ou Neve) sem exigir roupas térmicas.**",
+                    "Resistência de Pele. **Sistema: Ganha Resistência Passiva (Dano Cortado na metade) contra todos ataques de Fogo e Gelo comum.**",
+                    "Metabolismo Estável. **Sistema: Imune à condição 'Fadiga por Clima'. Nunca perde Stamina por calor extremo.**",
+                    "Absorção Elementar. **Sistema: Ser atingido por feitiços rasteiros de Fogo ou Gelo cura Vida HP no lugar de machucar.**",
+                    "Isolamento Absoluto. **Sistema: Imunidade a tomar Dano de Fogo. Nega chamas místicas e nevascas.**"
+                ],
+                "Estômago Forte": [
+                    "Mastigação Forte. **Sistema: Pode ingerir e se curar com sucata orgânica como se fossem Ração nos testes de Descanso.**",
+                    "Processamento dobrado. **Sistema: Toda Poção Menor de HP/Stamina tem eficácia dobrada em você.**",
+                    "Corrupção Alimentar. **Sistema: Ingerir venenos propositais curam seus outros debuffs internos em vez de causar dano.**",
+                    "Devorar. **Sistema: (Ação Principal) Consumir orgânicos caídos na arena aplica bônus de +20 HP temporário.**",
+                    "Fornalha Gástrica. **Sistema: Engolir miúdos de Chefes confere um Status temporário do Monstro na sua ficha.**"
+                ],
+                "Firmeza de Montanha": [
+                    "Base Firme. **Sistema: Impossível sofrer ataques de condição 'Surpresa' furtivos corpo-a-corpo e não cai por tropeço normal.**",
+                    "Duelo de força. **Sistema: Rolagem de +2 base fixo em Testes Opostos de Rasteiras ou Disputas de Agarrão.**",
+                    "Enraizamento. **Sistema: Imunidade completa a Knockback vindo de Forças de Tamanho 'Médio' ou inferior.**",
+                    "Rebote Cinético. **Sistema: Tentar te dar um empurrão devolve 1d4 de Dano Contundente (Requer Falha em Teste Oposto: FOR do atacante vs sua CON).**",
+                    "Gravidade Puxada. **Sistema: Cancela e imuniza as mecânicas ambientais de Telecinese Inimiga e Levitações forçadas.**"
+                ],
+                "Vitalidade Ampliada": [
+                    "Sangue encorpado. **Sistema: Modificador de Multiplicação: +10% de acréscimo final calculado no seu HP Máximo Base.**",
+                    "Coração espesso. **Sistema: O Bônus sobe para +20% HP Máximo total da ficha.**",
+                    "Veias Fortes. **Sistema: O Modificador atinge +30% HP Máximo na ficha.**",
+                    "Reservatório Físico. **Sistema: Aplica +50% no HP Máximo e ganha Vantagem em Testes Opostos de empurrão.**",
+                    "Coração Resistente. **Sistema: Ressurreição: Uma vez em campanha, se morto em batalha, você auto-revive com 50% HP imediato.**"
+                ],
+                "Estase Carnal": [
+                    "Genética Lenta. **Sistema: A longevidade da vida ignora os efeitos e penalidades de envelhecimento.**",
+                    "Pulmões Controlados. **Sistema: Confere x3 no multiplicador de Fôlego debaixo d'água antes de sofrer asfixia.**",
+                    "Hibernação. **Sistema: Consegue sobreviver semanas sem água/comida zerando os limites de sobrevivência ao adormecer.**",
+                    "Controle Hemorrágico. **Sistema: (Ação Livre) Prende Veneno ativo em 1 membro anulando a dispersão sistêmica.**",
+                    "Estase Completa. **Sistema: Imune à maldição de Roubo de Idade e a mecânicas temporais de envelhecimento mágico.**"
+                ],
+                "Escudo Físico Reativo": [
+                    "Músculos reflexos. **Sistema: +1 de CA (Classe de Armadura) contra golpes furtivos surpresa.**",
+                    "Pele repulsiva. **Sistema: Quem te ataca corpo-a-corpo e erra sofre Desvantagem no próximo ataque (Teste de Resistência: VON vs sua CON).**",
+                    "Onda Muscular. **Sistema: Receber +30 de dano num turno empurra inimigos 2m pra trás (Teste Oposto: FOR/AGI do inimigo vs sua CON para resistir).**",
+                    "Casco da Tartaruga. **Sistema: Ação Bônus (Desistir de andar): Dobra sua Defesa Física passiva no turno.**",
+                    "Abalo Refletor. **Sistema: Todo dano físico corpo a corpo recebido reflete 50% de volta (Teste de Resistência: AGI do atacante vs sua CON para esquivar).**"
+                ],
+                "Glândulas Adaptativas": [
+                    "Suor ácido. **Sistema: Ganha Vantagem (+2) em Testes Opostos (CON/AGI) para escapar de amarras de corda.**",
+                    "Suor Inibidor. **Sistema: Inimigos num raio de 2m sofrem Desvantagem para lançar feitiços de Medo/LUST contra você.**",
+                    "Película Deslizante. **Sistema: Imunidade passiva permanente contra a condição de ser 'Agarrado' (Grappled).**",
+                    "Mutações Químicas. **Sistema: Oponentes que ingerirem/tocarem seu fluido sofrem Envenenamento e -2 VON (Teste de Resistência: CON vs sua CON anula).**",
+                    "Crisálida de Sono. **Sistema: Em MindBreak ou HP zero, vira um casulo por 24h e revive com HP max/LUST zero.**"
+                ]
+            }
+        },
     vig: {
         name: "Vigor", icon: "fa-bolt",
         perks: {
-            "Fôlego Inesgotável": [
+            "Fôlego Constante": [
                 "Pulmões de ferro. **Sistema: Aumenta sua reserva máxima em +10 Stamina.**",
                 "Músculos incansáveis. **Sistema: Aumento permanente de +20 Stamina Máxima.**",
                 "Eficiência cardiovascular. **Sistema: Reduz em -1 o Custo de Stamina de golpes físicos.**",
                 "Fornalha pulmonar. **Sistema: Ganha +50 Stamina Máxima. Imunidade à condição Exaustão.**",
-                "Motor Perpétuo. **Sistema: Recupera passivamente 15 Stamina a cada turno.**"
+                "Recuperação Contínua. **Sistema: Recupera passivamente 15 Stamina a cada turno de combate.**"
             ],
-            "Corredor Incansável": [
-                "Pernas densas. **Sistema: Bônus permanente de +2m na Movimentação.**",
-                "Passo Lamacento. **Sistema: Ignora custo extra de movimento em Terreno Difícil.**",
-                "Adaptação de Carga. **Sistema: Ignora penalidades de movimentação impostas por Armaduras.**",
-                "Investida Furiosa. **Sistema: Correr (Dash) agora custa apenas uma Ação Bônus.**",
-                "Mobilidade Sombria. **Sistema: Movimentação em combate não aciona Ataques de Oportunidade.**"
+            "Corredor Frequente": [
+                "Pernas densas. **Sistema: Bônus permanente de +2m na sua Movimentação.**",
+                "Passo Lamacento. **Sistema: Ignora custo extra de movimento mecânico em Terreno Difícil.**",
+                "Adaptação de Carga. **Sistema: Ignora penalidades de movimentação impostas por Armaduras pesadas.**",
+                "Investida Direta. **Sistema: Ação Correr (Dash) agora custa apenas uma Ação Bônus.**",
+                "Mobilidade Tática. **Sistema: Movimentação em combate não aciona Ataques de Oportunidade do inimigo.**"
             ],
             "Coração Resiliente": [
-                "Adrenalina do corte. **Sistema: Recupera 5 Stamina imediata ao sofrer dano físico.**",
-                "Euforia Violenta. **Sistema: Acertar ataque melee recupera 5 Stamina.**",
-                "Sacrifício da Carne. **Sistema: Permite usar HP no lugar de Stamina (1 HP = 2 Stamina).**",
-                "Coração em fúria. **Sistema: A regeneração natural de Stamina é dobrada permanentemente.**",
-                "Imunidade Muscular. **Sistema: Zerar HP/Stamina não causa inconsciência imediata.**"
+                "Adrenalina. **Sistema: Recupera 5 Stamina imediata ao sofrer dano físico.**",
+                "Foco em Combate. **Sistema: Acertar ataque melee (corpo a corpo) recupera 5 Stamina.**",
+                "Sacrifício da Carne. **Sistema: Permite usar HP no lugar de Stamina (Conversão 1 HP = 2 Stamina).**",
+                "Coração forte. **Sistema: A regeneração natural de Stamina é dobrada permanentemente.**",
+                "Imunidade Muscular. **Sistema: Zerar HP/Stamina não causa inconsciência imediata; você aguenta mais 1 turno de pé.**"
             ],
             "Repelir Êxtase": [
-                "Controle sádico. **Sistema: Aumenta o seu Limiar Máximo de LUST em +5 pontos.**",
-                "Treino contra luxúria. **Sistema: Aumenta o seu Limiar Máximo de LUST em +10 pontos.**",
-                "Tolerância à Invasão. **Sistema: Aumenta o seu Limiar Máximo de LUST em +20 pontos.**",
-                "Masoquismo Reativo. **Sistema: Passar de 50% de LUST concede Bônus de +2 em Rolagens Físicas.**",
-                "Ascensão da Carne. **Sistema: LUST Cheio ativa um Transe Feroz letal sem Mind Break.**"
+                "Controle Mental. **Sistema: Aumenta o seu Limiar Máximo da barra de LUST em +5 pontos.**",
+                "Treino de Foco. **Sistema: Aumenta o seu Limiar Máximo da barra de LUST em +10 pontos.**",
+                "Tolerância. **Sistema: Aumenta o seu Limiar Máximo da barra de LUST em +20 pontos.**",
+                "Masoquismo Reativo. **Sistema: Passar de 50% de LUST concede Bônus de +2 em Rolagens Físicas (FOR/AGI/CON).**",
+                "Transe de Combate. **Sistema: LUST Cheio ativa Fúria (+50% Dano) ao invés de aplicar Mind Break automático.**"
             ],
             "Adaptação Erótica": [
                 "Alívio prático. **Sistema: Ação de 'Alívio Sexual' custa metade da Stamina em combate.**",
-                "Maestria do corpo. **Sistema: Alívio Pessoal em combate não consome Ação Principal (apenas Bônus).**",
-                "Vício funcional. **Sistema: A ação de Alívio recupera +15 Stamina instantânea.**",
-                "Sadomasoquismo ofensivo. **Sistema: Se aliviar em combate aplica dano de LUST em área (CD 14 VON).**",
-                "Clímax Tático. **Sistema: Atingir gozo zera todos os tempos de recarga (Cooldowns) da classe.**"
+                "Maestria corporal. **Sistema: Alívio Pessoal em combate não consome Ação Principal (apenas Ação Bônus).**",
+                "Foco Rápido. **Sistema: A ação de Alívio Sexual recupera +15 Stamina instantânea.**",
+                "Provocação. **Sistema: Se aliviar em combate aplica Dano LUST em área (Teste de Resistência Oposto: VON vs VIG/SED para anular).**",
+                "Clímax de Combate. **Sistema: Atingir gozo zera todos os tempos de recarga (Cooldowns) da sua classe de combate.**"
             ],
             "Tolerância Adrenalínica": [
-                "Bloqueio de Tesão. **Sistema: Imune aos debuffs mecânicos do Estágio 1 de LUST.**",
-                "Foco Inibidor Sanguinário. **Sistema: Anula completamente os debuffs do Estágio 2 de LUST.**",
-                "Conversão Mística. **Sistema: O debuff do Estágio 3 passa a conceder +2 de Dano ao invés de penalidade.**",
-                "Couraça de Nervos Rígidos. **Sistema: 100% Imune aos Espasmos Paralisantes e perda de turno LUST.**",
-                "Mind Break Assassino. **Sistema: Sofrer Mind Break Ativa a Fúria, dobrando FOR sem controle por 3 turnos.**"
+                "Bloqueio de Tesão. **Sistema: Imune aos debuffs mecânicos causados pelo Estágio 1 de LUST.**",
+                "Foco Inibidor. **Sistema: Anula completamente os debuffs causados pelo Estágio 2 de LUST.**",
+                "Conversão Mística. **Sistema: O debuff de Estágio 3 passa a conceder +2 de Dano Físico ao invés da penalidade.**",
+                "Couraça de Nervos Rígidos. **Sistema: 100% Imune aos Espasmos Paralisantes e perda de turno gerada por alto LUST.**",
+                "Fúria após Mind Break. **Sistema: Sofrer Mind Break ativa a Fúria de Combate, dobrando FOR sem controle (Berserk) por 3 turnos.**"
             ],
             "Capacidade Pulmonar": [
-                "Superoxigenação. **Sistema: Dobra o limite de tempo segurando o fôlego sob o mar/gás.**",
-                "Filtro mágico natural. **Sistema: Vantagem natural contra ataques que envolvam Veneno/Gás inalados.**",
-                "Sobrevivência aquática. **Sistema: Ignora o Dano de Asfixia direto nas primeiras 5 rodadas submerso.**",
+                "Oxigenação Elevada. **Sistema: Dobra o limite mecânico de tempo segurando o fôlego sob água ou gás.**",
+                "Filtro natural. **Sistema: Vantagem natural (CON) contra ataques que envolvam Veneno/Gás inalados.**",
+                "Sobrevivência aquática. **Sistema: Ignora o Dano Fixo de Asfixia direto nas primeiras 5 rodadas submerso.**",
                 "Caixa Respiratória. **Sistema: Fica completamente imune a sofrer 'Dano de Toxina Inalada'.**",
-                "Pulmões de Titã. **Sistema: Passa a respirar normalmente debaixo d'água e em áreas vácuas mágicas.**"
+                "Pulmões Adaptáveis. **Sistema: Passa a respirar normalmente debaixo d'água e em áreas de vácuo mágico.**"
             ],
             "Segundo Fôlego": [
                 "Reserva emergencial. **Sistema: (Ação Bônus) Recupera 10 Stamina ativa em batalha 1x ao dia.**",
                 "Dobro da Reserva. **Sistema: O Segundo Fôlego passa a recuperar 30 Stamina no combate.**",
-                "Sangue pelo Vigor. **Sistema: Pode queimar HP Máximo para recuperar imediatamente toda a Stamina.**",
-                "Onda de Choque de Energia. **Sistema: Acionar Segundo Fôlego joga Inimigos adjacentes 2m para trás.**",
-                "Vigor Imortal Absoluto. **Sistema: A sua Stamina é incapaz de descer abaixo de 10 na barra mecânica.**"
+                "Conversão de Vitalidade. **Sistema: Pode queimar 25% do seu HP Máximo para recuperar imediatamente toda a Stamina.**",
+                "Onda de Energia. **Sistema: Acionar Segundo Fôlego joga Inimigos adjacentes 2m para trás (Teste Oposto: FOR/AGI vs sua VIG para resistir).**",
+                "Vigor Mínimo. **Sistema: A sua Stamina é incapaz de descer abaixo de 10 na barra mecânica.**"
             ],
-            "Atleta Divino": [
-                "Corpo flexível. **Sistema: Vantagem passiva (+ mod VIG) em todo Teste Acrobático e de Escalada.**",
-                "Fibras elásticas. **Sistema: Multiplica a distância de qualquer rolagem de Salto longo por 3.**",
-                "Máquina incansável. **Sistema: Não exige teste de Exaustão ao ficar múltiplas noites sem dormir.**",
-                "Biorritmo Intocável. **Sistema: Imunidade ao status 'Lentidão' vindo de armadilhas ou Feitiços de Gelo.**",
-                "Físico Inabalável. **Sistema: Feitiços e Monstros não conseguem drenar ou diminuir seus Atributos Físicos.**"
+            "Atleta Treinado": [
+                "Corpo flexível. **Sistema: Vantagem passiva (+ mod VIG) em todo Teste Acrobático e de Escalada de cenário.**",
+                "Fibras elásticas. **Sistema: Multiplica a distância de qualquer rolagem base de Salto longo por 3.**",
+                "Corpo Resistente. **Sistema: Não exige Teste de Resistência à Exaustão (CON) ao ficar múltiplas noites sem dormir.**",
+                "Biorritmo Estável. **Sistema: Imunidade ao status mecânico 'Lentidão' vindo de armadilhas ou Feitiços de Gelo.**",
+                "Físico Protegido. **Sistema: Feitiços e Monstros não conseguem drenar ou aplicar debuff permanente nos seus Atributos Físicos.**"
             ],
             "Aura de Energia": [
-                "Inspiração Tropa. **Sistema: Concede +5 de Stamina (Max ST) passiva a aliados a 5m.**",
-                "Corrente Mágica. **Sistema: Aumenta o buff para os aliados na aura a +10 Max ST.**",
-                "Transferência de Pulso. **Sistema: Doa (Ação Bônus) metade da sua Stamina pra um aliado.**",
-                "Comando de Fúria. **Sistema: Ao motivar 1 Aliado, sua próxima habilidade custa zero Stamina.**",
-                "Cúpula Revigorante. **Sistema: Passivamente dobra a velocidade de Regen ST natural de todos no raio.**"
+                "Inspiração Tropa. **Sistema: Concede +5 de Stamina (Max ST) passiva a aliados num raio de 5m.**",
+                "Corrente Mágica. **Sistema: Aumenta o buff para os aliados na aura para +10 Max ST.**",
+                "Transferência de Pulso. **Sistema: Doa (Ação Bônus) metade da sua Stamina pra curar a barra de um aliado.**",
+                "Comando de Motivação. **Sistema: Ao usar ação para motivar um Aliado, sua próxima habilidade custa zero Stamina.**",
+                "Cúpula Revigorante. **Sistema: Passivamente dobra a velocidade de Regeneração de ST natural de todos aliados na aura.**"
             ],
             "Blindagem Mental": [
-                "Bloqueio de Tesão. **Sistema: Subtrai passivamente 10% do Dano LUST inimigo contra você.**",
-                "Psiquê de Ferro. **Sistema: A redução contra qualquer Dano LUST no combate aumenta para 25%.**",
-                "Sadismo convertido. **Sistema: Ataques Místicos LUST contra ti curam a sua Stamina num valor equivalente.**",
-                "Impactos Telepáticos Convertidos. **Sistema: Qualquer magia telepática contra você também te cura HP.**",
-                "Vigor Indomável. **Sistema: Inimigos estão impedidos magicamente de sugar ou roubar seu MP/Stamina.**"
+                "Bloqueio de Tesão. **Sistema: Subtrai passivamente 10% do Dano LUST total que um inimigo causa a você.**",
+                "Psiquê Protegida. **Sistema: A redução contra qualquer Dano LUST sofrido no combate aumenta para 25%.**",
+                "Drenagem de Energia. **Sistema: Ataques Místicos LUST contra ti curam a sua Stamina num valor equivalente ao invés de subir LUST.**",
+                "Impactos Telepáticos Convertidos. **Sistema: Qualquer magia telepática agressiva contra você te cura em HP.**",
+                "Vigor Estável. **Sistema: Inimigos estão impedidos magicamente de sugar ou roubar seu MP/Stamina.**"
             ],
             "Descanso Profundo": [
-                "Transe pesado. **Sistema: Descansos curtos (1h) concedem a você a cura de Descansos Longos (8h).**",
-                "Reparação Celular. **Sistema: Dormir remove a Condição 'Doença Menor' automaticamente.**",
-                "Tática de Guerrilha. **Sistema: Bastam 15 minutos parado para curar todo o HP e Stamina na masmorra.**",
-                "Sono Purgante. **Sistema: O descanso zera a corrupção oculta mental sombria que restou (Zera barra LUST).**",
-                "Estase de Cristal. **Sistema: Torna-se Imune a ataques furtivos instakill e dano bônus enquanto estiver dormindo.**"
+                "Sono Rápido. **Sistema: Descansos curtos de Acampamento (1h) concedem a você a cura máxima de um Descanso Longo (8h).**",
+                "Reparação Celular. **Sistema: Dormir remove a Condição 'Doença Menor' automaticamente sem itens.**",
+                "Tática de Guerrilha. **Sistema: Bastam 15 minutos em meditação para curar todo o HP e Stamina no meio da masmorra.**",
+                "Sono Purgante. **Sistema: O descanso zera a corrupção oculta mental sombria que restou (Zera a barra de LUST).**",
+                "Estase de Cristal. **Sistema: Torna-se Imune a ataques furtivos e dano furtivo bônus enquanto estiver dormindo.**"
             ]
         }
     },
     for: {
         name: "Força", icon: "fa-dumbbell",
         perks: {
-            "Golpes Esmagadores": [
-                "Músculos rasgados. **Sistema: Adiciona +1 de Dano Fixo Corpo-a-Corpo (Melee).**",
+            "Golpes Pesados": [
+                "Músculos grandes. **Sistema: Adiciona +1 de Dano Fixo Corpo-a-Corpo (Melee).**",
                 "Impactos maciços. **Sistema: Concede +3 de Dano Fixo (Melee).**",
-                "Força de Aríete. **Sistema: Acertos empurram os alvos em 1 Metro (Knockback).**",
-                "Ação 'Cleave'. **Sistema: Seu ataque físico atinge também alvos menores em 1 quadrado adjacente.**",
-                "Estilhaçar Blindagem. **Sistema: Seus ataques corpo-a-corpo ignoram 50% da Armadura Física inimiga.**"
+                "Força de Empurrão. **Sistema: Acertos físicos empurram os alvos em 1 Metro (Teste Oposto de Resistência: FOR/AGI do alvo vs sua FOR para não recuar).**",
+                "Ataque em Área. **Sistema: Seu ataque físico atinge também alvos menores em 1 quadrado adjacente ao principal.**",
+                "Quebra de Armadura. **Sistema: Seus ataques corpo-a-corpo ignoram 50% da Armadura Física inimiga (passivo).**"
             ],
-            "Agarre Titânico": [
-                "Garrote corporal. **Sistema: Vantagem automática para rolar testes de Agarrões/Submissão.**",
+            "Agarre Firme": [
+                "Trava Corporal. **Sistema: Vantagem passiva automática para rolar testes Opostos de Agarrões/Submissão.**",
                 "Cadeado físico. **Sistema: O Inimigo possui Desvantagem para tentar escapar de seus agarrões.**",
-                "Esmagar a Garganta. **Sistema: Oponente agarrado toma 1d4 de Dano Asfixiante direto no início do seu turno.**",
-                "Quebra-Ossos. **Sistema: Crítico num agarrão aplica -2 em atributos físicos do alvo permanentemente.**",
-                "Abraço Gigante. **Sistema: (Ação) O Agarrão em lacaios pequenos que falharem na resistência resulta em morte instantânea.**"
+                "Aperto na Garganta. **Sistema: Oponente agarrado toma 1d4 de Dano Asfixiante direto no início do seu turno (Dano automático).**",
+                "Trauma Físico. **Sistema: Um Crítico num agarrão aplica -2 em Atributos Físicos (FOR/AGI) do alvo permanentemente.**",
+                "Abraço Asfixiante. **Sistema: (Ação) O Agarrão em lacaios pequenos resulta em Morte Instantânea (Requer falha em Teste Oposto: FOR/AGI vs sua FOR).**"
             ],
             "Músculos Fibrosos": [
-                "Enrijecer. **Sistema: Vantagem em testes de resistência para evitar Rasteiras ou ser derrubado.**",
-                "Redutor Contundente. **Sistema: Reduz em 2 todo Dano Contundente (Maças/Martelos) sofrido.**",
-                "Densidade Tática. **Sistema: Monstros ou magias de tamanho médio não conseguem mover/jogar você pelo grid.**",
-                "Rompedor de Ferrolhos. **Sistema: Quebra amarras e correntes automaticamente usando apenas 1 Ação Bônus.**",
-                "Colosso Imóvel. **Sistema: Ganha Imunidade passiva total às condições 'Agarrado' ou 'Imobilizado'.**"
+                "Enrijecer. **Sistema: Vantagem (+2) em Testes de Resistência Opostos (FOR/AGI) para evitar Rasteiras ou ser derrubado.**",
+                "Redutor Contundente. **Sistema: Reduz em 2 todo Dano Contundente sofrido no combate.**",
+                "Densidade Tática. **Sistema: Monstros ou magias de tamanho médio não conseguem mover ou jogar você pelo grid.**",
+                "Rompedor de Amarras. **Sistema: Quebra amarras e correntes usando apenas 1 Ação Bônus sem rolar dados.**",
+                "Corpo Imóvel. **Sistema: Ganha Imunidade passiva total às condições de 'Agarrado' ou 'Imobilizado'.**"
             ],
             "Quebra-Defesas": [
-                "Oblitera Escudos. **Sistema: Seus ataques ignoram 1 Ponto direto de Redução de Dano Físico inimigo.**",
-                "Aço Esmagado. **Sistema: Seus ataques desconsideram 3 Pontos de Defesa Física de Monstros Fortes.**",
-                "Destruição de Base. **Sistema: Acertos críticos despedaçam escudos pequenos de madeira imediatamente.**",
-                "Amassamento Tático. **Sistema: Críticos reduzem permanentemente a Defesa Base do inimigo em 1 ponto pro resto do combate.**",
-                "Demolição Estrutural. **Sistema: Quebra instantaneamente qualquer Parede Mágica de Gelo/Terra usando Força Bruta.**"
+                "Fura-Defesas. **Sistema: Seus ataques ignoram 1 Ponto direto de Redução de Dano Físico inimigo.**",
+                "Aço Danificado. **Sistema: Seus ataques desconsideram 3 Pontos de Defesa Física passiva de Monstros Fortes.**",
+                "Destruição de Base. **Sistema: Acertos críticos quebram escudos pequenos de madeira imediatamente.**",
+                "Abalo Físico. **Sistema: Acertos Críticos reduzem permanentemente a Defesa Base do inimigo em 1 ponto.**",
+                "Dano a Estruturas. **Sistema: Quebra instantaneamente qualquer Parede Mágica de Gelo/Terra conjurada usando Força.**"
             ],
-            "Arremesso Brutal": [
-                "Atirador Rústico. **Sistema: Pode usar Perícia Atletismo (FOR) para atacar jogando objetos pesados.**",
-                "Boliche de Lacaio. **Sistema: (Ação) Permite arremessar inimigos pequenos ou cadáveres causando Dano em Área.**",
-                "Catapulta Salvadora. **Sistema: Arremessa um Aliado pra fora de Zonas de Perigo Perigosas sem causar Dano a ele.**",
-                "Chuva de Detritos. **Sistema: Jogar objetos massivos (pilares) causa o status 'Atordoado' em quem falhar na esquiva (Área 3m).**",
-                "Impacto da Fera. **Sistema: Consegue rolar empurrões (Knockbacks) eficientes até contra Chefes Gigantes.**"
+            "Arremesso Pesado": [
+                "Atirador Físico. **Sistema: Pode usar Perícia Atletismo (FOR) para atacar jogando objetos pesados no inimigo.**",
+                "Arremesso de Corpos. **Sistema: (Ação) Permite arremessar inimigos pequenos ou cadáveres como projéteis.**",
+                "Remoção Aliada. **Sistema: Arremessa um Aliado pra fora de Zonas de Perigo sem causar Dano a ele.**",
+                "Chuva de Detritos. **Sistema: Jogar objetos massivos causa 'Atordoado' em área de 3m (Teste Oposto de Esquiva: AGI do alvo vs sua FOR).**",
+                "Impacto em Gigantes. **Sistema: Consegue realizar Empurrões (Knockbacks) contra Chefes Gigantes (Teste Oposto normal de FOR vs FOR).**"
             ],
             "Força de Impacto": [
-                "Peso Oculto. **Sistema: Inflige a condição 'Lentidão' nos Inimigos que bloquearem seus golpes pesados.**",
-                "Concussão Bruta. **Sistema: Críticos aplicam a Condição 'Tonto', reduzindo a rolagem do Próximo Turno Inimigo.**",
-                "Esmagamento Cerebral. **Sistema: Pancadas Desarmadas dão status de 'Atordoado' em Lacaios (perdem o turno).**",
-                "Impacto de Terremoto. **Sistema: Golpear o chão converte um raio de 3m em 'Terreno Difícil'.**",
-                "Barreira do Som. **Sistema: Ataques errados ainda causam Dano Sônico igual à metade da sua Força no alvo adjacente.**"
+                "Peso Extra. **Sistema: Inflige a condição 'Lentidão' nos Inimigos que bloquearem golpes pesados (Teste de Resistência: CON vs sua FOR anula).**",
+                "Concussão Focada. **Sistema: Acertos Críticos aplicam a Condição 'Tonto', reduzindo a rolagem do Próximo Turno Inimigo.**",
+                "Impacto na Cabeça. **Sistema: Pancadas Desarmadas aplicam status de 'Atordoado' em Lacaios (Teste de Resistência: CON do alvo vs sua FOR para evitar).**",
+                "Abalo. **Sistema: Golpear o chão converte um raio de 3m do grid em 'Terreno Difícil'.**",
+                "Onda de Choque. **Sistema: Ataques errados ainda causam Dano (metade da FOR) em alvos adjacentes pelo impacto.**"
             ],
-            "Violência Bruta": [
-                "Oportunidade Predadora. **Sistema: +2 de Dano Fixo imediato em Oponentes sob efeito da condição 'Caído/Derrubado'.**",
-                "Massacre da Carne. **Sistema: +5 de Dano Adicional ao atacar inimigos sob a condição 'Agarrado' ou Imobilizado.**",
-                "Chute Bruto. **Sistema: Atacar oponentes 'Atordoados' garante Vantagem passiva nas rolagens de acerto.**",
-                "Execução Sumária. **Sistema: O seu primeiro ataque contra um inimigo 'Rendido' multiplica o Dano Final por x2.**",
-                "Grito do Açougueiro. **Sistema: Matar um inimigo força alvos ao redor a passarem num Teste de Vontade (VON) ou fugirão com Medo.**"
+            "Força Desmedida": [
+                "Ataque a Caídos. **Sistema: +2 de Dano Fixo imediato em Oponentes sob a condição 'Caído/Derrubado'.**",
+                "Dano Extra. **Sistema: +5 de Dano Fixo Adicional ao atacar inimigos sob a condição 'Agarrado' ou 'Imobilizado'.**",
+                "Chute Rápido. **Sistema: Atacar oponentes 'Atordoados' garante Vantagem (Rola 2d20) nas rolagens de acerto melee.**",
+                "Ataque Oportunista. **Sistema: O seu primeiro ataque contra um inimigo 'Rendido/Dormindo' multiplica o Dano Final por x2.**",
+                "Grito Aterrador. **Sistema: Matar um inimigo força alvos ao redor a sentirem Medo (Teste de Resistência Oposto: VON do alvo vs sua FOR).**"
             ],
             "Tensão Muscular Mágica": [
-                "Couraça Mágica. **Sistema: Em Duelos Arcanos, pode rolar FORÇA em vez de VONTADE contra Empurrão Telecinético.**",
-                "Quebrar a Dor. **Sistema: Pode quebrar Prisões Arcanas invisíveis socando-as diretamente com a Perícia Atletismo.**",
-                "Soco Arcano Dissipante. **Sistema: Golpes Desarmados aplicam +2 Dano Bônus Fixo ao atingir Invocações ou Elementais Mágicos.**",
-                "Fornalha Mística. **Sistema: Segurar espadas envoltas em chamas ou venenos não causa Dano na sua empunhadura.**",
-                "Rebote Titânico. **Sistema: (Ação de Reação) Permite socar feitiços de projétil rebatendo-os de volta para o Conjurador.**"
+                "Força Mágica. **Sistema: Em Duelos Arcanos, você pode rolar FORÇA em vez de VONTADE para resistir a um Empurrão Mágico.**",
+                "Quebrar Magia. **Sistema: Pode quebrar Prisões Arcanas invisíveis socando-as diretamente com Atletismo (FOR).**",
+                "Soco Antimagia. **Sistema: Golpes Desarmados aplicam +2 Dano Bônus Fixo ao atingir Invocações ou Elementais Mágicos.**",
+                "Empunhadura Estável. **Sistema: Segurar espadas envoltas em chamas ou venenos não causa Dano nas mãos.**",
+                "Rebote Físico. **Sistema: (Ação de Reação) Permite socar feitiços de projétil (Teste Oposto: FOR vs Magia) rebatendo-os.**"
             ],
-            "Saltador Colossal": [
-                "Tremor das Pernas. **Sistema: Pode realizar saltos acrobáticos de +5m Verticais sem a necessidade de impulso de corrida.**",
-                "Arremesso Aéreo. **Sistema: Cair de um Salto Longo em cima de inimigos permite jogar um Dado Extra de Dano da arma.**",
-                "Asas Brutas. **Sistema: Salto Longo permite carregar 1 Aliado sem que isso diminua a distância total percorrida.**",
-                "Queda Tectônica. **Sistema: A aterrissagem força Inimigos num raio de 3m a fazerem Resistência ou caem 'Derrubados'.**",
-                "Meteoro de Titânio. **Sistema: Zera o Dano de Queda ao cair de penhascos e o reverte como Dano Esmagador 1-Hit-Kill contra o alvo atingido.**"
+            "Saltador Experiente": [
+                "Salto de Base. **Sistema: Pode realizar saltos acrobáticos de +5m Verticais sem impulso de corrida.**",
+                "Ataque em Queda. **Sistema: Cair de um Salto Longo em cima de inimigos permite adicionar um Dado Extra de Dano da arma.**",
+                "Transporte Aéreo. **Sistema: Salto Longo permite carregar 1 Aliado leve sem diminuir a distância do pulo.**",
+                "Abalo na Queda. **Sistema: A aterrissagem pesada causa 'Derrubado' em Inimigos num raio de 3m (Teste Oposto de Equilíbrio: FOR/AGI vs sua FOR).**",
+                "Aterrissagem Pesada. **Sistema: Zera o Dano de Queda livre e reverte como Dano Esmagador contra o alvo atingido no solo.**"
             ],
             "Carregador de Fardo": [
-                "Costas de Touro. **Sistema: Armas classificadas como 'Pesadas' não diminuem passivamente sua Velocidade de Movimento.**",
-                "Mula Divina. **Sistema: Dobra permanentemente sua capacidade de Carga/Inventário Racial sem qualquer Debuff.**",
-                "Locomotiva Brutal. **Sistema: Arrastar lacaios imobilizados no grid passa a não gastar ou penalizar sua Movimentação.**",
-                "Arrancada Gigante. **Sistema: Consegue empunhar Armas 'Duas Mãos' com apenas Uma Mão (Liberando a outra para Escudo/Livre).**",
-                "Atlas Vivo. **Sistema: (Ação) Capaz de suportar Armadilhas de Esmagamento de Teto/Paredes Mágicas por tempo suficiente pro grupo fugir.**"
+                "Costas Firmes. **Sistema: Armas mecânicamente classificadas como 'Pesadas' não diminuem sua Velocidade de Movimento.**",
+                "Carga Extra. **Sistema: Dobra permanentemente sua capacidade de Carga/Inventário sem lhe causar Debuff de peso.**",
+                "Mover Corpos. **Sistema: Arrastar lacaios imobilizados no grid passa a não gastar ou penalizar sua Movimentação.**",
+                "Firmeza de Uma Mão. **Sistema: Consegue empunhar Armas 'Duas Mãos' usando apenas Uma Mão (Liberando a outra para Escudo).**",
+                "Suporte Estrutural. **Sistema: (Ação) Capaz de suportar fisicamente Armadilhas de Esmagamento/Teto para o grupo.**"
             ],
-            "Machado Humano": [
-                "Eixo Tático Perfeito. **Sistema: Passiva Acumulativa: Ganha +1 Dano Fixo por rodada caso ataque sem errar nenhum alvo.**",
-                "Fúria Acumulativa. **Sistema: O bônus progressivo aumenta para +2 de Dano Fixo por cada nova rodada atacando oponentes.**",
-                "Perfurar Artérias. **Sistema: Seu Dano Físico aplica o Status Automático de 'Sangramento Nível 1' em criaturas de carne e osso.**",
-                "Limiar da Ferida Fatal. **Sistema: Causar Dano de Sangramento debuffa Curas Inimigas (-50% Heal Reduction) no inimigo.**",
-                "Amputação Suprema. **Sistema: Um Sucesso Crítico permite que o Jogador decepe/estoure partes secundárias (Cauda, Asas) do alvo.**"
+            "Ataques Focados": [
+                "Ritmo de Batalha. **Sistema: Ganha um bônus progressivo de +1 Dano Fixo por rodada se atacar sem errar.**",
+                "Foco Acumulado. **Sistema: O bônus progressivo aumenta para +2 de Dano Fixo por cada rodada acertando.**",
+                "Ferida Aberta. **Sistema: Seu Dano Físico aplica o Status de 'Sangramento Nível 1' em criaturas biológicas.**",
+                "Ferida Profunda. **Sistema: Causar o Dano de Sangramento debuffa Curas Inimigas (-50% Heal Reduction) no alvo.**",
+                "Amputação Direta. **Sistema: Um Sucesso Crítico permite inutilizar partes secundárias (Braço, Cauda, Asas) do alvo.**"
             ],
             "Impacto Sísmico": [
-                "Micro-Tremores. **Sistema: Errar o Golpe desequilibra Alvos Menores próximos (-1 em testes de Acerto Inimigos no turno deles).**",
-                "Pisão Sombrio. **Sistema: (Ação Bônus Menor) Pisada cria um abalo; Inimigos a 2m rolam Resistência ou recebem Knockdown.**",
-                "Cobertura Terrena. **Sistema: Soco Mágico no chão sobe uma pedra temporária que concede Cobertura Média (+2 CA).**",
-                "Tectônica de Fenda. **Sistema: Esmagar o Chão cria uma Fenda num alvo que causa Dano e o Status de 'Atordoado' (Pernas presas).**",
-                "Doutrina do Terremoto. **Sistema: (Ação Suprema) Um único golpe direcionado oblitera Paredes Mágicas Fortificadas instantaneamente.**"
+                "Tremores Leves. **Sistema: Errar um golpe desequilibra Alvos Menores em volta (-1 Acerto para eles) (Teste Oposto: AGI vs FOR anula).**",
+                "Abalo de Solo. **Sistema: (Ação Bônus) Pisada cria um abalo; Inimigos a 2m sofrem Derrubado (Teste Oposto: FOR/AGI vs sua FOR).**",
+                "Cobertura Rápida. **Sistema: Soco Mágico no chão sobe uma pedra temporária que lhe concede Cobertura Média (+2 CA).**",
+                "Fenda Direta. **Sistema: Esmagar o Chão cria uma Fenda num alvo com Dano e 'Pernas Presas' (Teste Oposto de Esquiva: AGI vs FOR).**",
+                "Abalo Estrutural. **Sistema: (Ação Suprema) Um único golpe direcionado derruba Paredes Mágicas ou Fortificações do cenário.**"
             ]
         }
     },
@@ -455,88 +467,88 @@ const PERK_COSTS = [0, 1, 2, 3, 5, 9];
         name: "Agilidade", icon: "fa-person-running",
         perks: {
             "Reflexos Apurados": [
-                "Percepção leve. Ganha +2 nos lances de Iniciativa.",
-                "Reação de aranha. Ganha +5 Iniciativa, movendo-se no instante em que pensam em atacar.",
-                "Mente acelerada. Impossível de ser pego de surpresa enquanto dorme ou de olhos vendados.",
-                "Antecipação Tática. Uma vez por combate, troque seu lugar na ordem de turnos com um aliado.",
-                "Flash Constante. Você é invariavelmente o primeiro a agir em qualquer combate."
+                "Percepção leve. **Sistema: Ganha +2 Fixo nos lances de Iniciativa em combate.**",
+                "Reação de aranha. **Sistema: Ganha +5 Fixo de Iniciativa, movendo-se no instante em que pensam em atacar.**",
+                "Mente acelerada. **Sistema: Impossível sofrer ataques de condição 'Surpresa' enquanto dorme ou de olhos vendados.**",
+                "Antecipação Tática. **Sistema: Uma vez por combate (Ação Livre), troque seu lugar na ordem de turnos de Iniciativa com um aliado.**",
+                "Iniciativa Perfeita. **Sistema: Você é invariavelmente o primeiro a agir em qualquer combate (Iniciativa Máxima Absoluta).**"
             ],
             "Esquiva Acrobática": [
-                "Ginga fluida de corpo que melhora em +1 a sua Esquiva base.",
-                "Rolamentos diminuem ataques longos e te dão +3 de Esquiva natural.",
-                "Olhos afiados focados, garantindo Vantagem natural para desviar de lanças e flechas.",
-                "Contorcionista aéreo (+5 Esquiva base). Pode desviar de golpes no ar.",
-                "Aparar do Vento. Esquiva perfeita não só evita o dano, mas faz o inimigo perder a arma."
+                "Ginga fluida. **Sistema: Bônus permanente de +1 na sua Classe de Armadura (CA) / Esquiva base.**",
+                "Rolamentos de recuo. **Sistema: Bônus permanente aumenta para +3 de CA (Esquiva natural) contra Ataques a Distância.**",
+                "Olhos afiados focados. **Sistema: Garante Vantagem passiva para desviar (Teste de Resistência de AGI) contra Magias de Área.**",
+                "Acrobacia Aérea. **Sistema: +5 CA absoluta e permite usar Esquiva no Ar, cancelando ataques anti-aéreos.**",
+                "Aparar do Vento. **Sistema: Todo ataque que errar você força o inimigo a rolar (Teste Oposto: FOR/AGI dele vs sua AGI) ou ele deixa a arma cair.**"
             ],
             "Deslize Furtivo": [
-                "Passos sutis; seu peso raramente emite ruídos mesmo sobre vidro quebrado.",
-                "Camuflagem instintiva. Torna-se invisível a olho nu quando em sombras densas.",
-                "Os pés ignoram o atrito natural, imune a armadilhas de placa de pressão.",
-                "Aproximação Letal. Mover-se escondido consome apenas meia Ação no turno.",
-                "Fantasma Assassino. Se não for visto, o primeiro ataque decupla o dano em pontos vitais."
+                "Passos sutis. **Sistema: Ganha Vantagem (Rola 2d20) em todos Testes de Furtividade (AGI) para não fazer ruído.**",
+                "Camuflagem instintiva. **Sistema: Ficar parado em sombras densas fornece status de Invisibilidade a olho nu.**",
+                "Pés sem atrito. **Sistema: Ignora e passa imune a armadilhas de piso de placa de pressão sem acioná-las.**",
+                "Aproximação Letal. **Sistema: Usar a Ação de Esconder-se agora consome apenas uma Ação Bônus.**",
+                "Ataque Furtivo. **Sistema: Se iniciar combate Oculto, seu primeiro ataque multiplica o Dano Final por x10 (Abate Vitais).**"
             ],
             "Precisão Letal": [
-                "Olhar calculista (Margem de Crítico aumentada em 1; acerta Crítico com 19/20).",
-                "Punhaladas nos vasos aumentam a Margem Crítica em 2 (Acerta com 18+).",
-                "Golpes perfeitamente aplicados. Críticos agora também cegam ou sangram pesado.",
-                "Ponto fraco exposto. Seu Dano Crítico ignora 100% da Armadura Física do alvo.",
-                "Ceifador Silencioso. Todo ataque Crítico contra entidades menores resulta em Abate Sumário."
+                "Olhar calculista. **Sistema: Margem de Crítico Físico aumentada em 1 (Acerta Crítico rolando 19 ou 20 no d20).**",
+                "Punhaladas nos vasos. **Sistema: Margem Crítica aumentada para 2 (Acerta Crítico Físico rolando 18, 19 ou 20).**",
+                "Golpes perfeitamente aplicados. **Sistema: Acertos Críticos aplicam o Status Cegueira ou Sangramento Severo no inimigo.**",
+                "Ponto fraco exposto. **Sistema: Seu Dano Crítico passa a ignorar 100% da Redução de Armadura Física do alvo.**",
+                "Abate de Lacaios. **Sistema: Todo ataque Crítico Corpo-a-Corpo contra lacaios menores/fracos resulta em Instakill garantido.**"
             ],
             "Queda de Gato": [
-                "Articulações elásticas cortam pela metade qualquer dano recebido por quedas livres.",
-                "Quedas acidentais de até 20m tornam-se inofensivas.",
-                "Mesmo empurrado ou atordoado no ar, você sempre pousa equilibrado e em pé.",
-                "Pode abrir asas de pano largas ou planar suavemente manipulando as roupas.",
-                "Aterrissagem Heróica. Ignora Dano de Queda terminal caindo do céu completamente ileso."
+                "Articulações elásticas. **Sistema: Corta pela exata metade todo o Dano Físico recebido por Quedas Livres.**",
+                "Pulo Felino. **Sistema: Quedas ou saltos acidentais de até 20m de altura tornam-se mecanicamente inofensivos (0 Dano).**",
+                "Equilíbrio Aéreo. **Sistema: Imune à condição 'Derrubado' após Quedas ou Knockbacks Aéreos; sempre pousa de pé.**",
+                "Planar Aerodinâmico. **Sistema: Pode planar suavemente (como Magia Levitação leve) manipulando as roupas no ar.**",
+                "Aterrissagem Segura. **Sistema: Ignora Dano Terminal completamente, caindo de céu/nuvens até o chão sem receber nenhum arranhão.**"
             ],
             "Escapar de Agarrões": [
-                "Corpo escorregadio. Recebe bônus de +2 para escapar de imobilizações e agarrões LUST.",
-                "Articulações deslocáveis. +5 Absoluto em testes para fugir de garras firmes.",
-                "Escape Rápido. Tentar soltar-se vira uma Ação Bônus rápida em vez da Principal.",
-                "O reflexo sujo do contorcionista deixa quem tentou te agarrar atordoado ao falhar.",
-                "Ilusionista do Escape. Quando se solta, consegue roubar a arma e itens leves do alvo."
+                "Corpo escorregadio. **Sistema: Recebe Bônus Fixo de +2 nos Testes Opostos (AGI) para escapar de Agarrões/Grapples Inimigos.**",
+                "Articulações deslocáveis. **Sistema: O Bônus Fixo aumenta para +5 Absoluto em testes para fugir de qualquer Submissão/LUST.**",
+                "Escape Rápido. **Sistema: Tentar soltar-se vira uma Ação Bônus ao invés de consumir sua Ação Principal.**",
+                "Reflexo Sujo. **Sistema: Inimigos que tentarem te Agarrar e falharem recebem Condição 'Atordoado' no turno (Teste de Resistência CON vs AGI).**",
+                "Escape Oportuno. **Sistema: Quando se solta com sucesso, rouba passivamente a arma ou 1 item menor do inimigo.**"
             ],
-            "Ataque em Foco": [
-                "Armas pequenas ganham letalidade sutil nos cortes rápidos (+1 Dano).",
-                "Suas mãos são um borrão. Ganha a capacidade de um Ataque Extra fraco (Ação Bônus).",
-                "Acelera os pulmões gastando Stamina para desferir um Terceiro Ataque na rodada.",
-                "Aceleração Sanguínea. Cada ataque seguido no alvo acumula Bônus de Dano massivo.",
-                "Vendaval Mortal. Gira como um pião e ataca todas as unidades em área adjacente."
+            "Ataques Rápidos": [
+                "Movimento contínuo. **Sistema: Armas leves/finesse (Adagas/Sabres) causam +1 de Dano Fixo.**",
+                "Mãos borradas. **Sistema: Ganha a capacidade de usar um Ataque Extra (Ação Bônus) se usar Armas Leves/Desarmado.**",
+                "Aceleração Cardíaca. **Sistema: Pode gastar 10 Stamina para desferir um Terceiro Ataque Físico livre na sua rodada.**",
+                "Foco Sanguíneo. **Sistema: Acertar golpes sucessivos num mesmo inimigo acumula Bônus de +2 Dano por acerto na mesma rodada.**",
+                "Ataque Giratório. **Sistema: (Ação Principal) Você gira atacando todos os alvos a 1 quadrado de distância ao mesmo tempo com sua arma.**"
             ],
             "Contra-Ataque Rápido": [
-                "Abertura oportunista. Se um inimigo errar, você pode riscar de volta rapidamente.",
-                "O revide se torna letal. O seu Contra-Ataque de reação dá o Dano integral forte.",
-                "Velocidade de reação dupla. Pode contra-atacar e usar oportunidades 2x por turno inimigo.",
-                "Aparar e Perfurar. Prevê a investida, apara e espeta a garganta no exato mesmo segundo.",
-                "Contra-Ataque Fatal. O alvo revidado sofre sangramento severo e lentidão pelo golpe rápido."
+                "Abertura oportunista. **Sistema: Se um inimigo corpo-a-corpo errar o ataque em você, permite 1 Revide/Contra-Ataque de Reação imediato.**",
+                "Revide Direto. **Sistema: Seu Contra-Ataque de Reação ganha Bônus para causar seu Dano Bruto integral da Arma Primária.**",
+                "Reação Dupla. **Sistema: Você recebe passivamente 2 Ações de Reação por Rodada (pode contra-atacar duas vezes em turnos inimigos).**",
+                "Aparar e Perfurar. **Sistema: Acertar um Contra-Ataque interrompe o combo inimigo, encerrando o turno de ação física dele.**",
+                "Contra-Ataque Preciso. **Sistema: Alvos atingidos pelo seu Contra-Ataque sofrem Sangramento e 'Lentidão' no próximo turno.**"
             ],
             "Passo Fantasma": [
-                "Correr pelo campo ofusca seus contornos, concedendo +1 Esquiva natural passiva.",
-                "Mover-se em velocidade não aciona Ataques de Oportunidade contra você.",
-                "Fase etérea passageira. Pode usar a corrida para atravessar 1 inimigo no grid sem bater.",
-                "Corre livremente sobre superfícies verticais ou por cima da água mantendo impulso.",
-                "Se esconder na escuridão teleporta seu corpo para outra área de breu no limite visual."
+                "Corrida ofuscante. **Sistema: Mover-se ao menos 3 metros no seu turno te concede +1 de CA (Esquiva) passiva até o próximo turno.**",
+                "Passo Invisível. **Sistema: Se mover ou sair de combate corporal não gera/ativa Ataques de Oportunidade contra você.**",
+                "Fase etérea passageira. **Sistema: Pode usar seu Deslocamento para atravessar fisicamente 1 espaço ocupado por um inimigo sem impedimento.**",
+                "Leveza Impossível. **Sistema: Corre livremente por Superfícies Verticais (paredes) ou por cima de Água Líquida se mantiver o passo.**",
+                "Salto Sombrio. **Sistema: (Ação Bônus) Se esconder em área de Penumbra permite se Teleportar para outra área de Breu a até 10m visíveis.**"
             ],
-            "Mobilidade Extrema": [
-                "O famoso Bater e Correr. Após bater, você desliza magicamente 2 metros para trás limpo.",
-                "Pirueta elástica de recuo de até 5 metros automaticamente sem gerar reações inimigas.",
-                "Impulso de Stamina. Gastar pontos extras permite recuos táticos insanos de longas distâncias.",
-                "Passos borrados aplicam -2 na Chance de Acerto dos inimigos embaraçando a visão deles.",
-                "Flashstep Múltiplo. Pode atacar três alvos espalhados em cantos opostos saltando entre eles."
+            "Mobilidade Avançada": [
+                "Bater e Correr. **Sistema: Após realizar Ação de Ataque, desliza magicamente 2 metros grátis no grid.**",
+                "Recuo Elástico. **Sistema: O deslize/recuo grátis é estendido para 5 metros de fuga absoluta na rodada.**",
+                "Impulso Tático. **Sistema: Mover-se no primeiro turno de combate tem o Deslocamento total dobrado.**",
+                "Miragem de Passos. **Sistema: Ao usar Correr (Dash), todos inimigos ganham Desvantagem (-Rola 2d20) ao te alvejar com ataques visuais.**",
+                "Movimento e Ataque. **Sistema: Seu 'Ataque Giratório' (Ataque em Área) agora pode atingir alvos separados saltando num raio de 10m.**"
             ],
             "Reação Ocular": [
-                "Rastreia flechas a tempo de aparar projéteis leves no ar (50% de sucesso).",
-                "Aparagem e desvio de flechas instintivo e absoluto (100% de sucesso).",
-                "Domínio cinético nos punhos rebate a flecha desviada com exatidão mortal de volta.",
-                "Reflexo Arcano. Pode bloquear balas e projéteis elementais fracos com precisão.",
-                "Devolução do Caos. Gira feitiços e magias lendárias ofensivas refletindo de volta ao feitor."
+                "Visão cinética. **Sistema: (Ação de Reação) Rola Teste Oposto (AGI vs Acerto Inimigo) para tentar desviar ou cortar 1 flecha atirada em você.**",
+                "Aparagem Absoluta. **Sistema: Bloqueio de Projéteis mundanos (Flechas/Facas) torna-se 100% à prova de falhas se você usar Reação.**",
+                "Devolução de Projéteis. **Sistema: Flechas e projéteis rebatidos voam de volta ao atirador causando o dano original nele mesmo (Acerto Automático).**",
+                "Reflexo Arcano. **Sistema: Permite usar a Aparagem Absoluta contra Feitiços/Balas Mágicas de uso Direto e Foco único.**",
+                "Refletir Magia. **Sistema: Reflete magias Supremos e Lendários em área de volta ao Caster usando todo o corpo como eixo rotacional.**"
             ],
             "Dança da Morte": [
-                "Pés ágeis mesclam ritmos que atrapalham arqueiros inimigos e dão +1 Esquiva.",
-                "A graciosidade do movimento empolga. Esquivar confere Buffs menores aos aliados perto.",
-                "Ganha Bônus defensivos se cercado (Lutadores múltiplos ativam seus reflexos).",
-                "Frenesi Ritmado. Gira abrindo a guarda: todos tentam te acertar e falham, quebrando postura.",
-                "Manto da Esquiva Protetiva. No milissegundo de explosões mágicas, retira você e 1 aliado da zona fatal ilesos."
+                "Passos ágeis. **Sistema: Todo Arqueiro ou Atirador sofre passivamente -1 de penalidade para te acertar (Devido a sua fluidez constante).**",
+                "Graciosidade que Empolga. **Sistema: Sucesso num Teste de Esquiva confere +1 de Bônus em testes no próximo turno de todos os seus aliados num raio de 5m.**",
+                "Combate de Multidão. **Sistema: Ganha +1 CA para cada inimigo a mais (além do primeiro) que estiver em quadrado adjacente a você.**",
+                "Abertura Falsa. **Sistema: (Ação Bônus) Abre a guarda de propósito. Todo Inimigo a 2m que tentar bater e errar perde a Postura caindo 'Derrubados'.**",
+                "Esquiva em Grupo. **Sistema: Em caso de falha num Teste Oposto de Magia de Área inimiga (Fogo/Gelo), um salto puxando o aliado garante Dano Zero para ambos.**"
             ]
         }
     },
@@ -544,88 +556,88 @@ const PERK_COSTS = [0, 1, 2, 3, 5, 9];
         name: "Vontade", icon: "fa-brain",
         perks: {
             "Mente Inabalável": [
-                "Postura de veterano. **Sistema: Rola testes com Vantagem contra habilidades de Intimidação.**",
-                "Cérebro blindado. **Sistema: Bônus absoluto de +2 na Defesa Base contra Hipnose/Ilusão.**",
-                "Claridade Racional. **Sistema: Imunidade total à Condição 'Amedrontado/Fobia' de Monstros.**",
+                "Postura de veterano. **Sistema: Rola Testes de Resistência Opostos (VON) com Vantagem contra Intimidação.**",
+                "Cérebro blindado. **Sistema: Bônus absoluto de +2 na Defesa Base contra magias de Hipnose/Ilusão.**",
+                "Claridade Racional. **Sistema: Imunidade total à Condição 'Amedrontado/Fobia' imposta por Monstros.**",
                 "Carisma Inverso. **Sistema: Completamente impermeável à feitiços de Encantamento e Sedução Arcanos.**",
-                "Aura Mental Estilhaçadora. **Sistema: Inimigos que tentam ataques telepáticos sofrem Dano Psíquico de volta.**"
+                "Defesa Mental. **Sistema: Inimigos que tentam ataques telepáticos sofrem Dano Psíquico de volta (Teste Oposto: VON do atacante vs sua VON).**"
             ],
-            "Estoicismo Carcerário": [
-                "Acostumado à sujeira. **Sistema: +2 na Resistência (VON) contra acúmulo de LUST (Tesão).**",
-                "Castidade Bruta. **Sistema: Aumenta o Bônus de Defesa contra LUST para +5 passivo.**",
-                "Inversão do Papel. **Sistema: Corta pela metade a eficácia das Magias LUST inimigas.**",
+            "Resistência Mental": [
+                "Acostumado à sujeira. **Sistema: +2 nos Testes de Resistência (VON) contra o acúmulo de LUST (Tesão).**",
+                "Foco. **Sistema: Aumenta o Bônus de Defesa contra Dano LUST para +5 Fixo passivo.**",
+                "Inversão do Papel. **Sistema: Corta pela metade a eficácia de Magias LUST inimigas direcionadas a você.**",
                 "Mente Dissociativa. **Sistema: No Estágio 3 de LUST, você não sofre os debuffs de paralisação e fadiga extremas.**",
-                "Masoquismo Divino. **Sistema: Dano massivo de LUST curará o seu HP ao invés de causar Mind Break.**"
+                "Conversão de Dano. **Sistema: Dano massivo de LUST curará o seu HP ao invés de causar Mind Break.**"
             ],
             "Clarividência": [
-                "Intuição afiada. **Sistema: Inimigos rolam com Desvantagem testes de Furtividade e Enganação contra você.**",
-                "Vê borrões nítidos. **Sistema: Magias Menores de Invisibilidade falham passivamente na sua presença.**",
-                "Ilusões frágeis. **Sistema: Você não cai em ilusões geográficas de labirintos e miragens de feitiço.**",
-                "Sentido Assassino. **Sistema: Imune a ataques críticos originados de flanqueamento e emboscadas furtivas.**",
-                "Olho de Deus. **Sistema: Permite enxergar Dados Ocultos dos NPCs e Chefes (HP exato e Resistências Elementais).**"
+                "Intuição afiada. **Sistema: Inimigos rolam com Desvantagem testes Furtividade contra você (Teste Oposto: AGI deles vs sua VON/Percepção).**",
+                "Vê borrões nítidos. **Sistema: Magias Menores de Invisibilidade falham passivamente na sua presença num raio de 5m.**",
+                "Ilusões frágeis. **Sistema: Você ganha +5 Fixo em Testes de VON para não cair em labirintos ou miragens de feitiço.**",
+                "Sentido Assassino. **Sistema: Imune a acertos críticos originados de flanqueamento e emboscadas furtivas (Percebe automaticamente).**",
+                "Análise Completa. **Sistema: Permite enxergar Dados Ocultos dos NPCs e Chefes (HP exato, CA, LUST e Resistências Elementais).**"
             ],
             "Presença Imponente": [
-                "Postura intimidadora. **Sistema: Bônus de +2 em rolagens sociais e intimidações.**",
-                "Predador Nato. **Sistema: Ameaçar inimigos enfraquecidos inflige a Condição 'Abalado' neles.**",
-                "Grito Sangrento. **Sistema: (Ação) Berro que aplica Lentidão e -1 Iniciativa aos oponentes num raio de 5m.**",
-                "Aterrorizar Lacaios. **Sistema: Monstros menores fogem do combate ao você realizar Acertos Críticos neles.**",
-                "Comando Soberano. **Sistema: Força inimigos normais a largarem suas armas caso falhem num teste contra sua VON.**"
+                "Postura intimidadora. **Sistema: Bônus Fixo de +2 em rolagens de Persuasão e Intimidação.**",
+                "Predador Nato. **Sistema: Ameaçar inimigos enfraquecidos inflige 'Abalado' neles (Teste de Resistência: VON do alvo vs sua VON).**",
+                "Grito Intimidador. **Sistema: (Ação) Berro aplica Lentidão e -1 Iniciativa num raio de 5m (Teste Oposto: VON do alvo vs sua VON para resistir).**",
+                "Aterrorizar Lacaios. **Sistema: Monstros menores fogem em Medo ao você realizar Acertos Críticos neles (Teste de Resistência: VON).**",
+                "Comando Mental. **Sistema: Força inimigos normais a largarem suas armas (Teste de Resistência: VON do inimigo vs sua VON para anular).**"
             ],
             "Meditação Tática": [
-                "Respira e foca. **Sistema: Gastar o turno para Meditar recupera passivamente Vida e Estamina (HP/ST).**",
-                "Calmante Interior. **Sistema: Meditar em combate cessa Venenos fracos, Sangramentos ou Cegueira Menor.**",
-                "Desprezo Divino. **Sistema: Ignora as penalidades (debuffs de atributos) derivadas de HP crítico no combate.**",
-                "Transe de Batalha. **Sistema: Meditar purga (zera) a sua barra de LUST acumulada na masmorra.**",
-                "Farol de Paz Santificada. **Sistema: Aura curativa em Meditação remove Debuffs Mentais de aliados num raio de 5m.**"
+                "Respira e foca. **Sistema: Gastar o turno (Ação Completa) para Meditar recupera passivamente Vida e Estamina baseados na VON.**",
+                "Calmante Interior. **Sistema: Meditar em combate cessa Venenos fracos, Sangramentos menores ou Cegueira.**",
+                "Foco Pleno. **Sistema: Ignora passivamente as penalidades (debuffs de atributos) derivadas de estar com HP baixo no combate.**",
+                "Transe de Batalha. **Sistema: Meditar por 1 minuto purga (zera) a sua barra de LUST acumulada na masmorra.**",
+                "Aura de Calma. **Sistema: Sua Meditação cria uma Aura que remove Debuffs Mentais/Medo de aliados num raio de 5m.**"
             ],
             "Foco Implacável": [
-                "Coração Concentrado. **Sistema: Vantagem natural em Testes de Concentração para não perder magias invocadas.**",
-                "Ignora Espasmos. **Sistema: Receber Danos de raspão (ataques leves físicos) nunca cancelam Rituais Arcanos Castados.**",
-                "Controle Sensorial. **Sistema: Imune a Cegueira ou Surdez para efeitos de mirar magias à distância.**",
-                "Máquina Mística. **Sistema: Ser alvo de Crítico em combate dobra (x2) o Dano ou Cura do seu próximo feitiço conjurado.**",
-                "Transe Cadavérico. **Sistema: Atingir HP Zero permite finalizar as Invocações pendentes de Feitiço em Forma Espiritual deitado.**"
+                "Coração Concentrado. **Sistema: Vantagem natural em Testes de Concentração (VON) para não perder magias invocadas ao tomar dano.**",
+                "Ignora Espasmos. **Sistema: Receber Dano Físico de raspão (menos de 5 Dano) nunca cancela os seus Rituais Arcanos Castados.**",
+                "Controle Sensorial. **Sistema: Imune a Cegueira ou Surdez para efeitos de mirar feitiços mágicos à distância.**",
+                "Máquina Mística. **Sistema: Ser alvo de Acerto Crítico dobra (x2) o Dano Fixo ou a Cura Falsa do seu próximo feitiço conjurado.**",
+                "Concentração Final. **Sistema: Atingir HP Zero permite finalizar as Invocações pendentes de Feitiço em Forma Espiritual antes do coma.**"
             ],
             "Disciplina Carnal": [
-                "Mente Reprimida. **Sistema: Diminui a corrupção LUST em -2 pontos por rodada, sem necessitar de Alívio Sexual.**",
-                "Afastar do Combate. **Sistema: Fugas táticas (Desengajar) retiram passivamente -5 pontos da barra de LUST.**",
-                "Limiar Expansivo. **Sistema: Dobra a capacidade Total da barra de Limites de Prazer LUST da sua Ficha e Atributos de Sanidade.**",
-                "Flagelo Purificador. **Sistema: (Ação Especial) Paga custo de HP em Cortes para curar passivamente Corrupções Mentais da Party Amiga.**",
-                "Veto Moral Impiedoso. **Sistema: Se sofrer Mind Break final, ignora a Derrota Absoluta (Insta-Lose) e recobra 10% da consciência. (1x por Masmorra).**"
+                "Mente Reprimida. **Sistema: Diminui a corrupção LUST em -2 pontos por rodada passivamente, sem necessitar da Ação de Alívio Sexual.**",
+                "Afastar do Combate. **Sistema: Usar Desengajar/Fuga Tática retira passivamente -5 pontos da barra de LUST.**",
+                "Limiar Expansivo. **Sistema: Dobra a capacidade Total da barra de Limites de Prazer LUST da sua Ficha de Atributos.**",
+                "Flagelo Purificador. **Sistema: (Ação Especial) Paga custo de HP em auto-flagelação para curar 2d10 da Corrupção LUST de aliados próximos.**",
+                "Recuperação de Sanidade. **Sistema: Se sofrer Mind Break, ignora a Derrota Absoluta (Insta-Lose) e recobra 10% da sanidade (1x por Masmorra).**"
             ],
             "Barreira Psíquica": [
-                "Reduz Dano Mental. **Sistema: Ignora 1 ponto fixo de Dano Arcânico advindo de Magias e Raios Telepáticos e Ocultos.**",
-                "Escudo Mágico Espesso. **Sistema: Diminui 5 Pontos Absolutos de Dano Vindo de Explosões Fogo ou ataques de Projéteis Sombrios Inimigos na Ficha.**",
-                "Projeta Escudo Foco. **Sistema: Confere Redução Mágica Elemental e Imunidades contra Pânico para Aliados adjacentes a você no seu Raio.**",
-                "Ricochete Ocular Súcubo. **Sistema: Ataques Telepáticos Mentais dos Inimigos rebatem o Dano Psíquico da sua Mente Refletora contra eles Próprios de Retorno.**",
-                "Mente de Diamante Lapidado. **Sistema: Completamente Inabalável: Imunidade a Magias Colossais de Possessão Mental ou Corrupção Alheia Oculta dos Falsos Deuses Arcanos Táticos.**"
+                "Reduz Dano Mental. **Sistema: Ignora 1 ponto fixo de Dano Arcânico advindo de Magias de LUST ou Raios Telepáticos Ocultos.**",
+                "Escudo Mágico Espesso. **Sistema: Diminui 5 Pontos Absolutos de Dano recebido de Explosões de Magias Elementais.**",
+                "Projeta Escudo Foco. **Sistema: Confere +2 de Redução Mágica e Imunidade a Medo/Pânico para Aliados adjacentes a você.**",
+                "Ricochete Mental. **Sistema: Ataques Mentais/Telepáticos Inimigos rebatem Dano Psíquico neles mesmos (Teste Oposto: VON atacante vs sua VON).**",
+                "Mente Fechada. **Sistema: 100% de Imunidade a Magias Colossais de Possessão Mental ou Mind Control Inimigo.**"
             ],
             "Quebra-Amarras": [
-                "Controle afrouxado. **Sistema: Magias inimigas de Enraizamento ('Root') tem duração reduzida pela metade.**",
-                "Desdém mental. **Sistema: Efeitos inimigos Paralisantes na sua mente duram no máximo 1 único Turno.**",
-                "Toque de Despertar. **Sistema: Usar a Ação de Tocar em um Aliado o desperta do Controle Mental inimigo de Magos e Súcubos na mesma hora da invocação.**",
-                "Veto do Enfraquecimento. **Sistema: Imunidade a Feitiços de Preguiça, Enfraquecer Atributos Física ou Magias de Sono em Área dos Inimigos Táticos.**",
-                "Supremacia Real Perante a Mentira. **Sistema: Cancela Automaticamente os Labirintos Sombrios Dimensionais Ilusórios Inimigos Revelando Cenário Original aos Aliados no Olhar e Presença Focada do Herói Magico.**"
+                "Controle afrouxado. **Sistema: Magias inimigas de Enraizamento ('Root') tem a duração em turnos reduzida pela metade.**",
+                "Desdém mental. **Sistema: Efeitos inimigos de 'Paralisia' ou 'Atordoamento' na sua mente duram no máximo 1 único Turno.**",
+                "Toque de Despertar. **Sistema: Usar a Ação Tocar num Aliado o desperta do Controle Mental inimigo de Magos e Súcubos automaticamente.**",
+                "Veto do Enfraquecimento. **Sistema: Imunidade a Feitiços de Preguiça, Enfraquecer Atributos e Magias de Sono em Área inimigas.**",
+                "Quebra de Ilusões. **Sistema: Cancela automaticamente Labirintos e Ilusões de Cenário, revelando a saída ao grupo.**"
             ],
             "Avatar da Mente": [
-                "Empodera Conjurações. **Sistema: Adiciona Dano passivo equivalente ao Atributo Vontade nas Magias Divinas Disparadas.**",
-                "Guerreiro Monge Oculto. **Sistema: Ataques Corpo-a-Corpo passam a Escalar Dano Bruto baseado em VONTADE (VON) em vez de FORÇA.**",
-                "Canalização Divina. **Sistema: Converte 100% do Dano Físico de Espadas em Dano Mental Puro contra Armaduras e Golems.**",
-                "Exorcismo Brutal. **Sistema: Golpes Físicos seus atingem Invocações Intangíveis e Fantasmas que possuem Imunidade Física.**",
-                "Alma Projetada em Fúria. **Sistema: (Ação) Permite Lutar como Espírito Invulnerável fisicamente enquanto o corpo dorme seguro.**"
+                "Empodera Conjurações. **Sistema: Adiciona seu Modificador de VONTADE no Dano Base em todas as suas Magias Ofensivas.**",
+                "Guerreiro Monge Oculto. **Sistema: Seus Ataques Corpo-a-Corpo passam a Escalar Dano Bruto rolando VONTADE (VON) em vez de FORÇA.**",
+                "Canalização Divina. **Sistema: Converte 100% do Dano Físico de suas Armas em Dano Mental (ignorando Armaduras Físicas pesadas).**",
+                "Ataque a Espíritos. **Sistema: Seus Golpes Físicos acertam Invocações Intangíveis e Fantasmas que possuem Imunidade Física total.**",
+                "Projeção Astral. **Sistema: (Ação) Permite Lutar como Espírito Invulnerável fisicamente enquanto seu corpo real descansa seguro.**"
             ],
             "Vontade de Sobreviver": [
-                "Recusa a morte de amigos. **Sistema: Se um aliado Cair Moribundo de HP Zero, você ganha +2 Dano Extra Imediato contra o Assassino Dele.**",
-                "A Party no Limite. **Sistema: Se todos aliados caírem na luta: Dobra Seu Próprio HP Máximo regenerando a saúde como herói vingativo.**",
-                "Senso de Dever Inumano. **Sistema: Chegar a 0 HP não lhe causa Nocaute/Desmaio; você permanece lutando gastando as Ações Normais.**",
-                "Grito do Último Suspiro. **Sistema: Quando Aliado sofrer Letalidade, você gasta Reação para Cancelar a Morte deixando o Parceiro com 1HP.**",
-                "Recusa a Morte Escrita. **Sistema: Cancela e Anula Passivamente os Ataques de Execução (InstaKill) recebidos, convertendo em Dano Normal.**"
+                "Recusa a morte de amigos. **Sistema: Se um aliado Cair a 0 HP, você ganha Vantagem e +2 de Dano Extra contra o agressor dele.**",
+                "A Party no Limite. **Sistema: Se todos aliados caírem na luta, você dobra seu próprio HP Máximo curando a saúde como herói final.**",
+                "Foco na Sobrevivência. **Sistema: Chegar a 0 HP não lhe causa Nocaute/Desmaio; você permanece lutando ignorando a morte por 3 turnos.**",
+                "Grito do Último Suspiro. **Sistema: (Ação de Reação) Quando Aliado sofrer Letalidade, você Cancela a Morte dele o deixando com 1 HP firme.**",
+                "Ignorar Letalidade. **Sistema: Cancela e Anula Passivamente os Ataques Inimigos de Execução (InstaKill), convertendo em Dano Físico Normal.**"
             ],
             "Telecinese Latente": [
-                "Balanço suave. **Sistema: Permite Atrair e Levitar Itens Leves à distância com a mente (sem gasto de movimento).**",
-                "Atirar pedras e estilhaços. **Sistema: Ação Livre: Causa Dano Mágico de Longa Distância atirando os detritos/objetos do cenário.**",
-                "Dedos da Mente. **Sistema: Reação Bônus: Interrompe a Concentração do Inimigo asfixiando-o telecineticamente.**",
-                "Levitação Pessoal. **Sistema: Adquire Movimentação Voo. Imune a Terrenos Acidentados ou Buracos no Chão.**",
-                "Destruição Telecinética. **Sistema: Ação Suprema: Empurra Muros e Objetos Massivos esmagando alvos no caminho (Dano em Área AoE).**"
+                "Balanço suave. **Sistema: Permite Atrair e Levitar Itens Leves à distância com a mente em combate, usando Percepção Visual (Ação Bônus).**",
+                "Atirar pedras e estilhaços. **Sistema: (Ação Principal) Causa Dano Mágico de Longa Distância usando pedras e escombros (Teste Acerto de Magia normal).**",
+                "Dedos da Mente. **Sistema: (Reação Bônus) Interrompe a Concentração Mágica do Inimigo asfixiando-o telecineticamente (Teste Oposto: VON vs VON).**",
+                "Levitação Pessoal. **Sistema: Adquire Deslocamento de Voo passivo (Flutuar). Fica Imune a Terrenos Difíceis e armadilhas de piso ocultas.**",
+                "Arremesso Telecinético. **Sistema: (Ação Suprema) Empurra Objetos Massivos em linha reta. Inimigos esmagados rolam (Teste Oposto: FOR/AGI vs sua VON).**"
             ]
         }
     },
@@ -633,88 +645,88 @@ const PERK_COSTS = [0, 1, 2, 3, 5, 9];
         name: "Misticismo", icon: "fa-wand-magic-sparkles",
         perks: {
             "Afinidade Elemental": [
-                "Magia Primal. **Sistema: Concede +1 base de Dano Mágico fixo em feitiços ofensivos.**",
-                "Sintonia das chamas. **Sistema: +3 de Bônus direto a todos danos mágicos elementais.**",
-                "Impacto residual. **Sistema: Seus feitiços de dano aplicam status de Queimadura/Congelamento no alvo.**",
-                "Rasga consistência. **Sistema: O seu Dano Mágico ignora todas as resistências secundárias do alvo comum.**",
-                "Purificador Supremo. **Sistema: Todo o seu Dano Elemental se converte em Dano Divino, ignorando imunidades.**"
+                "Magia Primal. **Sistema: Concede +1 base de Dano Mágico Fixo em todos os feitiços ofensivos.**",
+                "Sintonia. **Sistema: +3 de Bônus Fixo direto a todos os danos mágicos elementais.**",
+                "Impacto residual. **Sistema: Feitiços de dano aplicam Queimadura ou Congelamento (Teste de Resistência: CON vs MIS do Conjurador).**",
+                "Magia Perfurante. **Sistema: O seu Dano Mágico passa a ignorar todas as resistências secundárias de alvos comuns.**",
+                "Magia Pura. **Sistema: Todo seu Dano Elemental se converte em Dano Puro, ignorando Imunidades Inimigas.**"
             ],
             "Controle de Mana/Energia": [
-                "Enxugar desperdício. **Sistema: Reduz em 1 o custo de Estamina/Mana de qualquer magia de nível médio.**",
-                "Feitiços menores livres. **Sistema: Feitiços de Custo 1 se tornam Habilidades Grátis que não gastam ações ou mana.**",
-                "Condensação de rituais. **Sistema: Corta pela metade o custo final de todas as Magias Pesadas.**",
-                "Magia de Sangue. **Sistema: Permite usar HP próprio no lugar de Estamina/Mana para conjurar quando zerado.**",
-                "Reservatório Arcano Infinito. **Sistema: (1x ao Dia) Ignora todos os limites e custos, conjurando uma Magia Lendária de graça.**"
+                "Redução de Custo. **Sistema: Reduz em 1 o custo de Estamina/Mana de qualquer magia de nível médio.**",
+                "Feitiços Menores. **Sistema: Magias Menores (Custo 1) se tornam Habilidades Grátis que não gastam recursos.**",
+                "Condensação de rituais. **Sistema: Corta pela exata metade o custo final de todas as Magias Pesadas ou Supremos.**",
+                "Magia de Sangue. **Sistema: Permite usar HP próprio no lugar de Estamina/Mana para conjurar (1 HP = 2 Mana).**",
+                "Reserva Mágica. **Sistema: (Ação Principal) 1x ao Dia, ignora limites e custos conjurando uma Magia Lendária grátis.**"
             ],
             "Canalização Rápida": [
-                "Acelera feitiços. **Sistema: Reduz o tempo de preparação de feitiços de múltiplos turnos em 1 turno inteiro.**",
-                "Sinergia com runas. **Sistema: Permite mover-se e conjurar magias complexas simultaneamente (sem perda de esquiva).**",
-                "Mãos independentes. **Sistema: Magias ofensivas ou defensivas menores se tornam Ação Bônus na rodada.**",
-                "Dual-Cast Arcano. **Sistema: Permite conjurar duas magias distintas (ex: dano e cura) no mesmo turno.**",
-                "Corte temporal absoluto. **Sistema: Transforma todos feitiços gigantes de preparação lenta em Casts Instantâneos.**"
+                "Acelera feitiços. **Sistema: Reduz o tempo de preparação de feitiços em 1 turno inteiro.**",
+                "Sinergia com runas. **Sistema: Permite mover-se e conjurar magias simultaneamente (sem perder Esquiva ou Movimento).**",
+                "Mãos independentes. **Sistema: Magias ofensivas ou defensivas menores se tornam conjuráveis com Ação Bônus na rodada.**",
+                "Conjuração Dupla. **Sistema: Permite conjurar ativamente duas magias distintas (ex: Ataque e Cura) no mesmo turno.**",
+                "Conjuração Instantânea. **Sistema: Transforma feitiços de lentidão (Preparação de Turnos) em Casts Instantâneos.**"
             ],
             "Escudo Arcano": [
-                "Condensação menor. **Sistema: Cria passivamente barreira que absorve os primeiros 10 pontos de dano recebido no combate.**",
-                "Parede de Força prismática. **Sistema: Aumenta a proteção passiva do Escudo Arcano para absorver 30 HP.**",
-                "Carapaça Empática. **Sistema: Inimigos que quebrarem sua Barreira recebem Dano Mental (LUST) imediato de retaliação.**",
-                "Bomba Protetora Retaliatória. **Sistema: Quando a defesa se rompe, explode num leque de Dano em Área (AoE) massivo.**",
-                "Aegis Cúpula de Prata. **Sistema: Barreira divina que absorve 1 único Golpe Final (Insta-Kill) ileso, trincando depois.**"
+                "Escudo Leve. **Sistema: Cria passivamente barreira que absorve os primeiros 10 pontos de Dano recebido no combate.**",
+                "Parede Prismática. **Sistema: Aumenta a proteção passiva base do Escudo Arcano para absorver 30 HP Dano.**",
+                "Barreira Empática. **Sistema: Inimigos que quebrarem sua Barreira recebem Dano LUST (Teste Oposto: VON do atacante vs sua MIS).**",
+                "Explosão do Escudo. **Sistema: Quando o escudo rompe, explode em Dano em Área (Teste Oposto: AGI para meia Esquiva vs MIS).**",
+                "Cúpula Protetora. **Sistema: Barreira divina densa que absorve 1 Golpe Letal (Insta-Kill) antes de trincar.**"
             ],
             "Raio Aumentado": [
-                "Expansão Mística. **Sistema: Aumenta o tamanho de magias de alvo único para pegar alvos numa área de +5 Metros extra.**",
-                "Artilharia Mágica. **Sistema: Amplia em +10 metros o alcance global da distância das magias sem penalidade de dano.**",
-                "Cúpulas Dobradas. **Sistema: Qualquer Área de Efeito (AoE) criada por você tem o seu Raio Base exatamente dobrado.**",
-                "Metralhadora Ramificada. **Sistema: Projéteis mágicos se ramificam passivamente para atingir múltiplos inimigos adjacentes do alvo.**",
-                "Balística do Sniper Arcano. **Sistema: Magias de alvo atravessam obstáculos e o horizonte, com alcance ilimitado na masmorra.**"
+                "Expansão Mística. **Sistema: Aumenta o tamanho de magias de alvo único para pegar alvos numa área extra de 5 Metros.**",
+                "Artilharia Mágica. **Sistema: Amplia em +10 metros o alcance global da distância de ataque sem penalidade.**",
+                "Área Dobrada. **Sistema: Qualquer Área de Efeito (AoE) criada por você tem o seu Raio Base exatamente dobrado.**",
+                "Ramificação. **Sistema: Projéteis mágicos se ramificam passivamente para atingir múltiplos inimigos em 2m do alvo.**",
+                "Projétil Perfurante. **Sistema: Magias atravessam obstáculos de cenário sólido sem perder precisão no alvo.**"
             ],
             "Percepção Arcana": [
-                "Terceiro Olho. **Sistema: Passiva ativada; percebe armadilhas arcanas e portões de ilusões secretos pelo mapa.**",
-                "Visão da Aura. **Sistema: Identifica itens amaldiçoados e criaturas sob invisibilidade a olho nu.**",
-                "Super-Computador Lógico. **Sistema: Ganha 1 Turno de Aviso informando qual o elemento que o inimigo conjurará.**",
-                "Lê Segredos Rasteiros. **Sistema: Permite usar a Ação para Ler a Mente e puxar informações de um NPC/Lacaio à força.**",
-                "Onisciência Completa. **Sistema: Seu olhar revela a planta completa da área, ignorando Furtividade e Invisibilidade da masmorra inteira.**"
+                "Terceiro Olho. **Sistema: Passiva ativada; percebe imediatamente armadilhas arcanas e paredes falsas (Testes de Percepção automáticos).**",
+                "Visão da Aura. **Sistema: Identifica status de maldição e criaturas sob Efeito de Invisibilidade magicamente.**",
+                "Antecipação Arcana. **Sistema: Ganha 1 Turno de Aviso informando qual elemento que o inimigo Mago vai conjurar.**",
+                "Lê Segredos. **Sistema: (Ação) Permite invadir a mente e puxar informações do Inimigo (Teste Oposto: VON do alvo vs sua MIS).**",
+                "Visão Estrutural. **Sistema: Seu olhar revela a planta da masmorra.**"
             ],
             "Manipulação de Fluidos": [
-                "Biologia Mágica. **Sistema: Poções e itens curativos ingeridos por você recebem +5 de HP curado adicional.**",
-                "Transmutação alquímica. **Sistema: Transmuta poças tóxicas e água em Venenos Fatais ou Antídotos para o grupo.**",
-                "Sanguessuga. **Sistema: Absorve HP direto de Oponentes Atordoados/Lentos causando Dano de Asfixia fluida.**",
-                "Transferência de Vitalidade. **Sistema: Permite cortar o próprio pulso para doação de Atributos e Cura massiva a aliados caídos.**",
-                "Lágrimas Purificadoras. **Sistema: Magias de cura extremas passam a anular Mutações Demoníacas e condições incuráveis.**"
+                "Biologia Mágica. **Sistema: Poções e itens curativos ingeridos por você recebem +5 de Cura extra.**",
+                "Transmutação alquímica. **Sistema: Transmuta poças em Venenos ou Antídotos mágicos usando Ação Bônus.**",
+                "Dreno Leve. **Sistema: Absorve HP de Oponentes Atordoados/Lentos causando Dano Drenante (Teste Oposto de Resistência: CON vs MIS).**",
+                "Transferência de Vitalidade. **Sistema: Permite cortar o pulso para doação (Transferência 100% eficiente) do seu HP a aliados caídos.**",
+                "Cura Pura. **Sistema: Magias de cura passam a anular passivamente Mutações Demoníacas ou Corrupções pesadas.**"
             ],
             "Cura Amplificada": [
-                "Estabilizador bruto. **Sistema: Todos os seus Feitiços de Cura ganham +10 de HP curado extra em qualquer aliado.**",
-                "Rios vigorosos de luz. **Sistema: Aumenta em +20 HP bônus curativo passivo de qualquer Magia do tipo Cura.**",
-                "Terapia Oculta Purificante. **Sistema: As suas curas limpam automaticamente Debuffs de LUST (Tesão) dos alvos atingidos.**",
-                "Regeneração Celular Arcana. **Sistema: A Cura massiva regenera Membros Decepados e fraturas, burlando limitações da Carne.**",
-                "Ressurreição da Luz Completa. **Sistema: Magias ou Habilidades finais de Cura podem Reviver Aliados do Estado de Morto ilesos.**"
+                "Estabilizador bruto. **Sistema: Todos os seus Feitiços de Cura ganham Bônus Fixo de +10 de HP em qualquer aliado.**",
+                "Rios de luz. **Sistema: Aumenta para +20 HP Fixo bônus curativo passivo de Magias Divinas ou Médicas.**",
+                "Cura Purificante. **Sistema: Suas curas de HP limpam (zera ou debuffa) as barras de LUST dos alvos.**",
+                "Regeneração Celular. **Sistema: Cura agora regenera Membros Decepados permanentemente.**",
+                "Ressurreição. **Sistema: Magias de Cura podem reviver Aliados do Estado de Morte Permanente os trazendo com 50% HP.**"
             ],
             "Pacto de Sangue": [
-                "Magia pelo Fio. **Sistema: Se não tiver mana, paga os feitiços consumindo HP Próprio em proporção de 1 para 1.**",
-                "Conversão Mística Densa. **Sistema: Ofertar 1 HP com cortes sangrentos converte em 2 Energia/Stamina para a rodada.**",
-                "Fúria Vingativa. **Sistema: Dobra o Alcance e Dano da sua Magia subsequente se tiver acabado de sofrer Dano Crítico.**",
-                "Lifesteal Sanguinário. **Sistema: Passiva: Suas magias sombrias ou de sangue roubam HP da barra do Inimigo para você.**",
-                "Parasitismo Oculto. **Sistema: Consegue drenar Vida de Lacaios imobilizados à força para pagar os custos das suas conjurações.**"
+                "Magia Sanguínea. **Sistema: Sem mana, paga custos normais consumindo seu HP Próprio (1 para 1).**",
+                "Conversão de Sangue. **Sistema: Ofertar 1 HP com cortes converte em 2 de Energia para gastar no turno.**",
+                "Retaliação Arcana. **Sistema: Dobra o Alcance e Dano final (x2) da sua próxima Magia se tiver sofrido um Acerto Crítico recém.**",
+                "Lifesteal Sanguinário. **Sistema: Passiva: Todas as magias sombrias roubam 25% do HP que deram de Dano Inimigo.**",
+                "Dreno Vital. **Sistema: Drena a Vida (HP) de Lacaios imobilizados em 1 Turno para recarregar as próprias magias gratuitamente.**"
             ],
             "Absorção Mística": [
-                "Esponja Mágica. **Sistema: Ser alvo de um feitiço inimigo (Mesmo tomando dano) recarrega +2 na sua barra de Energia/Stamina.**",
-                "Devorador de Luxúria. **Sistema: Sofrer ataques Súcubos baseados em LUST não o afeta, e ainda regenera +5 na sua Energia Arcana.**",
-                "Buraco Negro Reflexivo. **Sistema: Magias Elementares fracas (Até Custo 3) desaparecem e são anuladas sem causar dano em você.**",
-                "Dreno Vampírico. **Sistema: Ação Bônus Corpo-a-corpo: Seca passivamente os recursos de Energia Mágica (Mana/Stamina) do alvo para sua reserva.**",
-                "Engolidor do Caos Sideral. **Sistema: Pode usar Ação Reação Extrema para Engolir e Anular 1 Ataque Supremo Lendário/Nuclear de um Chefe.**"
+                "Esponja Mágica. **Sistema: Ser alvo de uma magia inimiga (Mesmo tomando Dano) recarrega +2 na sua Energia Mágica.**",
+                "Devorador de Luxúria. **Sistema: Dano LUST de Súcubos é anulado (Imunidade) e convertido como +5 Cura Arcana para você.**",
+                "Absorção de Magia Menor. **Sistema: Magias Elementares inimigas fracas (Custo de 1 a 3) são passivamente sugadas pela sua aura (0 Dano).**",
+                "Dreno Vampírico. **Sistema: (Ação Bônus Corpo-a-Corpo) Zera a Energia do inimigo pra você (Teste Oposto: VON vs MIS).**",
+                "Absorção de Magia Maior. **Sistema: Usa Ação Reação para Engolir e Anular totalmente 1 Magia Suprema Lendária.**"
             ],
             "Mestre Ritualístico": [
-                "Rapidez Sombria. **Sistema: Reduz pela metade a quantidade de Turnos que feitiços de Área ou Rituais levam para se fixar.**",
-                "Libertação Material. **Sistema: Conjurador pode soltar Magias Focadas e de Reagentes sem necessidade de pó, giz, ou grimório físico na mão.**",
-                "Âncora Ambulante. **Sistema: Áreas Mágicas de proteção e efeitos não precisam ser fixas, elas passam a seguir o avatar.**",
-                "Coro Macabro Único. **Sistema: Conjura magias Colossais feitas para 3 Pessoas, utilizando apenas 1 Ação solo e recursos próprios.**",
-                "Falsificador de Leis. **Sistema: Permite criar Feitiços Híbridos com elementos impossíveis (Ex: Fogo que congela, Lava de raio).**"
+                "Ritual Rápido. **Sistema: Corta 50% dos Turnos exigidos (Arredondado para baixo) de qualquer Ritual Pesado.**",
+                "Libertação Material. **Sistema: Conjura magias Sombrias/Ritual sem necessitar de Componentes Materiais Mundanos.**",
+                "Âncora Ambulante. **Sistema: Cúpulas e Áreas Mágicas de proteção não precisam mais ser fixas no chão; seguem como Aura o Avatar.**",
+                "Conjurador Solitário. **Sistema: Conjura feitiços que pediriam 3 Magos do Coven de forma Solitária, pagando custos sozinho.**",
+                "Feitiços Híbridos. **Sistema: Permite criar Feitiços Híbridos Inéditos (Fogo que congela, etc.) misturando efeitos das cartas.**"
             ],
             "Invocação Vinculante": [
-                "Familiar Espião. **Sistema: Permite Invocar Criaturas menores que não lutam, mas mapeiam a masmorra e revelam o Grid.**",
-                "Mensageiro Kamikaze. **Sistema: Familiares Invocados podem ser sacrificados numa Ação para explodir, causando Dano em Área no inimigo.**",
-                "Invocação Sombria. **Sistema: Permite invocar Familiares de Classe Média (Lobos das Cinzas) para Atacar no seu Turno como Unidades Bônus.**",
-                "Boi de Piranha Mental. **Sistema: O Seu Familiar absorve Ativamente todo Dano de LUST, Mind-Break e Condições focado em Você.**",
-                "Pacto Colossal Avatar. **Sistema: Permite usar Ação Suprema para invocar uma Entidade Chefe Primária para destruir o Campo inteiramente sob seu controle.**"
+                "Familiar Espião. **Sistema: Permite Invocar Pequenos Familiares para revelar o Grid invisível (Não atacam).**",
+                "Familiar Explosivo. **Sistema: Familiares podem ser explodidos numa Ação (Teste Oposto de Esquiva Inimiga: AGI vs MIS).**",
+                "Invocação de Batalha. **Sistema: Invoca Lacaios Mágicos para dar Dano no Turno Próprio como aliados.**",
+                "Boi de Piranha Mental. **Sistema: Familiares atraem (Taunt) Magias de Possessão Inimiga protegendo o Invocador de LUST e Medo.**",
+                "Invocação Maior. **Sistema: (Ação Suprema) Invoca e controla inteiramente 1 Entidade Chefe Primordial no Campo substituindo sua ficha.**"
             ]
         }
     }
@@ -767,17 +779,19 @@ function migrateChar(char) {
 
 // --- DB SYNC LOGIC ---
 function saveToDB(collection, item, localArray, storageKey) {
+    const idx = localArray.findIndex(x => x.id === item.id);
+    if (idx > -1) localArray[idx] = item;
+    else localArray.push(item);
+
     if (db && currentUser) {
         item.ownerId = currentUser.uid;
         db.collection(collection).doc(item.id).set(item).catch(e => console.error("Erro:", e));
     } else {
-        const idx = localArray.findIndex(x => x.id === item.id);
-        if (idx > -1) localArray[idx] = item;
-        else localArray.push(item);
         localStorage.setItem(storageKey, JSON.stringify(localArray));
-        renderSidebar();
-        if(collection === 'characters') renderDashboard();
     }
+    
+    renderSidebar();
+    if(collection === 'characters') renderDashboard();
 }
 
 function deleteFromDB(collection, id, localArray, storageKey) {
@@ -1122,7 +1136,7 @@ function updatePointsCounter() {
     const limitEl = document.getElementById('points-limit-display');
     if (limitEl) limitEl.innerText = limit;
 
-    if(total > limit || isOver5) counterEl.className = 'text-red-500 font-bold';
+    if(total !== limit || isOver5) counterEl.className = 'text-red-500 font-bold';
     else counterEl.className = 'text-white';
     
     updatePerksMath(); // Refresh perk limits
@@ -1202,9 +1216,9 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
     const isMasterOverride = isMaster() && isUnlocked;
     
     if (!isMasterOverride) {
-        if (pts.total > pts.limit) {
+        if (pts.total !== pts.limit) {
             switchCharTab('base');
-            return alert(`Você ultrapassou o limite de atributos! O máximo atual é ${pts.limit} (8 Base + Bônus de Classe).`);
+            return alert(`Você deve distribuir exatamente todos os pontos de atributo! O total deve ser ${pts.limit} (8 Base + Bônus de Classe).`);
         }
         if (pts.isOver5) {
             switchCharTab('base');
