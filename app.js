@@ -70,97 +70,134 @@ const CONDITIONS_DB = {
 };
 
 const PERK_COSTS = [0, 1, 2, 3, 5, 9];
-const PERKS_DB = {
-    sed: {
-        name: "Sedução", icon: "fa-heart",
-        perks: {
-            "Volúpia Anatômica: Seios": [
-                "Volume acentuado que atrai olhares gulosos. Você ganha +1 em testes sociais de persuasão leve.",
-                "Formato perfeito e chamativo. O contato físico intencional causa um leve LUST passivo no alvo.",
-                "Mamilos sempre marcados e pele quente. Combates próximos atordoam inimigos com excitação visual passiva.",
-                "Proporções macias e avassaladoras. Permite usar o próprio peso para sufocar oponentes de prazer, reduzindo a defesa LUST deles.",
-                "Bênção da Luxúria: A mera exposição nua causa transe hipnótico em área, forçando rendição orgástica incondicional."
-            ],
-            "Volúpia Anatômica: Glúteos e Quadris": [
-                "Curvas sinuosas que balançam. Inimigos hesitam instintivamente antes de golpear você pelas costas.",
-                "Molejo hipnótico (+1 persuasão). Ao dar as costas, quem estiver olhando sofre LUST direto.",
-                "Coxas grossas permitindo 'Ataque Sentada Esmagadora', imobilizando alvos sob o peso enquanto os estimula brutalmente.",
-                "Carne mágica: absorve golpes físicos e os devolve como gemidos contagiantes, quebrando a concentração de feitiços inimigos.",
-                "Dança do Cio: Uma rebolada cria onda de choque de luxúria, engolindo inimigos em área numa euforia atordoante."
-            ],
-            "Magnificência Genital": [
-                "Aroma inebriante, exalando umidade e calor que desperta instintos primitivos em quem chega perto.",
-                "Sensibilidade adaptativa (+2 provocação). O atrito aumenta a produção de feromônios, deixando parceiros obcecados.",
-                "Tamanho/profundidade ideais. Anula defesa de dor/LUST de quem entrar em contato íntimo direto; 50% mais LUST gerado.",
-                "Templo do Pecado. Drena magicamente energia ou LUST de quem se aliviar com você, transferindo-a para o seu HP.",
-                "Anatomia Dominadora. A primeira penetração (ativa ou passiva) decreta o Mind Break instantâneo de oponentes fracos."
-            ],
-            "Feromônios Inebriantes": [
-                "Suor tem aroma afrodisíaco. Torna pessoas ao redor mais propensas a aceitar toques casuais.",
-                "O cheiro quebra lógicas. Impõe -1 VON a alvos em alcance corpo a corpo.",
-                "Névoa sensual exalada em combate (+2 LUST em área). Inimigos erram por confusão erótica.",
-                "Aura Densa. Quem respira a névoa perde 25% da Resistência a LUST permanente durante o combate.",
-                "Nuvem de Dominância Absoluta. Ativa frenesi incontrolável; afetados atacam roupas uns dos outros se falharem em teste."
-            ],
-            "Beijo Sugador": [
-                "Lábios macios e quentes que instigam obediência canina instintiva após o contato.",
-                "Beijo profundo que confunde a mente do alvo por 1 turno inteiro, apagando intenções hostis.",
-                "Beijo ofegante que rouba 10 de fôlego e Stamina do alvo durante intimidade forçada ou consentida.",
-                "Beijo Vampírico. Rouba HP do alvo e o cura em si, convertendo a vitalidade do alvo em puro êxtase no doador.",
-                "Beijo de Dreno de Alma. Um beijo prolongado reduz atributos do alvo permanentemente na cena, garantindo escravidão emocional."
-            ],
-            "Olhar da Perdição": [
-                "Olhos gulosos que prometem perversão. Fixar o olhar atrai inimigos para você.",
-                "Contato visual paralisa o alvo momentaneamente num misto de medo e atração cega (atrasa iniciativa).",
-                "Encarar o alvo ativamente queima LUST diretamente na mente dele, sem necessitar de toque.",
-                "Olhar Despido. Atravessa defesas morais; focar no alvo corta a Defesa LUST dele pela metade instantaneamente.",
-                "Comando de Submissão. Um piscar de olhos imperativo ordena que o alvo se deite ou implore por você."
-            ],
-            "Voz de Sereia": [
-                "Timbre aveludado e relaxante que desmonta guardas defensivas.",
-                "Sussurros macios no ouvido garantem Vantagem (+1) ao tentar iniciar imobilizações corporais/sexuais.",
-                "Palavras de comando excitam à distância, induzindo dano de LUST sem precisar encostar no alvo.",
-                "Gemidos que perfuram tímpanos e quebram a aura inimiga, anulando status de Fúria ou buffs mentais deles.",
-                "Cântico do Prazer. Paralisa todos numa grande área, fazendo-os ouvir a voz como uma ordem sagrada e irrecusável."
-            ],
-            "Toque Corruptor": [
-                "Temperatura das pontas dos dedos arrepia a pele, desarmando tensões físicas de quem é tocado.",
-                "Um arranhão ou massagem deixa os músculos do inimigo trêmulos de vontade, aplicando Debuff de agilidade.",
-                "Sucos físicos carregados: Metade de todo o Dano físico causado se converte em Dano LUST no alvo.",
-                "Pele Amolecida. Ignora 50% da armadura do inimigo caso a ação seja tentar despi-lo em combate.",
-                "Dissolução Perversa. Toque mágico que derrete roupas e armaduras de metal/couro instantaneamente, expondo a vítima nua."
-            ],
-            "Graça Felina": [
-                "Postura elegante, com movimentos e alongamentos extremamente sensuais e provocativos.",
-                "Substitui uso de Agilidade por Sedução em esquivas ou acrobacias leves em combate.",
-                "Dança de combate contínua que passivamente excita (gera LUST) em todos os alvos que estiverem te assistindo.",
-                "Flexibilidade surreal. Imune a penalidades por estar no chão ou ser imobilizado em posições submissas.",
-                "Dança Intangível. Pode se mover como água nua; ataques inimigos erram automaticamente se falharem contra o seu LUST."
-            ],
-            "Imunidade à Vergonha": [
-                "Não sofre penalidades morais por lutar com roupas expostas, rasgadas e provocantes.",
-                "A nudez parcial te fornece +1 de Defesa LUST, pois o orgulho do próprio corpo bloqueia a humilhação.",
-                "Nudez Total fornece +3 absurdo em TODOS os testes sociais e habilidades corpo-a-corpo de Sedução.",
-                "Masoquismo. Sofrer LUST extremo não te debuffa; na verdade, bater o Limiar garante Buffs de ataque.",
-                "Avatar Transcendental. Estar completamente despido no ápice do LUST torna sua mente incorruptível e força sobre-humana."
-            ],
-            "Secreções Afetivas": [
-                "Lágrimas, suor e saliva ganham um sabor doce, servindo como bebida revigorante para parceiros.",
-                "Ingerir fluidos do seu corpo cura e estanca pequenos sangramentos, agindo como +5 HP para os aliados.",
-                "Néctar Viciante. Quem consome entra em 'abstinência', facilitando obedecer aos seus comandos no combate.",
-                "Fluidos purificadores celestiais. O sexo curativo limpa venenos pesados do corpo do aliado através do seu suor.",
-                "Santuário Fluido. Banhá-los em suas secreções (intimidade profunda) garante ao alvo imunidade total a LUST por 24h."
-            ],
-            "Domínio do Vínculo": [
-                "Empatia erótica passiva: Sabe de cara quem tem fetiches sombrios ou desejos latentes na sala.",
-                "Permite marcar o alvo com mordida/chupão. Você sente na pele a direção e a distância dele.",
-                "A marca pune. Quem tem sua marca sofre espasmos de dor (LUST massivo) se tentar atacar o mestre.",
-                "Telepatia de Prazer. Você pode enviar ondas de orgasmo ou dor prazerosa diretamente na mente conectada à distância.",
-                "Coleira de Alma. A marca obriga o alvo a trocar a própria vida, recebendo dano no seu lugar cegamente por amor."
-            ]
-        }
-    },
-    con: {
+    const PERKS_DB = {
+        sed: {
+            name: "Sedução",
+            icon: "fa-heart",
+            perks: {
+                "Seios Grandes": [
+                    "Peitos pesados e fartos que chamam atenção na hora. Você ganha +1 em testes de persuasão quando usa o corpo.",
+                    "Formato perfeito e macio. Qualquer toque proposital nos seios causa LUST no alvo sem ele conseguir evitar.",
+                    "Mamilos sempre duros e à mostra. Em combate perto, só de ver seus peitos o inimigo pode travar de tesão.",
+                    "Peitos tão grandes e pesados que você consegue sufocar alguém com eles, reduzindo forte a defesa de LUST do alvo.",
+                    "Só de tirar a roupa e mostrar os peitos nus, todo mundo perto entra num transe e goza sem conseguir reagir."
+                ],
+                "Bunda e Quadris Largos": [
+                    "Bunda grande e redonda. Inimigos pensam duas vezes antes de te atacar por trás.",
+                    "Molejo pesado e provocante (+1 persuasão). Quando você vira de costas, quem estiver olhando leva LUST na hora.",
+                    "Coxas grossas. Você pode sentar em cima de alguém com força, prendendo a pessoa enquanto esfrega a buceta ou o pau nela.",
+                    "A carne da sua bunda absorve golpes e transforma em gemidos altos que quebram a concentração de magias inimigas.",
+                    "Uma rebolada lenta e profunda manda uma onda de tesão em área. Todo mundo perto para de lutar de tanto prazer."
+                ],
+                "Sexo Dominante": [
+                    "Seu pau ou buceta exala um cheiro quente e molhado que deixa qualquer um perto com tesão na hora.",
+                    "Sensibilidade absurda (+2 provocação). Quanto mais atrito, mais cheiro você solta e mais obcecado o outro fica.",
+                    "Tamanho e profundidade perfeitos. Qualquer penetração anula a defesa de dor e LUST do outro e gera 50% a mais de tesão.",
+                    "Quem goza dentro de você (ou em você) tem a energia e o LUST sugados e transformados em cura pro seu HP.",
+                    "A primeira penetração — você metendo ou sendo metido — causa Mind Break na hora em qualquer um que já esteja excitado."
+                ],
+                "Cheiro Viciante": [
+                    "Seu suor tem cheiro forte de sexo. Pessoas perto ficam mais fáceis de aceitar toque e aproximação.",
+                    "O cheiro bagunça a cabeça. Qualquer um em alcance corpo a corpo leva –1 em Vontade enquanto respirar você.",
+                    "Você solta uma névoa de tesão em combate (+2 LUST em área). Inimigos erram golpe porque ficam confusos de tesão.",
+                    "Aura pesada: quem respira perde 25% da resistência a LUST o combate inteiro.",
+                    "Nuvem grossa de tesão. Quem falhar no teste começa a rasgar a própria roupa e a dos outros sem controle."
+                ],
+                "Beijo que Drena": [
+                    "Lábios macios e molhados. Depois do primeiro beijo o alvo fica com cara de cachorro obediente.",
+                    "Beijo fundo e molhado confunde a mente do alvo por 1 turno inteiro, apagando qualquer vontade de te atacar.",
+                    "Beijo ofegante que rouba 10 de Stamina do alvo enquanto você beija à força ou com consentimento.",
+                    "Beijo de vampiro. Você suga HP do alvo e cura a si mesmo, transformando a vida dele em puro prazer pra você.",
+                    "Beijo longo que drena atributos do alvo na hora. No final ele fica emocionalmente preso em você."
+                ],
+                "Olhar Dominador": [
+                    "Olhos cheios de tesão que prometem putaria. Só de olhar fixo você atrai inimigos pra perto.",
+                    "Contato visual trava o alvo por alguns segundos entre medo e vontade de se entregar (atrasa a iniciativa).",
+                    "Olhar direto queima LUST na mente do alvo sem precisar tocar nele.",
+                    "Olhar que atravessa qualquer moral. Focar no alvo corta a defesa de LUST dele pela metade na hora.",
+                    "Um piscar de olhos e o alvo se ajoelha ou implora pra você usar ele."
+                ],
+                "Voz Sensual": [
+                    "Voz baixa e rouca que desarma qualquer um que te escuta.",
+                    "Sussurro no ouvido dá vantagem (+1) quando você tenta imobilizar alguém pra foder.",
+                    "Palavras sujas à distância já causam dano de LUST sem precisar tocar.",
+                    "Gemidos altos que furam a cabeça do inimigo e cancelam fúria ou buffs mentais dele.",
+                    "Um gemido longo e baixo paralisa todo mundo numa área grande. Eles escutam sua voz como ordem sagrada."
+                ],
+                "Sem Vergonha Nenhuma": [
+                    "Você não leva nenhuma penalidade por lutar com a roupa rasgada, aberta ou quase pelado.",
+                    "Nudez parcial te dá +1 de defesa de LUST porque você não sente vergonha nenhuma.",
+                    "Ficar completamente pelado te dá +3 em todos os testes sociais e de sedução corpo a corpo.",
+                    "Masoquismo: quanto mais LUST você leva, mais forte fica. Bater o limite te dá buff de ataque.",
+                    "No auge do LUST e completamente nu, sua mente fica impossível de quebrar e você ganha força absurda."
+                ],
+                "Fluidos Viciantes": [
+                    "Lágrimas, suor e saliva ficam doces. Servem de bebida que recupera parceiros.",
+                    "Quem bebe seus fluidos cura e estanca sangramento leve (+5 HP).",
+                    "Néctar viciante. Quem toma fica em abstinência e obedece mais fácil seus comandos em combate.",
+                    "Seus fluidos limpam veneno do corpo do aliado quando você faz sexo com ele.",
+                    "Banhar alguém nos seus fluidos (sexo bem molhado) deixa o alvo imune a LUST por 24 horas."
+                ],
+                "Pau Enorme": [
+                    "Pênis grosso e pesado, visível de longe pela calça. +1 em intimidação e atração.",
+                    "Tamanho intimidante. Quando ereto, causa +2 LUST em quem ver pela primeira vez.",
+                    "Ereção dura e persistente. Pode usar como arma contundente em combate corpo a corpo.",
+                    "Grossura extrema prende qualquer orifício. Alvos penetrados ficam imobilizados por 1 turno.",
+                    "Tamanho monstruoso. Consegue penetrar qualquer criatura, causando LUST massivo e deixando marcas."
+                ],
+                "Língua Extensível": [
+                    "Língua mais longa que o normal, consegue tocar o próprio nariz facilmente.",
+                    "Consegue esticar até 30cm. Alcança zonas erógenas de longe em combate.",
+                    "Língua grossa e musculosa. Enrola e aperta como mão durante oral.",
+                    "Alcance de 1 metro. Pode lamber e provocar inimigos à distância sem se aproximar.",
+                    "Língua preênsil. Consegue segurar objetos, desarmar inimigos ou masturbar à distância."
+                ],
+                "Buceta Hiperflexível": [
+                    "Vagina elástica que se adapta a qualquer tamanho sem dor.",
+                    "Pode controlar a pressão interna. Aperta e solta no ritmo que quiser.",
+                    "Paredes rugosas e sensíveis. Penetração causa +50% de prazer no parceiro.",
+                    "Profundidade ajustável. Consegue engolir objetos e armas inteiras.",
+                    "Capacidade de reter sêmen. Guarda fluidos por dias e libera aos poucos."
+                ],
+                "Mamilos Sensíveis e Longos": [
+                    "Mamilos sempre eretos e proeminentes, visíveis sob a roupa.",
+                    "Tamanho aumentado, parecem pequenos dedos. Podem ser usados para estimulação.",
+                    "Hipersensibilidade. Estímulo nos seios recupera 5 de stamina.",
+                    "Mamilos alongados e flexíveis. Conseguem ser sugados por si mesmos.",
+                    "Produzem néctar quando excitados. Fluido doce que cura e excita quem beber."
+                ],
+                "Pele de Látex": [
+                    "Pele lisa e brilhante, parece borracha. Resistente a arranhões leves.",
+                    "Elasticidade aumentada. Pode se contorcer em posições impossíveis.",
+                    "Superfície sem fricção. Golpes deslizam, ataques físicos erram mais.",
+                    "Pele que gruda levemente. Inimigos que te tocarem ficam presos por 1 turno.",
+                    "Corpo inteiro serve como brinquedo sexual. Qualquer parte pode ser usada para masturbar."
+                ],
+                "Dedos Longos e Flexíveis": [
+                    "Dedos 30% maiores que o normal, alcançam pontos G/prostata facilmente.",
+                    "Articulações duplas. Dedos conseguem dobrar em ângulos impossíveis.",
+                    "Pontas dos dedos ultra-sensíveis. Sentem texturas internas do corpo alheio.",
+                    "Dedos independentes. Consegue fazer duas coisas diferentes ao mesmo tempo.",
+                    "Extensão total de 25cm. Alcançam fundo de qualquer orifício."
+                ],
+                "Pés Ágeis e Sensuais": [
+                    "Pés flexíveis e fortes, conseguem segurar e manipular objetos.",
+                    "Dedos dos pés longos e sensíveis. Podem ser usados para carícias íntimas.",
+                    "Arco do pé perfeito para masturbação. Consegue fazer footjob eficiente.",
+                    "Pés que aguentam peso. Podem pisar e pressionar sem cansar.",
+                    "Soleira ultra-sensível. Sentem pulsações e texturas através do chão."
+                ],
+                "Quadris Largos": [
+                    "Estrutura óssea que facilita posições de montar e dominar.",
+                    "Amplitude permite empurrada mais profunda e potente.",
+                    "Pelve que absorve impacto. Pode receber golpes fortes sem dor.",
+                    "Rotação de quadril ampla. Movimentos circulares durante sexo causam +LUST.",
+                    "Estrutura perfeita para gestação acelerada. Recupera forma rapidamente."
+                ]
+            }
+        },
+
+con: {
         name: "Constituição", icon: "fa-shield-heart",
         perks: {
             "Couro Resistente": [
