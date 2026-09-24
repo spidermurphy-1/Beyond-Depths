@@ -999,34 +999,6 @@ function renderDashboard() {
     const condList = char.activeConditionIds.map(id => CONDITIONS_DB[id]?.name).filter(Boolean);
     document.getElementById('dash-conditions').innerHTML = condList.length > 0 ? condList.join('<br>') : "Nenhuma condição ativa.";
     
-    // Combat Actions Table
-    const tBody = document.getElementById('dash-actions-table');
-    if (tBody) {
-        tBody.innerHTML = '';
-        const sed = char.attr.sed || 0;
-        const force = char.attr.for || 0;
-        const agi = char.attr.agi || 0;
-        const mis = char.attr.mis || 0;
-    
-    const actions = [
-        { name: "Ataque Desarmado/Físico", effect: `1d8 + ${force} HP`, cost: "1 Ação" },
-        { name: "Penetração Intensa (ERPG)", effect: `1d8 + ${sed} LUST`, cost: "15 Stamina" },
-        { name: "Oral / Toques Sensíveis", effect: `1d6 + ${Math.max(sed, agi)} LUST`, cost: "10 Stamina" },
-        { name: "Provocação Mística", effect: `1d4 + ${mis} LUST à distância`, cost: "5 Stamina" },
-        { name: "Esquiva / Fuga", effect: `Teste de Agilidade + ${agi}`, cost: "Reação ou Movimento" }
-    ];
-    
-    actions.forEach(act => {
-        tBody.innerHTML += `
-            <tr class="hover:bg-gold/5 transition-colors">
-                <td class="py-2 pr-2 font-bold text-gray-300">${act.name}</td>
-                <td class="py-2 pr-2 text-purple-400 font-bold">${act.effect}</td>
-                <td class="py-2 text-gray-400 text-xs">${act.cost}</td>
-            </tr>
-        `;
-    });
-    }
-    
     // Skills Grid
     const gridSkills = document.getElementById('dash-skills-grid');
     gridSkills.innerHTML = '';
@@ -1739,19 +1711,53 @@ window.openExtendedActionsModal = function() {
     // We can add logic to check for specific perks if needed (e.g. char.perks?.sed?.["Pegada Firme"])
     
     const actions = [
-        { cat: "Físico", name: "Soco / Chute", effect: `1d4 + ${force} HP`, cost: "1 Ação", desc: "Ataque desarmado rápido. Teste de FOR ou AGI vs Defesa." },
-        { cat: "Físico", name: "Ataque com Arma", effect: `Dano da Arma + ${force} HP`, cost: "1 Ação", desc: "Usa uma arma corpo a corpo. Teste de FOR ou AGI vs Defesa." },
-        { cat: "Físico", name: "Agarrão Bruto", effect: `Imobiliza + 1 Dano HP/LUST`, cost: "1 Ação", desc: "Teste Oposto: FOR vs FOR/AGI. Se sucesso, alvo fica imobilizado." },
-        { cat: "ERPG", name: "Toque Sensível", effect: `1d4 + ${sed} LUST`, cost: "Ação Bônus", desc: "Tocar áreas erógenas por cima da roupa ou rapidamente. Teste: AGI vs AGI (se alvo resistir)." },
-        { cat: "ERPG", name: "Beijo Intenso", effect: `1d6 + ${Math.max(sed, mis)} LUST`, cost: "1 Ação", desc: "Beijo de língua profundo. Alvo precisa estar agarrado ou consentir. Teste: SED vs VON." },
-        { cat: "ERPG", name: "Sexo Oral / Masturbação", effect: `1d8 + ${sed} LUST`, cost: "1 Ação", desc: "Estimulação direta. Alvo deve estar desprotegido. Teste: AGI vs AGI." },
-        { cat: "ERPG", name: "Penetração Frontal", effect: `2d6 + ${sed} LUST`, cost: "20 Stamina", desc: "Requer submissão ou consentimento. Aplica LUST contínuo todo turno se mantido." },
-        { cat: "ERPG", name: "Penetração Forçada", effect: `1d8 + ${Math.max(force, sed)} LUST`, cost: "30 Stamina", desc: "Penetração contra resistência. Teste Oposto de FOR vs AGI/FOR a cada turno." },
-        { cat: "ERPG", name: "Montaria / Cavalgada", effect: `2d6 + ${agi} LUST`, cost: "20 Stamina", desc: "Usa a Agilidade para ditar o ritmo em cima do alvo. Causa grande impacto LUST no parceiro." },
-        { cat: "Suporte", name: "Provocação Verbal", effect: `1d4 + ${sed} LUST`, cost: "Ação Livre", desc: "Sussurros ou gemidos a até 5m. Teste: SED vs VON. Se falhar, inimigo foca em você." },
-        { cat: "Defesa", name: "Esquiva Ágil", effect: `Vantagem na Defesa`, cost: "Reação", desc: "Quando atacado, rola 1d20+AGI extra para tentar superar o ataque do inimigo." },
-        { cat: "Defesa", name: "Resistência de Constituição", effect: `-1d4 Dano HP`, cost: "Reação + 5 Stamina", desc: "Enrijece o corpo para absorver um golpe contundente (apenas Dano Físico)." },
-        { cat: "Defesa", name: "Blindagem Mental", effect: `Resiste LUST`, cost: "Reação + 10 Stamina", desc: "Usa Misticismo ou Vontade para criar barreira mental, rolando com Vantagem contra Testes de Sedução." }
+        // FÍSICO (10)
+        { cat: "Físico", name: "Soco Simples / Chute Rápido", effect: `1d4 + ${force} HP`, cost: "1 Ação", desc: "Ataque desarmado rápido. Teste de FOR ou AGI vs Defesa." },
+        { cat: "Físico", name: "Golpe Pesado", effect: `1d8 + ${force} HP`, cost: "1 Ação + 10 Stamina", desc: "Golpe focado em força bruta. Causa -1 na rolagem de acerto, mas rola dano maior. Teste FOR vs Def." },
+        { cat: "Físico", name: "Ataque com Arma Corpo-a-Corpo", effect: `Dano da Arma + ${force} HP`, cost: "1 Ação", desc: "Ataque padrão com qualquer arma de mão. Teste FOR ou AGI vs Def." },
+        { cat: "Físico", name: "Agarrão Bruto", effect: `Imobiliza + 1 Dano HP/LUST`, cost: "1 Ação", desc: "Teste Oposto: FOR vs FOR/AGI. Se sucesso, alvo fica imobilizado. Impede movimentos e esquivas." },
+        { cat: "Físico", name: "Arremesso de Corpo", effect: `2d4 + ${force} HP`, cost: "1 Ação", desc: "Requer que o alvo esteja Agarrado. Joga o alvo no chão (Derrubado). Teste FOR vs CON." },
+        { cat: "Físico", name: "Encontrão / Investida", effect: `1d6 + ${force} HP`, cost: "1 Ação + Movimento", desc: "Corre e bate no alvo. Pode derrubá-lo se a diferença no teste (FOR vs FOR) for maior que 5." },
+        { cat: "Físico", name: "Desarmar", effect: `Alvo solta a arma`, cost: "1 Ação + 5 Stamina", desc: "Teste Oposto AGI/FOR vs FOR do alvo. Alvo deixa cair a arma ou item da mão." },
+        { cat: "Físico", name: "Golpe Baixo / Chute nas Partes", effect: `1d4 + ${force} HP`, cost: "1 Ação", desc: "Causa fraqueza por 1 turno se acertar (Vantagem nos seus próximos ataques). AGI vs AGI." },
+        { cat: "Físico", name: "Ataque Furtivo", effect: `1d10 + ${agi} HP`, cost: "1 Ação", desc: "Exige que o alvo não tenha te visto. Teste de AGI furtiva. Dano alto e bônus de acerto (+2)." },
+        { cat: "Físico", name: "Sufocamento", effect: `Perde 10 Stamina/turno`, cost: "Ação de Manter", desc: "Requer alvo Agarrado. Corta o fôlego. Se Stamina zerar, alvo desmaia. Teste FOR vs CON contínuo." },
+
+        // ERPG (10)
+        { cat: "ERPG", name: "Toque Sensível / Carícia Furtiva", effect: `1d4 + ${sed} LUST`, cost: "Ação Bônus", desc: "Tocar áreas erógenas por cima da roupa ou de relance. Teste: AGI vs AGI (se alvo resistir)." },
+        { cat: "ERPG", name: "Apalpar com Força / Amasso", effect: `1d6 + ${Math.max(sed, force)} LUST`, cost: "1 Ação", desc: "Exige contato corpo-a-corpo. Pode ser feito à força. Teste: FOR vs AGI/FOR." },
+        { cat: "ERPG", name: "Beijo Intenso / Francês", effect: `1d6 + ${Math.max(sed, mis)} LUST`, cost: "1 Ação", desc: "Beijo profundo. Alvo precisa estar agarrado ou consentir. Teste Oposto: SED vs VON." },
+        { cat: "ERPG", name: "Sexo Oral / Masturbação", effect: `1d8 + ${sed} LUST`, cost: "1 Ação", desc: "Estimulação direta das partes íntimas. Alvo deve estar desprotegido. Teste SED vs VON." },
+        { cat: "ERPG", name: "Penetração Frontal", effect: `2d6 + ${sed} LUST`, cost: "20 Stamina (Início)", desc: "Requer alvo submisso, imobilizado ou consentindo. Mantém 1d6+SED passivamente todo turno." },
+        { cat: "ERPG", name: "Penetração Forçada", effect: `1d8 + ${Math.max(force, sed)} LUST`, cost: "30 Stamina", desc: "Penetração agressiva. Teste Oposto: FOR vs AGI/FOR a cada turno para manter." },
+        { cat: "ERPG", name: "Montaria / Cavalgada", effect: `2d6 + ${agi} LUST`, cost: "15 Stamina", desc: "Usa Agilidade para ditar o ritmo no parceiro deitado/sentado. O alvo quase não tem defesa (VON)." },
+        { cat: "ERPG", name: "Fricção Corporal / Esfregação", effect: `1d4 + ${sed} LUST`, cost: "Ação de Movimento", desc: "Roçar o corpo de forma sugestiva ao passar ou lutar. Não gasta sua ação principal de ataque." },
+        { cat: "ERPG", name: "Estimulação com Brinquedos/Itens", effect: `1d10 + ${sed} LUST`, cost: "1 Ação", desc: "Uso de chicotes, vibradores ou tentáculos menores (Itens). Teste SED vs VON ou AGI." },
+        { cat: "ERPG", name: "Clímax Forçado", effect: `Mind Break (Imobiliza)`, cost: "Full Turn", desc: "Se o alvo chegar ao LUST máximo, você pode gastar 1 turno inteiro para finalizá-lo em orgasmo e derrubá-lo." },
+
+        // DEFESA (10)
+        { cat: "Defesa", name: "Esquiva Ágil", effect: `Vantagem na Defesa Fís.`, cost: "Reação", desc: "Quando atacado, rola 1d20+AGI extra contra o ataque inimigo. Ignora dano se superar." },
+        { cat: "Defesa", name: "Bloqueio Bruto", effect: `Metade do Dano`, cost: "Reação + 5 Stamina", desc: "Usa os braços ou escudo. Teste FOR. Se falhar, leva dano cheio; se passar, metade." },
+        { cat: "Defesa", name: "Resistência de Constituição", effect: `-1d6 Dano HP`, cost: "Reação + 10 Stamina", desc: "Enrijece os músculos ao receber golpe inevitável. Reduz ativamente o dano de HP resultante." },
+        { cat: "Defesa", name: "Fuga / Desvencilhar", effect: `Solta do Agarrão`, cost: "1 Ação", desc: "Teste Oposto: AGI/FOR vs FOR do inimigo que te segura. Se sucesso, você fica livre." },
+        { cat: "Defesa", name: "Recuo Rápido", effect: `Ganha 3m distância`, cost: "Reação a Fim de Turno", desc: "Pula para trás após ser atacado (independente de acertarem ou não)." },
+        { cat: "Defesa", name: "Aparar (Parry)", effect: `Anula + Contra-Ataque`, cost: "Reação + 15 Stamina", desc: "Exige arma. Teste AGI vs Acerto inimigo. Se você vencer por +5 de dif., ataca de volta de graça." },
+        { cat: "Defesa", name: "Blindagem Mental", effect: `Vant. contra SED/Mística`, cost: "Reação + 10 Stamina", desc: "Foca a mente. Rola 2d20 e pega o melhor para resistir à provocação ou controle." },
+        { cat: "Defesa", name: "Morder os Lábios (Resistir LUST)", effect: `-1d4 LUST recebido`, cost: "Passivo (Quando sofre LUST)", desc: "Teste de CON ou VON (Dif 15). Se passar, reduz a excitação recebida pela dor." },
+        { cat: "Defesa", name: "Proteger Aliado", effect: `Recebe o ataque por ele`, cost: "Reação + Movimento", desc: "Você entra na frente de um aliado até 3m de distância e sofre todo o dano/efeito no lugar dele." },
+        { cat: "Defesa", name: "Postura Defensiva", effect: `+2 Defesa Global`, cost: "1 Ação", desc: "Você não ataca neste turno, mas inimigos têm Desvantagem para te acertar corpo-a-corpo." },
+
+        // SUPORTE / OUTROS (10)
+        { cat: "Suporte", name: "Provocação Verbal", effect: `1d4 + ${sed} LUST`, cost: "Ação Bônus", desc: "Sussurros, gemidos ou insultos eróticos. Teste: SED vs VON (até 5m)." },
+        { cat: "Suporte", name: "Ajudar Aliado", effect: `Vantagem para Aliado`, cost: "1 Ação", desc: "Prejudica a defesa de um inimigo para que um aliado tenha Vantagem no próximo ataque." },
+        { cat: "Suporte", name: "Usar Poção/Item Rápido", effect: `Varia do Item`, cost: "Ação Bônus", desc: "Tomar uma poção ou passar um item para um aliado próximo." },
+        { cat: "Suporte", name: "Amedrontar (Intimidação)", effect: `Alvo com Desvantagem`, cost: "1 Ação", desc: "Grito ou postura ameaçadora. Teste FOR vs VON. Inimigo atacará com debuff." },
+        { cat: "Suporte", name: "Inspecionar Ponto Fraco", effect: `Descobre Fraquezas`, cost: "1 Ação", desc: "Teste de Misticismo ou Vontade. Mestre revela atributos ou pontos fracos do monstro." },
+        { cat: "Suporte", name: "Inspirar", effect: `+1d4 no Teste do Aliado`, cost: "Ação Bônus + 10 Stamina", desc: "Palavras de coragem (ou gemidos encorajadores). Aliado pode somar 1d4 num teste neste turno." },
+        { cat: "Suporte", name: "Concentração Mística", effect: `Recupera 10 Stamina`, cost: "1 Ação", desc: "Foca a mente e respira, ignorando dor leve e se recuperando. Requer Teste de VON." },
+        { cat: "Suporte", name: "Imobilizar de Forma Erótica", effect: `Ambos Imóveis (LUST em ambos)`, cost: "1 Ação", desc: "Amarra ou prende o alvo de um jeito estimulante. Alvo sofre penalidade na Defesa e recebe LUST passivo." },
+        { cat: "Suporte", name: "Seduzir (Ação Longa)", effect: `Muda postura inimiga`, cost: "Full Turn", desc: "Para de atacar e tenta encantar um NPC ou Monstro hostil. Requer série de Testes de SED." },
+        { cat: "Suporte", name: "Fingir Desmaio / Rendição", effect: `Inimigos te ignoram`, cost: "Reação / Ação Bônus", desc: "Deita-se e parece inofensivo. Inimigos que não são muito inteligentes focarão em outros alvos." }
     ];
     
     actions.forEach(act => {

@@ -98,6 +98,9 @@
                         <button id="btn-edit-char" class="btn-icon" title="Editar Atributos"><i class="fa-solid fa-pen"></i></button>
                         <button id="btn-delete-char" class="btn-icon text-red-400 hover:text-red-300" title="Excluir"><i class="fa-solid fa-trash"></i></button>
                     </div>
+                    <div class="mt-2 text-right">
+                        <button type="button" class="px-3 py-1 bg-purple-900/40 text-purple-300 text-xs font-bold rounded border border-purple-500/30 hover:bg-purple-800/60 transition" onclick="openExtendedActionsModal()"><i class="fa-solid fa-book-open mr-1"></i> Livro de Ações</button>
+                    </div>
                 </div>
             </div>
 
@@ -227,28 +230,6 @@
             
             <!-- Extended Descriptions -->
             <div class="grid grid-cols-1 gap-6">
-                <!-- Combat Actions Table -->
-                <div class="glass-panel p-6 rounded-lg">
-                    <div class="flex justify-between items-center border-b border-gold/20 pb-2 mb-4">
-                        <h3 class="font-cinzel text-xl text-gold"><i class="fa-solid fa-hand-fist mr-2"></i> Ações Básicas e ERPG</h3>
-                        <button type="button" class="px-3 py-1 bg-purple-900/40 text-purple-300 text-xs font-bold rounded border border-purple-500/30 hover:bg-purple-800/60 transition" onclick="openExtendedActionsModal()">Ver Livro de Regras/Ações</button>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="text-xs text-gray-400 uppercase border-b border-gold/10">
-                                    <th class="pb-2 font-bold">Ação</th>
-                                    <th class="pb-2 font-bold">Dano / Efeito Base</th>
-                                    <th class="pb-2 font-bold">Custo</th>
-                                </tr>
-                            </thead>
-                            <tbody id="dash-actions-table" class="text-sm text-gray-200 divide-y divide-gold/5">
-                                <!-- Populated via JS -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
                 <!-- Skills Cards -->
                 <div class="glass-panel p-6 rounded-lg">
                     <h3 class="font-cinzel text-xl text-gold border-b border-gold/20 pb-2 mb-4">Habilidades</h3>
