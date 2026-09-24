@@ -414,7 +414,7 @@ const PERK_COSTS = [0, 1, 2, 3, 5, 9, 14, 20];
         "name": "Vontade",
         "icon": "fa-brain",
         "perks": {
-            "Provocação de Batalha (Aggro)": [
+"Provocação de Batalha (Aggro)": [
                 "1: Gritos imponentes. +1 em Testes de Intimidação.",
                 "2: Postura ameaçadora. Dano intimidador +1d2.",
                 "3: Insulta as mães dos inimigos. Atrai foco facilmente.",
@@ -476,14 +476,79 @@ const PERK_COSTS = [0, 1, 2, 3, 5, 9, 14, 20];
                 "5: Coração Frio: Imunidade total a Pânico, Medo ou Choque.",
                 "6: Ignora penalidades de dor extrema por membros feridos.",
                 "7: Mente acima do corpo. Continua lutando mesmo despedaçado. Testes +3"
+            ],
+
+            "Foco Inabalável": [
+                "1: Concentração afiada. +1 em testes para evitar ser distraído.",
+                "2: Ruídos altos não quebram sua linha de pensamento.",
+                "3: Vantagem em testes mentais ao realizar trabalhos minuciosos.",
+                "4: Túnel de Foco: Ignora penalidades de ambiente caótico (ex: campo de batalha gritante).",
+                "5: Imune a magias de Desorientação.",
+                "6: Perfeição Absoluta. Nunca erra ataques por motivo de 'distração mágica'.",
+                "7: A Mente Fechada: Ninguém pode ler sua mente, tentar fazer isso causa 2d6 de Dano Mágico ao invasor."
+            ],
+            "Resiliência ao Medo": [
+                "1: Coragem testada. +1 de resistência contra Pânico.",
+                "2: Ignora auras de intimidação de monstros pequenos.",
+                "3: Você não recua. +2 contra magias de Terror.",
+                "4: Frio e Calculista: Imune ao status de Medo.",
+                "5: O medo dos aliados é mitigado se estiverem próximos a você.",
+                "6: Intimidadores sentem desconforto perante a sua apatia.",
+                "7: O Caçador de Pesadelos: Imunidade total a auras de Pavor. Você causa medo naquilo que tenta te assustar."
+            ],
+            "Instinto de Sobrevivência Mental": [
+                "1: Reflexo cognitivo. Sabe quando alguém tenta influenciar você magicamente.",
+                "2: Cria barreiras rasas na própria mente contra invasões de charme.",
+                "3: A dor psíquica se transforma em irritação leve.",
+                "4: Ceticismo Atroz: Magias ilusórias e de charme rolam com Desvantagem contra você.",
+                "5: Desperta imediatamente se colocado sob efeito de transe forçado.",
+                "6: Ao chegar a 0 LUST, rola um dado; par, você recupera 20 LUST em pura teimosia.",
+                "7: Incorruptível. Seu estado mental de LUST não pode ser alterado por poderes externos contra a sua vontade."
+            ],
+            "Aura de Autoridade": [
+                "1: Postura inabalável. NPCs sentem respeito instintivo.",
+                "2: Apenas um olhar silencia provocações fracas.",
+                "3: Vantagem em testes para resistir a ordens ou comandos absolutos (Geas).",
+                "4: Vontade Esmagadora: Reduz Dano LUST sofrido de magias de sedução em 1d4.",
+                "5: Comandos mentais lançados contra você falham miseravelmente 50% das vezes.",
+                "6: 'Eu não obedeço': Imune à condição Submisso.",
+                "7: O Rei Intocável. Imunidade absoluta a controle de ordens e encantamentos diretos."
+            ],
+            "Mente Desperta": [
+                "1: Sono sempre leve, nunca é pego em estado vulnerável.",
+                "2: Ignora o cansaço mental diário (1 nível de exaustão mental a menos).",
+                "3: Resiste a feitiços básicos de indução ao sono.",
+                "4: Despertar Brutal: Imune a magias de letargia, lentidão mental ou sono profundo.",
+                "5: Nunca pode ser apagado por traumas psicológicos.",
+                "6: A mente trabalha mesmo quando o corpo descansa, imunidade a ataques em sonhos.",
+                "7: Consciência Perpétua. Você está ciente de tudo, mesmo se o corpo físico for paralisado ou nocauteado."
+            ],
+            "Determinação Cega": [
+                "1: A meta acima de tudo. Ignora penalidades leves se focado num objetivo.",
+                "2: Resistência contra magias de Desânimo ou Tristeza induzida.",
+                "3: Se recusar a perder: +1 em Testes se o HP estiver muito baixo.",
+                "4: Teimosia Absoluta: Uma vez por dia, ignora um golpe letal que reduziria seu HP a 0, caindo para 1 HP em vez disso.",
+                "5: Imune a fraqueza mágica.",
+                "6: 'Nós vamos conseguir': Passa Vantagem inspiradora aos aliados se você estiver quase caindo.",
+                "7: A Recusa da Morte: Enquanto tiver determinação/foco, nem feitiços de Morte Instantânea funcionam contra você."
+            ],
+            "Fúria Fria": [
+                "1: Agressividade controlada. Transforma insultos em foco.",
+                "2: Quando provocam você, seus ataques não perdem precisão.",
+                "3: Quando recebe Dano LUST, o próximo Dano Físico que causar recebe +1.",
+                "4: Retribuição Calada: Quando alguém tenta controlar sua mente, ganha Vantagem no ataque contra essa pessoa.",
+                "5: Absorção Gélida: Quando recebe Dano LUST Crítico, devolve Dano Físico equivalente ao atacante.",
+                "6: Ignora qualquer debuff imposto por sedução ao realizar um ataque letal.",
+                "7: A Vontade é uma Arma. Sempre que for alvo de poder LUST/Sedução, converte o efeito falho em +2d6 de Dano Adicional."
             ]
-        }
+
+}
     },
     "vig": {
         "name": "Vigor",
         "icon": "fa-battery-full",
         "perks": {
-            "Fôlego": [
+"Fôlego": [
                 "1: Fôlego extra. +10 de Stamina máxima.",
                 "2: Conserva energia. Habilidades custam -2 Stamina (mínimo 1).",
                 "3: Recuperação ágil. Regenera 5 Stamina extra por turno ao não atacar.",
@@ -536,8 +601,73 @@ const PERK_COSTS = [0, 1, 2, 3, 5, 9, 14, 20];
                 "5: A Dor vira fúria cega. Ignora metade da Defesa Física inimiga na exaustão.",
                 "6: Ataques suicidas e violentos. Dano +2d3 e Vantagem garantida se HP < 10%.",
                 "7: Fera encurralada. Dano +3d4 e imune a Knockdown. Testes +3 quando ferido"
+            ],
+
+            "Fígado de Ferro": [
+                "1: Tolerância alcoólica e resistência leve a venenos.",
+                "2: O corpo processa drogas exóticas sem colaterais pesados.",
+                "3: Imune a venenos paralisantes comuns.",
+                "4: Sangue Limpo: Cura 1 nível de Envenenamento por turno passivamente.",
+                "5: Metabolismo Impecável: Imune a doenças biológicas e infecções.",
+                "6: Quebra toxinas e as transforma em 1d4 de Stamina.",
+                "7: Purificação Perfeita: Imunidade total a qualquer tipo de veneno, ácido ou contaminação."
+            ],
+            "Pulmões de Aço": [
+                "1: Prende a respiração por longos minutos sem penalidade.",
+                "2: Fôlego para correr sem cansar tão rápido.",
+                "3: Imune a afogamento rápido ou asfixia simples.",
+                "4: Fôlego Inesgotável: Ignora o primeiro nível de Exaustão.",
+                "5: Imune a gases venenosos e esporos através do controle respiratório.",
+                "6: Grito Desestabilizador: Usa o fôlego extremo para atordoar alvos próximos.",
+                "7: Sem Necessidade de Ar: Pode lutar debaixo d'água ou no vácuo sem nenhuma perda de performance."
+            ],
+            "Tolerância à Dor": [
+                "1: Arranhões não incomodam. +1 contra Dor leve.",
+                "2: Ignora a dor de cortes profundos.",
+                "3: Foco através do Sangue: Não sofre Desvantagem por dor severa.",
+                "4: Quebra de Limite: Se sofrer um acerto crítico, ganha +2 em Dano no próximo turno por adrenalina.",
+                "5: Ossos quebrados não te param. Movimento normal mesmo gravemente ferido.",
+                "6: Masoquismo Focado: Converte 10% do Dano Físico sofrido em Vantagem no ataque seguinte.",
+                "7: Máquina Insensível: Ignora completamente qualquer penalidade física decorrente de ferimentos."
+            ],
+            "Sangue Estancado": [
+                "1: Coagulação rápida. +1 de resistência contra cortes.",
+                "2: Pequenas feridas se fecham em segundos.",
+                "3: Imune a Condição: Sangramento Leve.",
+                "4: Coagulação Forçada: Custa 5 Stamina para parar um sangramento severo instantaneamente.",
+                "5: Reduz todo o dano cortante recebido em 1d4.",
+                "6: Imune a Hemorragias críticas e Feridas Abertas.",
+                "7: O Sangue Ferve, Mas Não Vaza. Reduz dano de armas brancas afiadas pela metade permanentemente."
+            ],
+            "Vigor Extremo": [
+                "1: Corpo descansado rende mais. +5 Stamina Máxima.",
+                "2: Fôlego duradouro. Ações de movimento custam menos Stamina.",
+                "3: Bateria Reserva: Quando Stamina chegar a 0, recupera 1d6 (1x por combate).",
+                "4: Motor a Querosene: Recupera passivamente +2 de Stamina no início do seu turno.",
+                "5: Nunca precisa dormir mais que 2 horas por dia para estar 100%.",
+                "6: Recupera passivamente +1d4 de Stamina no início do turno.",
+                "7: O Coração da Terra: Sua Stamina máxima aumenta em +30 e você nunca mais sente cansaço natural."
+            ],
+            "Casca Grossa": [
+                "1: Pele caleijada. Reduz 1 de Dano Físico puro recebido.",
+                "2: Músculos rígidos. HP Máximo +10.",
+                "3: Absorção Corporal: Ignora Dano Físico menor que 3 (não machuca).",
+                "4: Muro de Carne: Você ganha Vantagem em testes para não ser Empurrado ou Derrubado.",
+                "5: Reduz todo e qualquer Dano Físico sofrido em 2.",
+                "6: Imune a atordoamento (Stun) por impacto físico.",
+                "7: O Colosso Vivo: Reduz 20% de TODO o Dano Físico sofrido, antes de contar a armadura."
+            ],
+            "Motor Biológico": [
+                "1: Digestão rápida permite comer muito para ganhar bônus leve.",
+                "2: Gasta HP (2 pontos) para ganhar Stamina (2 pontos) como Ação Livre.",
+                "3: O corpo emana calor intenso ao queimar energia, imunidade ao frio.",
+                "4: Burst Metabólico: Gasta 10 HP para dobrar sua locomoção por 1 turno.",
+                "5: Consegue curar ossos através do consumo massivo de alimentos.",
+                "6: Gasta HP para adicionar Dano Extra (1 HP = +1 Dano, max +5).",
+                "7: Sobrecarga Celular: Aquece o corpo a 100°C, queimando inimigos próximos passivamente enquanto você tem Stamina."
             ]
-        }
+
+}
     },
     "mis": {
         "name": "Misticismo",
@@ -1613,25 +1743,7 @@ function renderDashboard() {
     const canEditChar = canEdit(char);
     document.querySelectorAll('.action-btn').forEach(btn => btn.disabled = !canEditChar);
     
-    // Render Perks
-    const dashPerks = document.getElementById('dash-perks');
-    dashPerks.innerHTML = '';
-    let hasAnyPerk = false;
-    if (char.perks) {
-        Object.keys(char.perks).forEach(attr => {
-            const perksObj = char.perks[attr];
-            Object.keys(perksObj).forEach(pName => {
-                if (perksObj[pName] > 0) {
-                    hasAnyPerk = true;
-                    dashPerks.innerHTML += `<div class="bg-black/30 p-2 rounded border-l-2 border-gold/50 mb-1">
-                        <div class="flex justify-between items-center"><span class="font-bold text-gray-200">${escapeHTML(pName)}</span><span class="text-xs text-gold">Nv ${perksObj[pName]}</span></div>
-                        <div class="text-[10px] text-gray-400 mt-1">${PERKS_DB[attr].perks[pName] ? escapeHTML(PERKS_DB[attr].perks[pName][perksObj[pName]-1]) : 'Vantagem órfã.'}</div>
-                    </div>`;
-                }
-            });
-        });
-    }
-    if (!hasAnyPerk) dashPerks.innerHTML = '<div class="text-gray-500 text-sm">Nenhuma vantagem adquirida.</div>';
+
 
     // Render Logs
     const dashLogs = document.getElementById('dash-logs');
@@ -1772,7 +1884,12 @@ function updateBars(char, mods) {
 function renderAttributesAndDerivedStats(char, mods) {
     const totalDF = char.attr.con + mods.df;
     const totalDL = mods.dlust_set !== null ? mods.dlust_set : (char.attr.von + mods.dlust);
-    const totalEsq = 8 + (char.attr.agi) + mods.agi + mods.esq;
+    
+    const totalAgi = char.attr.agi + mods.agi;
+    const baseEsq = 8 + mods.esq;
+    const minDodge = totalAgi > 0 ? 2 : 0;
+    const maxDodge = totalAgi > 0 ? 2 * totalAgi : 0;
+    const totalEsq = minDodge === maxDodge ? (baseEsq + minDodge) : `${baseEsq + minDodge}-${baseEsq + maxDodge}`;
     const totalDanFis = 5 + (char.attr.for) + mods.danFis;
     const totalDanLust = 5 + (char.attr.sed) + mods.danLust;
 
@@ -1795,7 +1912,7 @@ function renderAttributesAndDerivedStats(char, mods) {
 
     if(document.getElementById('tt-df')) document.getElementById('tt-df').innerHTML = buildTT('Base (CON)', char.attr.con, mods.breakdown.df);
     if(document.getElementById('tt-dl')) document.getElementById('tt-dl').innerHTML = buildTT('Base (VON)', char.attr.von, mods.breakdown.dlust);
-    if(document.getElementById('tt-esq')) document.getElementById('tt-esq').innerHTML = buildTT('Base (8 + AGI)', 8 + char.attr.agi, mods.breakdown.esq);
+    if(document.getElementById('tt-esq')) document.getElementById('tt-esq').innerHTML = buildTT('Base (8 + 2dAGI)', `8${totalAgi > 0 ? ` + (2 a ${maxDodge})` : ''}`, mods.breakdown.esq);
     if(document.getElementById('tt-danfis')) document.getElementById('tt-danfis').innerHTML = buildTT('Base (5 + FOR)', 5 + char.attr.for, mods.breakdown.danFis);
     if(document.getElementById('tt-danlust')) document.getElementById('tt-danlust').innerHTML = buildTT('Base (5 + SED)', 5 + char.attr.sed, mods.breakdown.danLust);
 
@@ -2154,8 +2271,9 @@ document.getElementById('btn-combat-confirm').onclick = () => {
     const cStats = isMon ? null : getClassStats(source.class);
     const mods = isMon ? null : getCharModifiers(source);
     
-    let mhp = isMon ? source.hp : Math.max(1, Math.floor((cStats.hp + (source.attr.con * 10)) * mods.hp_mult));
-    let mst = isMon ? source.stamina : Math.max(1, Math.floor((cStats.st + (source.attr.vig * 5)) * mods.st_mult));
+    const attr = source.attr || { con: 0, vig: 0, agi: 0 };
+    let mhp = isMon ? source.hp : Math.max(1, Math.floor((cStats.hp + (attr.con * 10)) * mods.hp_mult));
+    let mst = isMon ? source.stamina : Math.max(1, Math.floor((cStats.st + (attr.vig * 5)) * mods.st_mult));
     let mlu = isMon ? source.lust : cStats.lust;
     
     const combatant = {
@@ -2175,6 +2293,7 @@ document.getElementById('btn-combat-confirm').onclick = () => {
     
     combatState.combatants.push(combatant);
     sortCombatants();
+    saveCombatState();
     document.getElementById('modal-combat-add').close();
     renderRPG();
 };
