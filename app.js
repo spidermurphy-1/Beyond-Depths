@@ -1057,7 +1057,7 @@ function renderSidebar() {
         } else {
             const sub = currentTab === 'armors' ? `DF: +${item.mods.df}` : `Tipo: ${item.type}`;
             div.innerHTML = `
-                <div class="flex-1">
+                <div class="flex-1 cursor-pointer" onclick="openViewModal('${currentTab === 'armors' ? 'armor' : 'skill'}', '${item.id}')">
                     <div class="font-bold text-sm text-gray-200">${escapeHTML(item.name)}</div>
                     <div class="text-xs text-gray-400">${escapeHTML(sub)}</div>
                 </div>
@@ -1107,6 +1107,52 @@ document.getElementById('btn-save-g-skill').addEventListener('click', (e) => {
     saveToDB('global_skills', obj, globalSkills, 'bd_skills');
     document.getElementById('modal-skill').close();
 });
+
+window.openViewModal = function(type, id) {
+    if (!id) return;
+    const titleEl = document.getElementById('modal-view-title');
+    const contentEl = document.getElementById('modal-view-content');
+    
+    if (type === 'skill') {
+        const sk = globalSkills.find(s => s.id === id);
+        if (!sk) return;
+        titleEl.innerHTML = `<i class="fa-solid fa-star text-gold mr-2"></i>${escapeHTML(sk.name)}`;
+        contentEl.innerHTML = `
+            <div class="grid grid-cols-2 gap-x-2 gap-y-2 mb-4">
+                <div><span class="font-bold text-gray-400 uppercase text-xs">Tipo:</span><br>${escapeHTML(sk.type)}</div>
+                <div><span class="font-bold text-gray-400 uppercase text-xs">Custo:</span><br>${escapeHTML(sk.cost)}</div>
+                <div class="col-span-2"><span class="font-bold text-gray-400 uppercase text-xs">Teste:</span><br>${escapeHTML(sk.test)}</div>
+            </div>
+            <div>
+                <span class="font-bold text-gray-400 uppercase text-xs">Efeito:</span><br>
+                <div class="mt-1 p-3 bg-black/40 border-l-2 border-gold rounded text-gray-300 italic whitespace-pre-wrap leading-relaxed">${escapeHTML(sk.effect)}</div>
+            </div>
+        `;
+    } else if (type === 'armor') {
+        const ar = globalArmors.find(a => a.id === id);
+        if (!ar) return;
+        const b = getArmorBaseStats(ar.base);
+        titleEl.innerHTML = `<i class="fa-solid fa-shield-halved text-gold mr-2"></i>${escapeHTML(ar.name)}`;
+        contentEl.innerHTML = `
+            <div class="grid grid-cols-2 gap-x-2 gap-y-2 mb-4">
+                <div><span class="font-bold text-gray-400 uppercase text-xs">Tipo:</span><br>${escapeHTML(ar.type)}</div>
+                <div><span class="font-bold text-gray-400 uppercase text-xs">Base:</span><br>${escapeHTML(b.name)}</div>
+            </div>
+            <div class="mb-4">
+                <span class="font-bold text-gray-400 uppercase text-xs">Modificadores:</span><br>
+                <ul class="list-disc list-inside mt-1 space-y-1 text-gray-300">
+                    <li><span class="text-green-400">DF:</span> +${ar.mods.df}</li>
+                    ${ar.mods.hp ? `<li><span class="text-red-400">HP:</span> +${Math.round((ar.mods.hp-1)*100)}%</li>` : ''}
+                    ${ar.mods.st ? `<li><span class="text-blue-400">Vigor:</span> +${Math.round((ar.mods.st-1)*100)}%</li>` : ''}
+                    ${ar.mods.pen ? `<li><span class="text-red-500">Penalidade Furtividade:</span> +${ar.mods.pen} CD</li>` : ''}
+                </ul>
+            </div>
+            ${ar.desc ? `<div><span class="font-bold text-gray-400 uppercase text-xs">Descrição:</span><br><div class="mt-1 text-gray-300 italic whitespace-pre-wrap leading-relaxed">${escapeHTML(ar.desc)}</div></div>` : ''}
+        `;
+    }
+    
+    document.getElementById('modal-view').showModal();
+};
 
 // --- CHARACTER MODAL LOGIC ---
 let editingCharId = null;
@@ -1224,10 +1270,11 @@ document.querySelectorAll('.inp-attr-group input').forEach(inp => {
 
 document.getElementById('btn-add-skill-slot').addEventListener('click', () => {
     const div = document.createElement('div');
-    div.className = 'flex gap-2 mb-2';
+    div.className = 'flex gap-2 mb-2 items-center';
     div.innerHTML = `
-        <select class="input-dark flex-1 inp-skill-slot"></select>
-        <button type="button" class="btn-icon text-red-400" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
+        <select class="input-dark flex-1 inp-skill-slot" onchange="this.nextElementSibling.onclick = () => openViewModal('skill', this.value)"></select>
+        <button type="button" class="btn-icon text-blue-400 px-2" onclick="openViewModal('skill', this.previousElementSibling.value)" title="Ver Detalhes"><i class="fa-solid fa-circle-info"></i></button>
+        <button type="button" class="btn-icon text-red-400 px-2" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
     `;
     document.getElementById('skills-select-list').appendChild(div);
     updateSkillSelectOptions();
@@ -1263,10 +1310,11 @@ if (inpTemplate) {
 
                 if (!alreadyInList) {
                     const div = document.createElement('div');
-                    div.className = 'flex gap-2 mb-2';
+                    div.className = 'flex gap-2 mb-2 items-center';
                     div.innerHTML = `
-                        <select class="input-dark flex-1 inp-skill-slot"><option value="${existingSk.id}" selected></option></select>
-                        <button type="button" class="btn-icon text-red-400" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
+                        <select class="input-dark flex-1 inp-skill-slot" onchange="this.nextElementSibling.onclick = () => openViewModal('skill', this.value)"><option value="${existingSk.id}" selected></option></select>
+                        <button type="button" class="btn-icon text-blue-400 px-2" onclick="openViewModal('skill', this.previousElementSibling.value)" title="Ver Detalhes"><i class="fa-solid fa-circle-info"></i></button>
+                        <button type="button" class="btn-icon text-red-400 px-2" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
                     `;
                     document.getElementById('skills-select-list').appendChild(div);
                 }

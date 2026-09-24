@@ -573,6 +573,17 @@
         </div>
     </dialog>
 
+    <!-- Modal View Details -->
+    <dialog id="modal-view" class="glass-panel rounded-xl shadow-2xl p-0 max-w-md w-full">
+        <div class="bg-black/60 p-4 border-b border-gold/20 flex justify-between items-center">
+            <h2 id="modal-view-title" class="text-xl font-cinzel text-gold">Detalhes</h2>
+            <button class="text-gray-400 hover:text-white" onclick="document.getElementById('modal-view').close()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="modal-view-content" class="p-6 space-y-4 text-sm text-gray-300">
+            <!-- Injected via JS -->
+        </div>
+    </dialog>
+
     <dialog id="modal-login" class="glass-panel rounded-xl shadow-2xl p-0 w-96">
         <div class="p-6 border-b border-gold/20">
             <h2 class="text-2xl font-cinzel text-gold">Autenticação</h2>
