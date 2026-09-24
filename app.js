@@ -888,8 +888,9 @@ function loadData() {
 
 function canEdit(item) {
     if (!db) return true;
-    if (!item || !currentUser) return false;
+    if (!currentUser) return false;
     if (isMaster()) return true;
+    if (!item) return true;
     return item.ownerId === currentUser.uid;
 }
 
@@ -1933,7 +1934,7 @@ window.switchCharTab = function(tab) {
 // --- MONSTER LOGIC ---
 document.getElementById('form-monster').addEventListener('submit', (e) => {
     e.preventDefault();
-    if (!canEdit(null)) return alert("Sem permissão.");
+    if (!isMaster()) return alert("Sem permissão. Apenas o Mestre pode criar monstros.");
     
     const newMonster = {
         id: editingMonsterId || generateId(),
