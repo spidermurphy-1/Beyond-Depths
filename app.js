@@ -558,22 +558,47 @@ function enforceClassConditions() {
 
 document.getElementById('inp-class').addEventListener('input', enforceClassConditions);
 
+function getClassBonusSum() {
+    const className = document.getElementById('inp-class').value.trim();
+    const tplKey = Object.keys(CLASS_TEMPLATES).find(k => k.toLowerCase() === className.toLowerCase());
+    let sum = 0;
+    if (tplKey) {
+        const mods = CLASS_TEMPLATES[tplKey].attrMods || {};
+        Object.values(mods).forEach(v => sum += v);
+    }
+    return sum;
+}
+
 function updatePointsCounter() {
-    const total = (parseInt(document.getElementById('inp-con').value) || 0) +
-                  (parseInt(document.getElementById('inp-for').value) || 0) +
-                  (parseInt(document.getElementById('inp-vig').value) || 0) +
-                  (parseInt(document.getElementById('inp-agi').value) || 0) +
-                  (parseInt(document.getElementById('inp-von').value) || 0) +
-                  (parseInt(document.getElementById('inp-sed').value) || 0) +
-                  (parseInt(document.getElementById('inp-mis').value) || 0);
+    const attrs = [
+        parseInt(document.getElementById('inp-con').value) || 0,
+        parseInt(document.getElementById('inp-for').value) || 0,
+        parseInt(document.getElementById('inp-vig').value) || 0,
+        parseInt(document.getElementById('inp-agi').value) || 0,
+        parseInt(document.getElementById('inp-von').value) || 0,
+        parseInt(document.getElementById('inp-sed').value) || 0,
+        parseInt(document.getElementById('inp-mis').value) || 0
+    ];
+    
+    let isOver5 = false;
+    for (let v of attrs) {
+        if (v > 5) isOver5 = true;
+    }
+
+    const total = attrs.reduce((a, b) => a + b, 0);
+    const limit = 8 + getClassBonusSum();
     
     const counterEl = document.getElementById('points-counter');
     counterEl.innerText = total;
-    if(total > 12) counterEl.className = 'text-red-500 font-bold';
+    
+    const limitEl = document.getElementById('points-limit-display');
+    if (limitEl) limitEl.innerText = limit;
+
+    if(total > limit || isOver5) counterEl.className = 'text-red-500 font-bold';
     else counterEl.className = 'text-white';
     
     updatePerksMath(); // Refresh perk limits
-    return total;
+    return { total, limit, isOver5 };
 }
 
 document.querySelectorAll('.inp-attr-group input').forEach(inp => {
@@ -635,15 +660,30 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
         if (existingChar && existingChar.isUnlockedPoints) isUnlocked = true;
     }
     
-    const totalPoints = updatePointsCounter();
-    if (totalPoints > 12 && !isUnlocked && !isMaster()) {
-        return alert("O limite para jogadores normais é de 12 pontos somados entre todos os atributos base.");
+    const pts = updatePointsCounter();
+    const isMasterOverride = isMaster() && isUnlocked;
+    
+    if (!isMasterOverride) {
+        if (pts.total > pts.limit) {
+            switchCharTab('base');
+            return alert(`Você ultrapassou o limite de atributos! O máximo atual é ${pts.limit} (8 Base + Bônus de Classe).`);
+        }
+        if (pts.isOver5) {
+            switchCharTab('base');
+            return alert("Nenhum atributo individual pode ser maior que 5!");
+        }
     }
     
-    const isMasterOverride = isMaster() && isUnlocked;
-    if (!updatePerksMath() && !isMasterOverride) {
-        switchCharTab('perks');
-        return alert("Você gastou mais Pontos de Vantagem (PV) do que seus Atributos Base permitem! Reduza suas Vantagens ou aumente o Atributo (se não estiver no limite).");
+    const perkStatus = updatePerksMath();
+    if (!isMasterOverride) {
+        if (!perkStatus.allValid) {
+            switchCharTab('perks');
+            return alert("Você gastou mais Pontos de Vantagem (PV) do que seus Atributos Base permitem! Reduza suas Vantagens ou aumente o Atributo.");
+        }
+        if (!perkStatus.allSpent) {
+            switchCharTab('perks');
+            return alert("Você possui Pontos de Vantagem (PV) não gastos! É obrigatório distribuir todos os seus pontos nas vantagens antes de salvar a ficha.");
+        }
     }
 
     const classNameVal = document.getElementById('inp-class').value.toLowerCase();
@@ -1109,6 +1149,7 @@ function updatePerksMath() {
     };
 
     let allValid = true;
+    let allSpent = true;
 
     Object.keys(PERKS_DB).forEach(attrKey => {
         const maxPV = Math.max(0, attrs[attrKey] * 3);
@@ -1151,10 +1192,13 @@ function updatePerksMath() {
             } else {
                 usedEl.className = 'text-white';
             }
+            if(usedPV < maxPV) {
+                allSpent = false;
+            }
         }
     });
     
-    return allValid;
+    return { allValid, allSpent };
 }
 
 window.adjustPerk = function(attrKey, perkName, delta) {
