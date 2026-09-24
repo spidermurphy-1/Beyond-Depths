@@ -153,6 +153,24 @@ const PERK_COSTS = [0, 1, 2, 3, 5, 9, 14, 20];
         "name": "Força",
         "icon": "fa-dumbbell",
         "perks": {
+            "Armas Colossais / Machado e Montante": [
+                "1: Balanço pesado. Dano Físico Pesado +1.",
+                "2: Quebra escudos de madeira. Dano Físico Pesado +1d2.",
+                "3: Força contundente. Dano Físico Pesado +1d3.",
+                "4: Trespasse (Cleave): Se matar um alvo, o dano restante passa para um inimigo adjacente.",
+                "5: Golpes arremessam inimigos leves. Dano Físico Pesado +2d2.",
+                "6: Cada golpe estilhaça o solo (Dano em pequena área). Dano Físico Pesado +2d3.",
+                "7: Um furacão de puro aço pesado. Dano Físico Pesado +3d4, Testes +3"
+            ],
+            "Punhos / Artes Marciais": [
+                "1: Punhos calejados. Dano Físico +1 em socos.",
+                "2: Postura de luta. Dano Físico +1d2.",
+                "3: Socos precisos em pontos fracos. Dano Físico +1d3.",
+                "4: Quebra-Guarda: Libera Habilidade de ignorar a armadura do alvo por 1 turno. Dano +1d4",
+                "5: Sequência de golpes relâmpago. Dano Físico +2d2.",
+                "6: Golpes causam sangramento ou concussões graves. Dano Físico +2d3.",
+                "7: Mestria Absoluta. Mãos letais que atravessam carne e aço. Dano Físico +3d4, Testes +3"
+            ],
             "Braços": [
                 "1: Braços definidos. Dano Físico +1",
                 "2: Bíceps duros. Dano Físico +1d2",
@@ -213,6 +231,51 @@ const PERK_COSTS = [0, 1, 2, 3, 5, 9, 14, 20];
         "name": "Agilidade",
         "icon": "fa-person-running",
         "perks": {
+            "Visão de Águia / Arquearia": [
+                "1: Mira firme. Dano Físico à distância +1.",
+                "2: Olhos afiados. Dano à distância +1d2 e ignora meia-cobertura.",
+                "3: Tiros rápidos. Dano à distância +1d3.",
+                "4: Tiro Preciso: Libera Habilidade de mirar em pontos vitais (Dobra chance de Acerto Crítico).",
+                "5: Disparos atravessam alvos macios. Dano à distância +2d2.",
+                "6: Acerta o alvo de olhos vendados pelo som. Dano à distância +2d3.",
+                "7: Chuva de flechas/balas indefensável. Dano à distância +3d4, Testes de Mira +3"
+            ],
+            "Lâminas Curtas / Combate Veloz": [
+                "1: Precisão letal com adagas/facas. Dano Físico +1.",
+                "2: Cortes rápidos. Dano Físico +1d2.",
+                "3: Finta e Estocada. Dano Físico +1d3.",
+                "4: Sangramento: Acertos críticos causam perda de 1d4 HP contínua.",
+                "5: Ataca e recua sem gerar ataque de oportunidade. Dano Físico +2d2.",
+                "6: Mil cortes. Golpes quebram a defesa e armadura do alvo. Dano +2d3.",
+                "7: Tempestade de aço invisível. Dano Físico +3d4, Testes +3"
+            ],
+            "Armadilhas / Emboscada": [
+                "1: Sabe criar nós e armadilhas simples. Testes Furtivos +1.",
+                "2: Venenos rápidos nas lâminas. Dano de Emboscada +1d2.",
+                "3: Posição perfeita. Dano de Emboscada +1d3.",
+                "4: Fio de Tropeço: Libera armadilhas no meio do combate que causam Knockdown.",
+                "5: Prepara explosivos leves ou dardos peçonhentos. Dano Emboscada +2d2.",
+                "6: Inimigos que ativam sua armadilha ficam Desarmados/Atordoados.",
+                "7: Predador invisível. O campo minado perfeito. Dano Armadilha/Emboscada +3d4, Testes +3"
+            ],
+            "Pernas de Velocidade": [
+                "1: Passos rápidos. +1m de deslocamento livre.",
+                "2: Fôlego de corredor. Pode fugir de embates com Vantagem.",
+                "3: Agilidade pura. Ignora penalidade de terreno ao se mover.",
+                "4: Velocista: Libera a habilidade de usar 2 Ações de Movimento no turno.",
+                "5: Passos como o vento. +2 Defesa contra projéteis se moveu neste turno.",
+                "6: Quase teleporte visual de tão rápido. +2 Iniciativa.",
+                "7: Aceleração insana. Move-se antes de qualquer um reagir. +3 Iniciativa, Defesa +3"
+            ],
+            "Furtividade Absoluta / Sombras": [
+                "1: Sabe onde pisar. +1 Teste Furtividade.",
+                "2: Respiração silenciada. +1d2 Dano Furtivo.",
+                "3: Oculta-se em qualquer sombra leve. +1d3 Dano Furtivo.",
+                "4: Camuflagem: Libera Habilidade de ficar invisível a olho nu por 1 turno.",
+                "5: Bate-carteiras mestre e assassino silencioso. +2d2 Dano Furtivo.",
+                "6: Nem o faro de monstros te acha. +2d3 Dano Furtivo.",
+                "7: Um fantasma de sangue. Dano Furtivo letal imediato. +3d4, Testes +3"
+            ],
             "Flexibilidade": [
                 "1: Corpo flexível. Defesa +1",
                 "2: Alcance em posições exóticas. Defesa +1",
@@ -273,6 +336,15 @@ const PERK_COSTS = [0, 1, 2, 3, 5, 9, 14, 20];
         "name": "Constituição",
         "icon": "fa-shield-heart",
         "perks": {
+            "Muralha Viva / Uso de Escudo": [
+                "1: Postura defensiva firme. Defesa Física +1.",
+                "2: Sabe usar escudos. Redução Dano +1d2 se portando escudo.",
+                "3: Protege os flancos. Defesa Física +2.",
+                "4: Cobertura Aliada: Libera habilidade de receber o dano no lugar de um aliado adjacente.",
+                "5: Ignora 50% de dano de fogo/gelo ao se cobrir. Defesa Física +3.",
+                "6: Golpes fracos rebatem em você sem causar dano. Redução Dano +2d3.",
+                "7: Fortaleza Ambulante absoluta. Defesa +3, Testes de Bloqueio +3, Redução +2d4"
+            ],
             "Abdômen / Core": [
                 "1: Barriga firme. Redução de Dano Físico +1",
                 "2: Tanquinho. Redução de Dano Físico +1d2",
@@ -333,6 +405,15 @@ const PERK_COSTS = [0, 1, 2, 3, 5, 9, 14, 20];
         "name": "Vontade",
         "icon": "fa-brain",
         "perks": {
+            "Provocação de Batalha (Aggro)": [
+                "1: Gritos imponentes. +1 em Testes de Intimidação.",
+                "2: Postura ameaçadora. Dano intimidador +1d2.",
+                "3: Insulta as mães dos inimigos. Atrai foco facilmente.",
+                "4: Chamado pro Duelo (Taunt): Força o inimigo a te focar por 2 turnos ou sofrer Desvantagem.",
+                "5: Inimigos têm -2 de Defesa se não baterem em você. Defesa Física +2.",
+                "6: Ao ser atacado corpo-a-corpo, você causa 1d4 de Dano LUST/Mental no atacante.",
+                "7: O senhor do campo de batalha, todos te atacam cegamente. Defesa +3, Testes +3"
+            ],
             "Resistência a Provocações": [
                 "1: Difícil de irritar ou seduzir. Defesa LUST +1",
                 "2: Mente calma perante xingamentos. Defesa LUST +1d2",
@@ -453,6 +534,33 @@ const PERK_COSTS = [0, 1, 2, 3, 5, 9, 14, 20];
         "name": "Misticismo",
         "icon": "fa-book-journal-whills",
         "perks": {
+            "Senso Predatório / Magia Rastreadora": [
+                "1: Visão no escuro básica. Percepção Mágica +1.",
+                "2: Faro mágico leve. Testes Investigação +2.",
+                "3: Consegue ver pegadas térmicas/mágicas recentes.",
+                "4: Sentido Aranha Arcana: Nunca é pego de surpresa (Anula turno de Emboscada inimiga).",
+                "5: Lê as intenções hostis e marca um alvo (O alvo perde 2 de Defesa passiva).",
+                "6: Vê perfeitamente através de paredes finas e escuridão mágica.",
+                "7: Radar vivo. Sentidos ilimitados num raio de 50m. Testes +3 absolutos"
+            ],
+            "Magia Branca / Cura Divina": [
+                "1: Conhece primeiros socorros mágicos. Cura +1 HP extra.",
+                "2: Suas magias de cura fecham feridas na hora. Cura +1d2 HP extra.",
+                "3: Purifica venenos de baixo nível no toque. Cura +1d3 HP extra.",
+                "4: Canalização de Luz: Libera Feitiço de Cura em Área para aliados.",
+                "5: Ressuscitação primária (Traz alguém estabilizado instantaneamente).",
+                "6: Apenas estar perto de você recupera 1d6 HP passivo dos aliados por turno.",
+                "7: Salvação Milagrosa. Traz os quase mortos de volta a vida nova. Testes de Cura +3"
+            ],
+            "Magia Destrutiva (Elemental/Arcana)": [
+                "1: Pequenas chamas/raios saem dos dedos. Dano Mágico Físico +1.",
+                "2: Pode incendiar, congelar ou eletrocutar alvos. Dano Mágico +1d2.",
+                "3: Magia molda o campo de batalha. Dano Mágico +1d3.",
+                "4: Sobrecarga: Libera Feitiço de Área Destrutiva (Custo HP/Stamina). Dano +1d4",
+                "5: Ignora resistências elementais comuns. Dano Mágico +2d2.",
+                "6: Destruição concentrada que vaporiza armaduras. Dano Mágico +2d3.",
+                "7: Uma ogiva arcana ambulante. Dano Mágico Físico +3d4, Testes +3"
+            ],
             "Aura": [
                 "1: Presença leve que esfria/aquece o ar. Dano Mágico +1",
                 "2: Aura brilhante intimida fracos. Dano Mágico +1d2",
