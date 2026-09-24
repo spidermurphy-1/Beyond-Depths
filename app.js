@@ -1,4 +1,4 @@
-/
+/*
  * Beyond Depths - System Logic (Multiplayer & Secure)
  * VTT Architecture: Global Armors, Skills & Conditions
  */
