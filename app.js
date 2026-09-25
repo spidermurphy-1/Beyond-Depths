@@ -2768,43 +2768,6 @@ window.updateMasterDamageUI = function() {
         c.classList.add('hidden');
     }
     
-    // 2. Attacker Zones
-    const attackerCid = document.getElementById('inp-dmg-attacker').value;
-    const attacker = combatState.combatants.find(c => c.cid === attackerCid);
-    const zoneWrapper = document.getElementById('wrapper-dmg-zone');
-    const zoneSelect = document.getElementById('inp-dmg-zone');
-    
-    // Reset options
-    zoneSelect.innerHTML = '<option value="">Nenhuma Especial</option>';
-    let hasZones = false;
-    
-    if (attacker && !attacker.isMonster) {
-        const char = characters.find(c => c.id === attacker.refId);
-        if (char && char.perks) {
-            // Find all perks they have invested points in
-            Object.keys(char.perks).forEach(attrKey => {
-                Object.keys(char.perks[attrKey]).forEach(perkName => {
-                    if (char.perks[attrKey][perkName] > 0) {
-                        // If it's a bodily zone perk, add it to options
-                        const zonePerks = ["Dotação / Membro", "Peitos/Peitoral", "Quadril/Glúteos", "Lábios/Fala", "Mãos/Dedos", "Pés/Pernas"];
-                        if (zonePerks.includes(perkName) || attrKey === 'sed') { 
-                            // Actually, let's just add any perk that has points, so the GM can select it as the "Zone/Advantage Used"
-                            if (!Array.from(zoneSelect.options).some(o => o.value === perkName)) {
-                                const opt = document.createElement('option');
-                                opt.value = perkName;
-                                opt.innerText = perkName;
-                                zoneSelect.appendChild(opt);
-                                hasZones = true;
-                            }
-                        }
-                    }
-                });
-            });
-        }
-    }
-    
-    if (hasZones) zoneWrapper.classList.remove('hidden');
-    else zoneWrapper.classList.add('hidden');
 };
 
 document.getElementById('btn-master-damage').addEventListener('click', () => {
@@ -2881,7 +2844,27 @@ document.getElementById('btn-master-damage').addEventListener('click', () => {
     document.getElementById('modal-apply-damage').showModal();
 });
 
-window.parsePerkBuffs = function(char, dmgType, isAttacker, zoneName = null) {
+window.getAttackTags = function(attackName) {
+    let tags = [];
+    if(!attackName) return tags;
+    let n = attackName.toLowerCase();
+    
+    if (n.includes("soco") || n.includes("chute") || n.includes("fricção") || n.includes("arma") || n.includes("pesado") || n.includes("brutal")) tags.push("Punhos / Artes Marciais", "Armas Colossais / Machado e Montante", "Pés/Pernas", "Braços");
+    if (n.includes("arremesso") || n.includes("encontrão")) tags.push("Braços", "Pegada/Mãos");
+    if (n.includes("furtivo") || n.includes("adaga")) tags.push("Mãos/Dedos");
+    
+    if (n.includes("raio") || n.includes("magia") || n.includes("ritual")) tags.push("Bruxaria / Maldições", "Artes Proibidas");
+    if (n.includes("fogo") || n.includes("explosão")) tags.push("Pirotecnia", "Bruxaria / Maldições");
+    
+    if (n.includes("toque") || n.includes("apalpar") || n.includes("masturbação")) tags.push("Mãos/Dedos", "Pegada/Mãos");
+    if (n.includes("beijo") || n.includes("oral") || n.includes("verbal")) tags.push("Lábios/Fala", "Fluidos Excitantes");
+    if (n.includes("penetração") || n.includes("cavalgada") || n.includes("montaria") || n.includes("fricção")) tags.push("Dotação / Membro", "Quadril/Glúteos");
+    if (n.includes("brinquedos") || n.includes("amarras")) tags.push("Bondage / Amarras", "Mãos/Dedos");
+    
+    return tags;
+};
+
+window.parsePerkBuffs = function(char, dmgType, isAttacker, attackTags = []) {
     let buff = { flat: 0, pct: 0, diceCount: 0, diceFaces: 0, notes: [] };
     if(!char || !char.perks) return buff;
 
@@ -2900,21 +2883,27 @@ window.parsePerkBuffs = function(char, dmgType, isAttacker, zoneName = null) {
         if (isMag && dmgType !== 'MAG') return;
         
         if (isAttacker) {
+            // Apply strict tag validation for Attackers so we don't apply boob damage on punches.
+            if (attackTags.length > 0 && !attackTags.includes(perkName)) {
+                // Passives like Presence or Pheromones are always active.
+                if (!perkName.includes('Feromônios') && !perkName.includes('Presença')) return;
+            }
+
             let mPct = text.match(/Dano.*?(\+|-)\s*(\d+)%/i);
-            if (mPct) { buff.pct += parseInt(mPct[1] + mPct[2]); buff.notes.push(`${perkName} (${mPct[1]}${mPct[2]}%)`); }
+            if (mPct) { buff.pct += parseInt(mPct[1] + mPct[2]); buff.notes.push(`${perkName} (${mPct[1]}${mPct[2]}%)`); applicable = true; }
             
             let mDice = text.match(/Dano.*?(\+|-)\s*(\d+)d(\d+)/i);
-            if (mDice) { buff.diceCount += parseInt(mDice[2]); buff.diceFaces += parseInt(mDice[3]); buff.notes.push(`${perkName} (${mDice[1]}${mDice[2]}d${mDice[3]})`); }
+            if (mDice) { buff.diceCount += parseInt(mDice[2]); buff.diceFaces += parseInt(mDice[3]); buff.notes.push(`${perkName} (${mDice[1]}${mDice[2]}d${mDice[3]})`); applicable = true; }
             else {
                 let mFlat = text.match(/Dano.*?(\+|-)\s*(\d+)(?!\w|d|%)/i);
-                if (mFlat) { buff.flat += parseInt(mFlat[1] + mFlat[2]); buff.notes.push(`${perkName} (${mFlat[1]}${mFlat[2]})`); }
+                if (mFlat) { buff.flat += parseInt(mFlat[1] + mFlat[2]); buff.notes.push(`${perkName} (${mFlat[1]}${mFlat[2]})`); applicable = true; }
             }
         } else {
             let mPct = text.match(/Reduz.*?(\+|-)?\s*(\d+)%/i) || text.match(/Resist.*?(\+|-)?\s*(\d+)%/i) || text.match(/Dano.*?-\s*(\d+)%/i);
-            if (mPct) { buff.pct -= parseInt(mPct[2]); buff.notes.push(`${perkName} (-${mPct[2]}% Dano)`); }
+            if (mPct) { buff.pct -= parseInt(mPct[2]); buff.notes.push(`${perkName} (-${mPct[2]}% Dano)`); applicable = true; }
             
             let mFlat = text.match(/Defesa.*?(\+|-)\s*(\d+)/i) || text.match(/Dano.*?-\s*(\d+)(?!\w|d|%)/i);
-            if (mFlat) { buff.flat += parseInt(mFlat[1] + mFlat[2]); buff.notes.push(`${perkName} (Defesa ${mFlat[1]}${mFlat[2]})`); }
+            if (mFlat) { buff.flat += parseInt(mFlat[1] + mFlat[2]); buff.notes.push(`${perkName} (Defesa ${mFlat[1]}${mFlat[2]})`); applicable = true; }
         }
     };
 
@@ -2924,20 +2913,12 @@ window.parsePerkBuffs = function(char, dmgType, isAttacker, zoneName = null) {
             let lvl = char.perks[attr][pName];
             if (lvl > 0) {
                 const perkDef = PERKS_DB[attr].perks[pName];
-                if (!perkDef) return; // Prevent crash if perk no longer exists in DB
+                if (!perkDef) return; 
                 
                 const pText = perkDef[lvl - 1];
                 if (!pText) return;
                 
-                if (isAttacker) {
-                    if (zoneName && pName === zoneName) parseText(pText, pName);
-                    else if (!zoneName) {
-                        const zonePerks = ["Dotação / Membro", "Peitos/Peitoral", "Quadril/Glúteos", "Lábios/Fala", "Mãos/Dedos", "Pés/Pernas"];
-                        if (!zonePerks.includes(pName)) parseText(pText, pName);
-                    }
-                } else {
-                    parseText(pText, pName);
-                }
+                parseText(pText, pName);
             }
         });
     });
@@ -3040,11 +3021,11 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
     else if(cond === 'desvantagem') baseDano = Math.min(r1, r2);
     
     // --- AUTOMATED PERKS SYSTEM ---
-    const zoneName = document.getElementById('inp-dmg-zone').value;
-    let atkBuffs = parsePerkBuffs(attackerChar, dmgType, true, zoneName);
+    const attackSelect = document.getElementById('inp-dmg-attack'); const attackName = attackSelect.options[attackSelect.selectedIndex].text; const attackTags = getAttackTags(attackName);
+    let atkBuffs = parsePerkBuffs(attackerChar, dmgType, true, attackTags);
     
     let defChar = target.isMonster ? null : characters.find(c => c.id === target.refId);
-    let defBuffs = parsePerkBuffs(defChar, dmgType, false, null);
+    let defBuffs = parsePerkBuffs(defChar, dmgType, false, []);
 
     // Apply Attacker Buffs
     baseDano += atkBuffs.flat;
