@@ -1486,13 +1486,25 @@ document.getElementById('btn-add-skill-slot').addEventListener('click', () => {
 const inpTemplate = document.getElementById('inp-template');
 if (inpTemplate) {
     inpTemplate.addEventListener('change', async (e) => {
-        const tpl = CLASS_TEMPLATES[e.target.value];
+        const tplName = e.target.value;
+        const tpl = CLASS_TEMPLATES[tplName];
         if (tpl) {
-            document.getElementById('inp-class').value = tpl.class;
-            Object.keys(tpl.attrMods).forEach(attrKey => {
-                const el = document.getElementById(`inp-${attrKey}`);
-                if (el) el.value = parseInt(el.value || 0) + tpl.attrMods[attrKey];
+            document.getElementById('inp-class').value = tplName;
+            
+            // Reset all attributes to 0 before applying base stats
+            const attrKeys = ['con', 'for', 'vig', 'agi', 'von', 'sed', 'mis'];
+            attrKeys.forEach(k => {
+                const el = document.getElementById(`inp-${k}`);
+                if (el) el.value = 0;
             });
+
+            // Apply base mods
+            if (tpl.attrMods) {
+                Object.keys(tpl.attrMods).forEach(attrKey => {
+                    const el = document.getElementById(`inp-${attrKey}`);
+                    if (el) el.value = tpl.attrMods[attrKey];
+                });
+            }
             
             enforceClassConditions();
             updatePointsCounter();
