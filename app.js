@@ -76,6 +76,11 @@ function migrateChar(char) {
     }
     if (char.energy === undefined) char.energy = 35;
     
+    // Auto-heal NaN corruptions from previous bug
+    if(isNaN(char.hp) || char.hp === null) char.hp = 999;
+    if(isNaN(char.stamina) || char.stamina === null) char.stamina = 999;
+    if(isNaN(char.lust) || char.lust === null) char.lust = 999;
+    
     // Arrays for relations
     if (!char.equippedArmorId) char.equippedArmorId = "";
     if (!char.equippedSkillIds) char.equippedSkillIds = [];
