@@ -2308,7 +2308,7 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
                 targetChar.energy = (targetChar.energy || 0) + energyGain;
                 const tStats = getClassStats(targetChar.class);
                 if(targetChar.energy > tStats.en) targetChar.energy = tStats.en;
-                saveToDB('characters', targetChar.id, targetChar, 'bd_characters');
+                saveToDB('characters', targetChar, characters, 'bd_characters');
                 logNotes.push(`Conversão Automática: +${energyGain} Magia gerada pelo golpe.`);
             }
         } else {
