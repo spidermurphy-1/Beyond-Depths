@@ -776,7 +776,7 @@
             </div>
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Ataque Utilizado</label>
-                <select id="inp-dmg-attack" class="input-dark w-full mb-2" onchange="const c = document.getElementById('inp-dmg-custom'); if(this.value==='custom') c.classList.remove('hidden'); else c.classList.add('hidden');"></select>
+                <select id="inp-dmg-attack" class="input-dark w-full mb-2" onchange="const c = document.getElementById('inp-dmg-custom'); if(this.value.includes('+') || this.value.includes('Arma') || this.value==='custom') { c.classList.remove('hidden'); c.placeholder = this.value==='custom' ? 'Digite o Dano Final (Ex: 10 ou 2d6)' : 'Qual o Dano Final de ' + this.value + '?'; } else { c.classList.add('hidden'); }"></select>
                 <input type="text" id="inp-dmg-custom" class="input-dark w-full hidden" placeholder="Rolagem custom (ex: 2d6+4)">
             </div>
             <div class="grid grid-cols-2 gap-4">

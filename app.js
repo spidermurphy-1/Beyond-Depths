@@ -2754,15 +2754,40 @@ document.getElementById('btn-master-damage').addEventListener('click', () => {
     
     const aSelect = document.getElementById('inp-dmg-attack');
     aSelect.innerHTML = `
-        <option value="1d4">Ataque Leve / Fricção Corporal (1d4)</option>
-        <option value="1d6">Ataque Médio / Magia Simples / Sedução (1d6)</option>
-        <option value="1d8">Ataque Pesado / Arma (1d8)</option>
-        <option value="1d10">Ataque Furtivo / Magia Forte (1d10)</option>
-        <option value="2d6">Golpe Brutal (2d6)</option>
-        <option value="custom">Ataque Livre / Customizado</option>
+        <optgroup label="Genéricos (Cálculo Automático)">
+            <option value="1d4">Ataque Leve / Fricção (1d4)</option>
+            <option value="1d6">Ataque Médio / Magia (1d6)</option>
+            <option value="1d8">Ataque Pesado (1d8)</option>
+            <option value="1d10">Magia Forte (1d10)</option>
+            <option value="2d6">Golpe Brutal (2d6)</option>
+        </optgroup>
+        <optgroup label="Ações Físicas (Mestre joga os dados e insere)">
+            <option value="1d4 + FOR">Soco Simples / Chute Rápido (1d4 + FOR)</option>
+            <option value="1d8 + FOR">Golpe Pesado (1d8 + FOR)</option>
+            <option value="Dano da Arma + FOR">Arma Corpo-a-Corpo (Arma + FOR)</option>
+            <option value="2d4 + FOR">Arremesso de Corpo (2d4 + FOR)</option>
+            <option value="1d6 + FOR">Encontrão / Investida (1d6 + FOR)</option>
+            <option value="1d4 + FOR">Golpe Baixo (1d4 + FOR)</option>
+            <option value="1d10 + AGI">Ataque Furtivo (1d10 + AGI)</option>
+        </optgroup>
+        <optgroup label="Ações ERPG (Mestre joga os dados e insere)">
+            <option value="1d4 + SED">Toque Sensível (1d4 + SED)</option>
+            <option value="1d6 + MAX(SED, FOR)">Apalpar com Força (1d6 + SED/FOR)</option>
+            <option value="1d6 + MAX(SED, MIS)">Beijo Intenso (1d6 + SED/MIS)</option>
+            <option value="1d8 + SED">Sexo Oral / Masturbação (1d8 + SED)</option>
+            <option value="2d6 + SED">Penetração Frontal (2d6 + SED)</option>
+            <option value="1d8 + MAX(FOR, SED)">Penetração Forçada (1d8 + FOR/SED)</option>
+            <option value="2d6 + AGI">Montaria / Cavalgada (2d6 + AGI)</option>
+            <option value="1d10 + SED">Brinquedos/Itens (1d10 + SED)</option>
+            <option value="1d4 + SED">Provocação Verbal (1d4 + SED)</option>
+        </optgroup>
+        <optgroup label="Personalizado">
+            <option value="custom" selected>Ataque Livre / Customizado</option>
+        </optgroup>
     `;
     
-    document.getElementById('inp-dmg-custom').classList.add('hidden');
+    document.getElementById('inp-dmg-custom').classList.remove('hidden');
+    document.getElementById('inp-dmg-custom').placeholder = "Digite o Dano (Ex: 10 ou 2d6)";
     document.getElementById('inp-dmg-custom').value = '';
     
     document.getElementById('modal-apply-damage').showModal();
@@ -2770,7 +2795,7 @@ document.getElementById('btn-master-damage').addEventListener('click', () => {
 
 function rollDiceExpr(expr) {
     if(!expr || typeof expr !== 'string') return 0;
-    const match = expr.toLowerCase().match(/(\d+)d(\d+)/);
+    const match = expr.toLowerCase().match(/^(\d+)d(\d+)$/);
     if(match) {
         let total = 0;
         let count = parseInt(match[1]);
@@ -2778,6 +2803,8 @@ function rollDiceExpr(expr) {
         for(let i=0; i<count; i++) total += Math.floor(Math.random() * faces) + 1;
         return total;
     }
+    const flat = parseInt(expr);
+    if(!isNaN(flat)) return flat;
     return 0;
 }
 
@@ -2787,8 +2814,13 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
     if(!target) return alert("Alvo não encontrado!");
     
     let expr = document.getElementById('inp-dmg-attack').value;
-    if(expr === 'custom') {
-        expr = document.getElementById('inp-dmg-custom').value;
+    const customInp = document.getElementById('inp-dmg-custom');
+    if(!customInp.classList.contains('hidden')) {
+        if(customInp.value.trim() !== '') {
+            expr = customInp.value.trim();
+        } else {
+            return alert("Por favor, digite o dano final rolado no campo customizado!");
+        }
     }
     
     const dmgType = document.getElementById('inp-dmg-type').value; 
