@@ -595,15 +595,64 @@
             </div>
             
             <div class="border border-purple-500/30 rounded-lg p-4 bg-purple-900/10">
-                <div class="flex justify-between items-center mb-2">
-                    <label class="block text-xs font-bold text-purple-400 uppercase">Tabela de Modificadores Específicos</label>
-                    <button type="button" class="btn-icon text-green-400 hover:text-green-300 text-xs font-bold border border-green-500/30 px-2 py-1 rounded" onclick="addMonsterModifierRow()"><i class="fa-solid fa-plus mr-1"></i> Add Modificador</button>
+                <label class="block text-xs font-bold text-purple-400 uppercase mb-2">Planilha de Defesas e Modificadores</label>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse" id="monster-modifiers-table">
+                        <thead>
+                            <tr class="border-b border-purple-500/30 text-[10px] text-gray-400 uppercase">
+                                <th class="pb-2">Dano</th>
+                                <th class="pb-2 px-1 text-center" title="Aumenta o dano recebido em %">Vuln. (+) %</th>
+                                <th class="pb-2 px-1 text-center" title="Reduz o dano recebido em %">Red. (-) %</th>
+                                <th class="pb-2 px-1 text-center" title="Soma ou subtrai da Defesa Base do monstro. Valores negativos facilitam o ataque inimigo.">Defesa Extra (+/-)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-xs">
+                            <tr class="border-b border-gray-800" data-dmg="HP">
+                                <td class="py-2 font-bold text-gray-300">Físico (HP)</td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-vuln" placeholder="0"></td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-red" placeholder="0"></td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-def" placeholder="0"></td>
+                            </tr>
+                            <tr class="border-b border-gray-800" data-dmg="MAG">
+                                <td class="py-2 font-bold text-gray-300">Mágico (HP)</td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-vuln" placeholder="0"></td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-red" placeholder="0"></td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-def" placeholder="0"></td>
+                            </tr>
+                            <tr class="border-b border-gray-800" data-dmg="LUST">
+                                <td class="py-2 font-bold text-pink-300">Lust (Mental)</td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-vuln" placeholder="0"></td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-red" placeholder="0"></td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-def" placeholder="0"></td>
+                            </tr>
+                            <tr class="border-b border-gray-800" data-dmg="FOGO">
+                                <td class="py-2 font-bold text-red-400">🔥 Fogo</td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-vuln" placeholder="0"></td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-red" placeholder="0"></td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-def" placeholder="0"></td>
+                            </tr>
+                            <tr class="border-b border-gray-800" data-dmg="GELO">
+                                <td class="py-2 font-bold text-blue-300">❄️ Gelo</td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-vuln" placeholder="0"></td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-red" placeholder="0"></td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-def" placeholder="0"></td>
+                            </tr>
+                            <tr class="border-b border-gray-800" data-dmg="ELETRICO">
+                                <td class="py-2 font-bold text-yellow-400">⚡ Elétrico</td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-vuln" placeholder="0"></td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-red" placeholder="0"></td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-def" placeholder="0"></td>
+                            </tr>
+                            <tr data-dmg="VENENO">
+                                <td class="py-2 font-bold text-green-500">☣️ Veneno</td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-vuln" placeholder="0"></td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-red" placeholder="0"></td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-def" placeholder="0"></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="text-[10px] text-gray-400 mb-3 leading-tight">Adicione resistências, fraquezas elementais ou reduções de dano.<br>Ex: Gatilho 'Fogo', Efeito 'Dano Extra (%)', Valor '100' (recebe o dobro de dano). Gatilho 'Físico', Efeito 'Redução (%)', Valor '50' (sofre metade do dano).</div>
-                
-                <div id="monster-modifiers-list" class="space-y-2 max-h-40 overflow-y-auto custom-scrollbar pr-2">
-                    <!-- Dinâmico -->
-                </div>
+            </div>
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Ataques e Habilidades (Texto Livre)</label>
                 <textarea id="inp-monster-desc" rows="4" class="input-dark"></textarea>

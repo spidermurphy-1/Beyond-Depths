@@ -1656,7 +1656,8 @@ function getClassStats(className) {
     if(!className) return { hp: 10, st: 10, en: 35, lust: 100, ecstasy: 25 };
     const tplKey = Object.keys(CLASS_TEMPLATES).find(k => k.toLowerCase() === className.toLowerCase());
     if (tplKey && CLASS_TEMPLATES[tplKey].baseStats) {
-        return CLASS_TEMPLATES[tplKey].baseStats;
+        const st = CLASS_TEMPLATES[tplKey].baseStats;
+        return { hp: st.hp, st: st.st, en: st.en, lust: st.lust, ecstasy: st.ecstasy || 25 };
     }
     if (className.toLowerCase().includes('sacerdote')) {
         return { hp: 90, st: 90, en: 50, lust: 120, ecstasy: 20 };
@@ -2333,27 +2334,14 @@ window.switchCharTab = function(tab) {
 }
 
 // --- MONSTER LOGIC ---
-window.addMonsterModifierRow = function(data = null) {
-    const list = document.getElementById('monster-modifiers-list');
-    const row = document.createElement('div');
-    row.className = 'flex gap-2 items-center bg-black/40 p-2 rounded border border-purple-500/20';
-    row.innerHTML = `
-        <input type="text" class="input-dark w-1/3 text-xs mod-trigger" placeholder="Gatilho (Fogo, Físico...)" required value="${data ? escapeHTML(data.trigger) : ''}">
-        <select class="input-dark w-1/3 text-xs mod-effect" required>
-            <option value="reducao" ${data && data.effect === 'reducao' ? 'selected' : ''}>Redução (%)</option>
-            <option value="vulnerabilidade" ${data && data.effect === 'vulnerabilidade' ? 'selected' : ''}>Dano Extra / Vuln (%)</option>
-            <option value="defesa_fixa" ${data && data.effect === 'defesa_fixa' ? 'selected' : ''}>Defesa Fixa (+X)</option>
-        </select>
-        <input type="number" class="input-dark w-1/4 text-xs mod-value" placeholder="Valor" required value="${data ? data.value : ''}">
-        <button type="button" class="btn-icon text-red-500 hover:text-red-400" onclick="this.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>
-    `;
-    list.appendChild(row);
-};
-
 window.openNewMonsterModal = function() {
     editingMonsterId = null;
     document.getElementById('form-monster').reset();
-    document.getElementById('monster-modifiers-list').innerHTML = '';
+    document.querySelectorAll('#monster-modifiers-table tbody tr').forEach(row => {
+        row.querySelector('.mod-vuln').value = '';
+        row.querySelector('.mod-red').value = '';
+        row.querySelector('.mod-def').value = '';
+    });
     document.getElementById('modal-monster').showModal();
 }
 
@@ -2368,13 +2356,16 @@ document.getElementById('form-monster').addEventListener('submit', (e) => {
         return;
     }
     
-    const mods = [];
-    document.querySelectorAll('#monster-modifiers-list > div').forEach(row => {
-        mods.push({
-            trigger: row.querySelector('.mod-trigger').value.trim(),
-            effect: row.querySelector('.mod-effect').value,
-            value: parseInt(row.querySelector('.mod-value').value) || 0
-        });
+    const mods = {};
+    document.querySelectorAll('#monster-modifiers-table tbody tr').forEach(row => {
+        const dmgType = row.getAttribute('data-dmg');
+        if (dmgType) {
+            mods[dmgType] = {
+                vuln: parseInt(row.querySelector('.mod-vuln').value) || 0,
+                red: parseInt(row.querySelector('.mod-red').value) || 0,
+                def: parseInt(row.querySelector('.mod-def').value) || 0
+            };
+        }
     });
     
     const newMonster = {
@@ -2419,11 +2410,13 @@ window.openEditMonster = function(id) {
     document.getElementById('inp-monster-von').value = m.von || 5;
     document.getElementById('inp-monster-desc').value = m.desc || '';
     
-    const list = document.getElementById('monster-modifiers-list');
-    list.innerHTML = '';
-    if(m.modifiers) {
-        m.modifiers.forEach(mod => addMonsterModifierRow(mod));
-    }
+    document.querySelectorAll('#monster-modifiers-table tbody tr').forEach(row => {
+        const dmgType = row.getAttribute('data-dmg');
+        const mdata = m.modifiers && m.modifiers[dmgType] ? m.modifiers[dmgType] : {vuln:0, red:0, def:0};
+        row.querySelector('.mod-vuln').value = mdata.vuln || '';
+        row.querySelector('.mod-red').value = mdata.red || '';
+        row.querySelector('.mod-def').value = mdata.def || '';
+    });
     
     document.getElementById('modal-monster').showModal();
 };
@@ -2825,30 +2818,24 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
             if(dmgType === 'LUST') defesaTotal = Math.floor((mObj.von || 5) * 1);
             
             // Analisa a tabela de modificadores dinâmicos do monstro
-            if(mObj.modifiers && mObj.modifiers.length > 0) {
-                mObj.modifiers.forEach(mod => {
-                    const trig = mod.trigger.toUpperCase();
-                    // Se o gatilho bater com o Dano (ex: FOGO == FOGO, MÁGICO == MAG)
-                    if(trig === dmgType || (trig === 'FÍSICO' && dmgType === 'HP') || (trig === 'MÁGICO' && dmgType === 'MAG')) {
-                        if(mod.effect === 'reducao') {
-                            const percent = mod.value / 100;
-                            // Se for redução de dano (Ex: 50% = DanoBruto * 0.5 abate)
-                            // A redução aplica direto sobre o Dano Base+Mod rolado
-                            // Mas na lógica aqui, é melhor ajustar o baseDano ou adicionar Defesa
-                            const dmgReduced = Math.floor((baseDano + mod) * percent);
-                            defesaTotal += dmgReduced;
-                            logNotes.push(`Redução Ativada (-${mod.value}% Dano)`);
-                        } else if(mod.effect === 'vulnerabilidade') {
-                            const percent = mod.value / 100;
-                            const dmgExtra = Math.floor((baseDano + mod) * percent);
-                            defesaTotal -= dmgExtra; // Reduz a defesa pra simular mais dano
-                            logNotes.push(`Vulnerabilidade Ativada (+${mod.value}% Dano)`);
-                        } else if(mod.effect === 'defesa_fixa') {
-                            defesaTotal += mod.value;
-                            logNotes.push(`Defesa Fixa (+${mod.value} Defesa)`);
-                        }
-                    }
-                });
+            if(mObj.modifiers && mObj.modifiers[dmgType]) {
+                const modData = mObj.modifiers[dmgType];
+                if(modData.def) {
+                    defesaTotal += modData.def;
+                    logNotes.push(`Defesa Extra: ${modData.def > 0 ? '+' : ''}${modData.def}`);
+                }
+                if(modData.red > 0) {
+                    const percent = modData.red / 100;
+                    const dmgReduced = Math.floor((baseDano + mod) * percent);
+                    defesaTotal += dmgReduced;
+                    logNotes.push(`Redução (-${modData.red}% Dano)`);
+                }
+                if(modData.vuln > 0) {
+                    const percent = modData.vuln / 100;
+                    const dmgExtra = Math.floor((baseDano + mod) * percent);
+                    defesaTotal -= dmgExtra;
+                    logNotes.push(`Vulnerabilidade (+${modData.vuln}% Dano)`);
+                }
             }
         }
     }
