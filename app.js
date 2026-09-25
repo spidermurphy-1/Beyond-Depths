@@ -3131,7 +3131,14 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
         adjustCombatStat(targetCid, 'hp', -danoTotal);
     }
     
-    const logMsg = `Mestre aplicou ${danoTotal} de Dano [${dmgType}] em ${target.name}. (Dano Bruto: ${baseDano+mod} [Rolado: ${baseDano}, Mod: ${mod}] - Defesa: ${defesaTotal}). Notas: ${logNotes.join(', ') || 'Nenhuma'}`;
+    // Deduct Stamina for both sides (random 2-8)
+    let attackerStaminaCost = Math.floor(Math.random() * 7) + 2;
+    let targetStaminaCost = Math.floor(Math.random() * 7) + 2;
+    
+    if (attackerCid) adjustCombatStat(attackerCid, 'stamina', -attackerStaminaCost);
+    adjustCombatStat(targetCid, 'stamina', -targetStaminaCost);
+    
+    const logMsg = `Mestre aplicou ${danoTotal} de Dano [${dmgType}] em ${target.name}. (Dano Bruto: ${baseDano+mod} [Rolado: ${baseDano}, Mod: ${mod}] - Defesa: ${defesaTotal}). Notas: ${logNotes.join(', ')} | Stamina Gasta: Atacante -${attackerStaminaCost}, Alvo -${targetStaminaCost}`;
     
     if(!target.isMonster) {
         const pChar = characters.find(c => c.id === target.refId);
