@@ -2955,178 +2955,187 @@ window.rollDiceExpr = function(expr) {
 };
 
 document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
-    const targetCid = document.getElementById('inp-dmg-target').value;
-    const target = combatState.combatants.find(c => c.cid === targetCid);
-    if(!target) return alert("Alvo não encontrado!");
-    
-    let baseAttackStr = document.getElementById('inp-dmg-attack').value;
-    let expr = baseAttackStr;
-    const customInp = document.getElementById('inp-dmg-custom');
-    if(!customInp.classList.contains('hidden')) {
-        let typedVal = customInp.value.trim();
-        if(typedVal !== '') {
-            if (baseAttackStr === 'custom') {
-                expr = typedVal;
-            } else {
-                let plusIdx = baseAttackStr.indexOf('+');
-                if (plusIdx !== -1) {
-                    expr = typedVal + ' ' + baseAttackStr.substring(plusIdx);
-                } else {
+    try {
+        const targetCid = document.getElementById('inp-dmg-target').value;
+        const target = combatState.combatants.find(c => c.cid === targetCid);
+        if(!target) {
+            alert("Alvo não encontrado!");
+            return;
+        }
+
+        let baseAttackStr = document.getElementById('inp-dmg-attack').value;
+        let expr = baseAttackStr;
+        const customInp = document.getElementById('inp-dmg-custom');
+        
+        if(!customInp.classList.contains('hidden')) {
+            let typedVal = customInp.value.trim();
+            if(typedVal !== '') {
+                if (baseAttackStr === 'custom') {
                     expr = typedVal;
+                } else {
+                    let plusIdx = baseAttackStr.indexOf('+');
+                    if (plusIdx !== -1) {
+                        expr = typedVal + ' ' + baseAttackStr.substring(plusIdx);
+                    } else {
+                        expr = typedVal;
+                    }
                 }
+            } else {
+                alert("Por favor, digite o dano final rolado no campo customizado!");
+                return;
+            }
+        }
+
+        const attackerCid = document.getElementById('inp-dmg-attacker').value;
+        const attacker = combatState.combatants.find(c => c.cid === attackerCid);
+        let attackerChar = null;
+
+        if(attacker && !attacker.isMonster) {
+            attackerChar = characters.find(c => c.id === attacker.refId);
+            if(attackerChar) {
+                const a = attackerChar.attr || {};
+                expr = expr.replace(/FOR/gi, a.for || 0)
+                           .replace(/AGI/gi, a.agi || 0)
+                           .replace(/SED/gi, a.sed || 0)
+                           .replace(/MIS/gi, a.mis || 0)
+                           .replace(/CON/gi, a.con || 0)
+                           .replace(/VIG/gi, a.vig || 0)
+                           .replace(/VON/gi, a.von || 0);
+
+                expr = expr.replace(/MAX\(\s*(\d+)\s*,\s*(\d+)\s*\)/gi, (m, p1, p2) => Math.max(parseInt(p1), parseInt(p2)));
+                expr = expr.replace(/MIN\(\s*(\d+)\s*,\s*(\d+)\s*\)/gi, (m, p1, p2) => Math.min(parseInt(p1), parseInt(p2)));
+                expr = expr.replace(/(\d+)\s*\/\s*(\d+)/g, (m, p1, p2) => Math.max(parseInt(p1), parseInt(p2)));
+            }
+        }
+
+        const dmgType = document.getElementById('inp-dmg-type').value;
+        const cond = document.getElementById('inp-dmg-cond').value;
+        const mod = parseInt(document.getElementById('inp-dmg-mod').value) || 0;
+
+        let r1 = rollDiceExpr(expr);
+        let r2 = rollDiceExpr(expr);
+        let baseDano = r1;
+
+        if(cond === 'vantagem') baseDano = Math.max(r1, r2);
+        else if(cond === 'desvantagem') baseDano = Math.min(r1, r2);
+
+        // --- AUTOMATED PERKS SYSTEM ---
+        const attackSelect = document.getElementById('inp-dmg-attack'); 
+        const attackName = attackSelect.options[attackSelect.selectedIndex].text; 
+        const attackTags = getAttackTags(attackName);
+        let atkBuffs = parsePerkBuffs(attackerChar, dmgType, true, attackTags);
+
+        let defChar = target.isMonster ? null : characters.find(c => c.id === target.refId);
+        let defBuffs = parsePerkBuffs(defChar, dmgType, false, []);
+
+        // Apply Attacker Buffs
+        baseDano += atkBuffs.flat;
+        let extraDiceTotal = 0;
+        for(let i=0; i<atkBuffs.diceCount; i++) extraDiceTotal += Math.floor(Math.random() * atkBuffs.diceFaces) + 1;
+        baseDano += extraDiceTotal;
+        baseDano = Math.floor(baseDano * (1 + (atkBuffs.pct / 100)));
+
+        let logNotes = [];
+        if(atkBuffs.notes.length > 0) logNotes.push(`Buffs de Ataque: ${atkBuffs.notes.join(', ')}`);
+        if(defBuffs.notes.length > 0) logNotes.push(`Defesas Especiais: ${defBuffs.notes.join(', ')}`);
+
+        let defesaTotal = defBuffs.flat;
+        let raceTpl = "";
+        let classTpl = "";
+
+        if(!target.isMonster) {
+            if(defChar) {
+                const pMods = getCharModifiers(defChar);
+                if(dmgType === 'HP' || dmgType === 'MAG') defesaTotal += Math.floor(pMods.con * 1);
+                if(dmgType === 'LUST') defesaTotal += Math.floor(pMods.von * 1);
+
+                if (defBuffs.pct !== 0) {
+                    let block = Math.floor(baseDano * (Math.abs(defBuffs.pct) / 100));
+                    if (defBuffs.pct < 0) {
+                        defesaTotal += block;
+                        logNotes.push(`Vantagens Defensivas (${Math.abs(defBuffs.pct)}%) bloquearam ${block}`);
+                    } else {
+                        defesaTotal -= block;
+                        logNotes.push(`Vulnerabilidade (${defBuffs.pct}%) tomou +${block}`);
+                    }
+                }
+
+                raceTpl = defChar.race || "";
+                classTpl = defChar.class || "";
             }
         } else {
-            return alert("Por favor, digite o dano final rolado no campo customizado!");
-        }
-    }
-    
-    const attackerCid = document.getElementById('inp-dmg-attacker').value;
-    const attacker = combatState.combatants.find(c => c.cid === attackerCid);
-    let attackerChar = null;
-    
-    if(attacker && !attacker.isMonster) {
-        attackerChar = characters.find(c => c.id === attacker.refId);
-        if(attackerChar) {
-            const a = attackerChar.attr || {};
-            // Replace Attributes in Expression
-            expr = expr.replace(/FOR/gi, a.for || 0)
-                       .replace(/AGI/gi, a.agi || 0)
-                       .replace(/SED/gi, a.sed || 0)
-                       .replace(/MIS/gi, a.mis || 0)
-                       .replace(/CON/gi, a.con || 0)
-                       .replace(/VIG/gi, a.vig || 0)
-                       .replace(/VON/gi, a.von || 0);
-                       
-            // Resolve MAX() and MIN() functions before rolling
-            expr = expr.replace(/MAX\(\s*(\d+)\s*,\s*(\d+)\s*\)/gi, (m, p1, p2) => Math.max(parseInt(p1), parseInt(p2)));
-            expr = expr.replace(/MIN\(\s*(\d+)\s*,\s*(\d+)\s*\)/gi, (m, p1, p2) => Math.min(parseInt(p1), parseInt(p2)));
-            
-            // Allow string parsing of division like SED/FOR -> treated as MAX(SED, FOR) in old logic
-            // Wait, "1d6 + SED/FOR" -> user wants us to use the slash as "OR" (meaning MAX).
-            expr = expr.replace(/(\d+)\s*\/\s*(\d+)/g, (m, p1, p2) => Math.max(parseInt(p1), parseInt(p2)));
-        }
-    }
+            const mObj = monsters.find(m => m.id === target.refId);
+            if(mObj) {
+                if(dmgType === 'HP' || dmgType === 'MAG' || ['FOGO', 'GELO', 'ELETRICO', 'VENENO'].includes(dmgType)) defesaTotal += Math.floor((mObj.con || 5) * 1);
+                if(dmgType === 'LUST') defesaTotal = Math.floor((mObj.von || 5) * 1);
 
-    const dmgType = document.getElementById('inp-dmg-type').value; 
-    const cond = document.getElementById('inp-dmg-cond').value; 
-    const mod = parseInt(document.getElementById('inp-dmg-mod').value) || 0;
-    
-    let r1 = rollDiceExpr(expr);
-    let r2 = rollDiceExpr(expr);
-    let baseDano = r1;
-    
-    if(cond === 'vantagem') baseDano = Math.max(r1, r2);
-    else if(cond === 'desvantagem') baseDano = Math.min(r1, r2);
-    
-    // --- AUTOMATED PERKS SYSTEM ---
-    const attackSelect = document.getElementById('inp-dmg-attack'); const attackName = attackSelect.options[attackSelect.selectedIndex].text; const attackTags = getAttackTags(attackName);
-    let atkBuffs = parsePerkBuffs(attackerChar, dmgType, true, attackTags);
-    
-    let defChar = target.isMonster ? null : characters.find(c => c.id === target.refId);
-    let defBuffs = parsePerkBuffs(defChar, dmgType, false, []);
-
-    // Apply Attacker Buffs
-    baseDano += atkBuffs.flat;
-    let extraDiceTotal = 0;
-    for(let i=0; i<atkBuffs.diceCount; i++) extraDiceTotal += Math.floor(Math.random() * atkBuffs.diceFaces) + 1;
-    baseDano += extraDiceTotal;
-    baseDano = Math.floor(baseDano * (1 + (atkBuffs.pct / 100)));
-
-    let logNotes = [];
-    if(atkBuffs.notes.length > 0) logNotes.push(`Buffs de Ataque: ${atkBuffs.notes.join(', ')}`);
-    if(defBuffs.notes.length > 0) logNotes.push(`Defesas Especiais: ${defBuffs.notes.join(', ')}`);
-
-    let defesaTotal = defBuffs.flat;
-    let raceTpl = "";
-    let classTpl = "";
-    
-    if(!target.isMonster) {
-        if(defChar) {
-            const pMods = getCharModifiers(defChar);
-            if(dmgType === 'HP' || dmgType === 'MAG') defesaTotal += Math.floor(pMods.con * 1);
-            if(dmgType === 'LUST') defesaTotal += Math.floor(pMods.von * 1);
-            
-            // Apply defensive perk percentages (e.g. Resist LUST 15% -> defBuffs.pct = -15)
-            if (defBuffs.pct !== 0) {
-                let block = Math.floor(baseDano * (Math.abs(defBuffs.pct) / 100));
-                if (defBuffs.pct < 0) {
-                    defesaTotal += block;
-                    logNotes.push(`Vantagens Defensivas (${Math.abs(defBuffs.pct)}%) bloquearam ${block}`);
-                } else {
-                    defesaTotal -= block;
-                    logNotes.push(`Vulnerabilidade (${defBuffs.pct}%) tomou +${block}`);
-                }
-            }
-            
-            raceTpl = defChar.race || "";
-            classTpl = defChar.class || "";
-        }
-    } else {
-        const mObj = monsters.find(m => m.id === target.refId);
-        if(mObj) {
-            if(dmgType === 'HP' || dmgType === 'MAG' || ['FOGO', 'GELO', 'ELETRICO', 'VENENO'].includes(dmgType)) defesaTotal += Math.floor((mObj.con || 5) * 1);
-            if(dmgType === 'LUST') defesaTotal = Math.floor((mObj.von || 5) * 1);
-            
-            // Analisa a tabela de modificadores dinâmicos do monstro
-            if(mObj.modifiers && mObj.modifiers[dmgType]) {
-                const modData = mObj.modifiers[dmgType];
-                if(modData.def) {
-                    defesaTotal += modData.def;
-                    logNotes.push(`Defesa Extra: ${modData.def > 0 ? '+' : ''}${modData.def}`);
-                }
-                if(modData.red > 0) {
-                    const percent = modData.red / 100;
-                    const dmgReduced = Math.floor((baseDano + mod) * percent);
-                    defesaTotal += dmgReduced;
-                    logNotes.push(`Redução (-${modData.red}% Dano)`);
-                }
-                if(modData.vuln > 0) {
-                    const percent = modData.vuln / 100;
-                    const dmgExtra = Math.floor((baseDano + mod) * percent);
-                    defesaTotal -= dmgExtra;
-                    logNotes.push(`Vulnerabilidade (+${modData.vuln}% Dano)`);
+                if(mObj.modifiers && mObj.modifiers[dmgType]) {
+                    const modData = mObj.modifiers[dmgType];
+                    if(modData.def) {
+                        defesaTotal += modData.def;
+                        logNotes.push(`Defesa Extra: ${modData.def > 0 ? '+' : ''}${modData.def}`);
+                    }
+                    if(modData.red > 0) {
+                        const percent = modData.red / 100;
+                        const dmgReduced = Math.floor((baseDano + mod) * percent);
+                        defesaTotal += dmgReduced;
+                        logNotes.push(`Redução (-${modData.red}% Dano)`);
+                    }
+                    if(modData.vuln > 0) {
+                        const percent = modData.vuln / 100;
+                        const dmgExtra = Math.floor((baseDano + mod) * percent);
+                        defesaTotal -= dmgExtra;
+                        logNotes.push(`Vulnerabilidade (+${modData.vuln}% Dano)`);
+                    }
                 }
             }
         }
-    }
-    
-    if(raceTpl === 'Humano' && dmgType === 'LUST') {
-        defesaTotal -= 3;
-        if(defesaTotal < 0) defesaTotal = 0;
-        logNotes.push("Carne Ordinária (Humano: -3 Def. Lust)");
-    }
-    
-    let danoTotal = baseDano + mod - defesaTotal;
-    if(danoTotal < 0) danoTotal = 0;
-    
-    if(classTpl === 'Artífice' && dmgType === 'MAG') {
-        danoTotal = Math.floor(danoTotal * 1.10);
-        logNotes.push("Descrente (Artífice: +10% Dano Recebido Mágico)");
-    }
-    
-    if(dmgType === 'LUST') {
-        adjustCombatStat(targetCid, 'lust', danoTotal);
-    } else {
-        adjustCombatStat(targetCid, 'hp', -danoTotal);
-    }
-    
-    // Deduct Stamina for both sides (random 2-8)
-    let attackerStaminaCost = Math.floor(Math.random() * 7) + 2;
-    let targetStaminaCost = Math.floor(Math.random() * 7) + 2;
-    
-    if (attackerCid) adjustCombatStat(attackerCid, 'stamina', -attackerStaminaCost);
-    adjustCombatStat(targetCid, 'stamina', -targetStaminaCost);
-    
-    const logMsg = `Mestre aplicou ${danoTotal} de Dano [${dmgType}] em ${target.name}. (Dano Bruto: ${baseDano+mod} [Rolado: ${baseDano}, Mod: ${mod}] - Defesa: ${defesaTotal}). Notas: ${logNotes.join(', ')} | Stamina Gasta: Atacante -${attackerStaminaCost}, Alvo -${targetStaminaCost}`;
-    
-    if(!target.isMonster) {
-        const pChar = characters.find(c => c.id === target.refId);
-        if(pChar) {
-            addLog(pChar, logMsg, 'info');
-            saveToDB('characters', pChar, characters, 'bd_characters');
+
+        if(raceTpl === 'Humano' && dmgType === 'LUST') {
+            defesaTotal -= 3;
+            if(defesaTotal < 0) defesaTotal = 0;
+            logNotes.push("Carne Ordinária (Humano: -3 Def. Lust)");
         }
+
+        let danoTotal = baseDano + mod - defesaTotal;
+        if(danoTotal < 0) danoTotal = 0;
+
+        if(classTpl === 'Artífice' && dmgType === 'MAG') {
+            danoTotal = Math.floor(danoTotal * 1.10);
+            logNotes.push("Descrente (Artífice: +10% Dano Recebido Mágico)");
+        }
+
+        if(dmgType === 'LUST') {
+            adjustCombatStat(targetCid, 'lust', danoTotal);
+        } else {
+            adjustCombatStat(targetCid, 'hp', -danoTotal);
+        }
+
+        let attackerStaminaCost = Math.floor(Math.random() * 7) + 2;
+        let targetStaminaCost = Math.floor(Math.random() * 7) + 2;
+
+        if (attackerCid) adjustCombatStat(attackerCid, 'stamina', -attackerStaminaCost);
+        adjustCombatStat(targetCid, 'stamina', -targetStaminaCost);
+
+        const logMsg = `Mestre aplicou ${danoTotal} de Dano [${dmgType}] em ${target.name}. (Dano Bruto: ${baseDano+mod} [Rolado: ${baseDano}, Mod: ${mod}] - Defesa: ${defesaTotal}). Notas: ${logNotes.join(', ')} | Stamina Gasta: Atacante -${attackerStaminaCost}, Alvo -${targetStaminaCost}`;
+
+        if(!target.isMonster) {
+            const pChar = characters.find(c => c.id === target.refId);
+            if(pChar) {
+                addLog(pChar, logMsg, 'info');
+                saveToDB('characters', pChar, characters, 'bd_characters');
+            }
+        }
+
+        document.getElementById('modal-apply-damage').close();
+        
+        // Force UI refresh just in case
+        renderRPG();
+
+        alert(`Resultado:\nDano Base Rolado: ${baseDano}\nModificador: ${mod}\nDefesa do Alvo: ${defesaTotal}\n\nDano Final Recebido: ${danoTotal}\n\nNotas do Sistema: ${logNotes.join(', ') || 'Nenhuma'}`);
+
+    } catch(err) {
+        alert("CRITICAL ERROR: " + err.message + "\n" + err.stack);
+        console.error(err);
     }
-    
-    document.getElementById('modal-apply-damage').close();
-    alert(`Resultado:\nDano Base Rolado: ${baseDano}\nModificador: ${mod}\nDefesa do Alvo: ${defesaTotal}\n\nDano Final Recebido: ${danoTotal}\n\nNotas do Sistema: ${logNotes.join(', ') || 'Nenhuma'}`);
 });
