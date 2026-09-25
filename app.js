@@ -2897,11 +2897,17 @@ window.parsePerkBuffs = function(char, dmgType, isAttacker, attackTags = []) {
                 if (mFlat) { buff.flat += parseInt(mFlat[1] + mFlat[2]); buff.notes.push(`${perkName} (${mFlat[1]}${mFlat[2]})`); applicable = true; }
             }
         } else {
-            let mPct = text.match(/Reduz.*?(\+|-)?\s*(\d+)%/i) || text.match(/Resist.*?(\+|-)?\s*(\d+)%/i) || text.match(/Dano.*?-\s*(\d+)%/i);
-            if (mPct) { buff.pct -= parseInt(mPct[2]); buff.notes.push(`${perkName} (-${mPct[2]}% Dano)`); applicable = true; }
+            let mPct1 = text.match(/Reduz.*?(\+|-)?\s*(\d+)%/i) || text.match(/Resist.*?(\+|-)?\s*(\d+)%/i);
+            let mPct2 = text.match(/Dano.*?-\s*(\d+)%/i);
             
-            let mFlat = text.match(/Defesa.*?(\+|-)\s*(\d+)/i) || text.match(/Dano.*?-\s*(\d+)(?!\w|d|%)/i);
-            if (mFlat) { buff.flat += parseInt(mFlat[1] + mFlat[2]); buff.notes.push(`${perkName} (Defesa ${mFlat[1]}${mFlat[2]})`); applicable = true; }
+            if (mPct1) { buff.pct -= parseInt(mPct1[2] || 0); buff.notes.push(`${perkName} (-${mPct1[2] || 0}% Dano)`); applicable = true; }
+            else if (mPct2) { buff.pct -= parseInt(mPct2[1] || 0); buff.notes.push(`${perkName} (-${mPct2[1] || 0}% Dano)`); applicable = true; }
+            
+            let mFlat1 = text.match(/Defesa.*?(\+|-)\s*(\d+)/i);
+            let mFlat2 = text.match(/Dano.*?-\s*(\d+)(?!\w|d|%)/i);
+            
+            if (mFlat1) { buff.flat += parseInt((mFlat1[1] || '+') + (mFlat1[2] || 0)); buff.notes.push(`${perkName} (Defesa ${mFlat1[1] || '+'}${mFlat1[2] || 0})`); applicable = true; }
+            else if (mFlat2) { buff.flat += parseInt(mFlat2[1] || 0); buff.notes.push(`${perkName} (Defesa +${mFlat2[1] || 0})`); applicable = true; }
         }
     };
 
