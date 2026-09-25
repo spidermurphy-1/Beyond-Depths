@@ -3132,7 +3132,7 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
         // Force UI refresh just in case
         renderRPG();
 
-        alert(`Resultado:\nDano Base Rolado: ${baseDano}\nModificador: ${mod}\nDefesa do Alvo: ${defesaTotal}\n\nDano Final Recebido: ${danoTotal}\n\nNotas do Sistema: ${logNotes.join(', ') || 'Nenhuma'}`);
+        alert(`Resultado:\nDano Base Rolado: ${baseDano}\nModificador: ${mod}\nDefesa do Alvo: ${defesaTotal}\n\nDano Final Recebido: ${danoTotal} ${danoTotal === 0 ? '(NENHUM DANO APLICADO!)' : ''}\n\nNotas do Sistema: ${logNotes.join(', ') || 'Nenhuma'}`);
 
     } catch(err) {
         alert("CRITICAL ERROR: " + err.message + "\n" + err.stack);
