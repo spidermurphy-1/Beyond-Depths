@@ -1086,6 +1086,12 @@ function updateAuthUI() {
     } else {
         btnShowLogin.classList.remove('hidden'); elUserInfo.classList.add('hidden');
     }
+    
+    if (isMaster()) {
+        document.getElementById('btn-master-damage')?.classList.remove('hidden');
+    } else {
+        document.getElementById('btn-master-damage')?.classList.add('hidden');
+    }
 }
 
 if(btnShowLogin) btnShowLogin.addEventListener('click', () => { formLogin.reset(); modalLogin.showModal(); });
@@ -2431,7 +2437,7 @@ document.getElementById('btn-combat-add').onclick = () => {
     optGroupChars.label = 'Personagens';
     characters.forEach(c => {
         const opt = document.createElement('option');
-        opt.value = 'char_' + c.id;
+        opt.value = 'char|' + c.id;
         opt.innerText = c.name;
         optGroupChars.appendChild(opt);
     });
@@ -2440,7 +2446,7 @@ document.getElementById('btn-combat-add').onclick = () => {
     optGroupMonsters.label = 'Monstros';
     monsters.forEach(m => {
         const opt = document.createElement('option');
-        opt.value = 'monster_' + m.id;
+        opt.value = 'monster|' + m.id;
         opt.innerText = m.name;
         optGroupMonsters.appendChild(opt);
     });
@@ -2457,8 +2463,8 @@ document.getElementById('btn-combat-confirm').onclick = () => {
         const val = document.getElementById('inp-combat-select').value;
         if(!val) return;
         
-        const type = val.split('_')[0];
-        const id = val.split('_')[1];
+        const type = val.split('|')[0];
+        const id = val.split('|')[1];
         
         let source = null;
         if (type === 'char') source = characters.find(c => c.id === id);
