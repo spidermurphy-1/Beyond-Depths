@@ -922,7 +922,7 @@ const CLASS_TEMPLATES = {
 // --- STATE ---
 let characters = [];
 let monsters = [];
-let combatState = { round: 1, combatants: [] };
+let combatState = JSON.parse(localStorage.getItem('bd_combat_state')) || { round: 1, combatants: [] };
 let globalArmors = [];
 let globalSkills = [];
 let activeCharId = null;
@@ -2645,6 +2645,9 @@ function renderRPG() {
         `;
         listEl.appendChild(div);
     });
+    
+    // Auto-save on every render
+    localStorage.setItem('bd_combat_state', JSON.stringify(combatState));
 }
 
 window.removeCombatant = function(cid) {
@@ -2748,7 +2751,7 @@ window.updateMasterDamageUI = function() {
     const c = document.getElementById('inp-dmg-custom');
     if(aSelect.value.includes('+') || aSelect.value.includes('Arma') || aSelect.value === 'custom') {
         c.classList.remove('hidden');
-        c.placeholder = aSelect.value === 'custom' ? 'Digite o Dano (Ex: 10 ou 2d6)' : 'Role: ' + aSelect.value + ' e digite o total';
+        c.placeholder = aSelect.value === 'custom' ? 'Digite o Dano (Ex: 10 ou 2d6)' : 'Apenas o valor puro do dado (Ex: 6)';
     } else {
         c.classList.add('hidden');
     }
@@ -2829,10 +2832,18 @@ document.getElementById('btn-master-damage').addEventListener('click', () => {
             <option value="1d4 + FOR">Soco Simples / Chute Rápido (1d4 + FOR)</option>
             <option value="1d8 + FOR">Golpe Pesado (1d8 + FOR)</option>
             <option value="Dano da Arma + FOR">Arma Corpo-a-Corpo (Arma + FOR)</option>
+            <option value="Dano da Arma + AGI">Arma à Distância / Arco (Arma + AGI)</option>
             <option value="2d4 + FOR">Arremesso de Corpo (2d4 + FOR)</option>
             <option value="1d6 + FOR">Encontrão / Investida (1d6 + FOR)</option>
             <option value="1d4 + FOR">Golpe Baixo (1d4 + FOR)</option>
-            <option value="1d10 + AGI">Ataque Furtivo (1d10 + AGI)</option>
+            <option value="1d10 + AGI">Ataque Furtivo / Adaga (1d10 + AGI)</option>
+        </optgroup>
+        <optgroup label="Ataques Mágicos (Mestre joga os dados e insere)">
+            <option value="1d6 + MIS">Raio Mágico Básico (1d6 + MIS)</option>
+            <option value="2d6 + MIS">Bola de Fogo / Explosão (2d6 + MIS)</option>
+            <option value="1d8 + MIS">Magia Guiada (1d8 + MIS)</option>
+            <option value="1d10 + MIS">Magia Pesada / Ritual (1d10 + MIS)</option>
+            <option value="1d4 + MIS">Ataque Mágico Furtivo (1d4 + MIS)</option>
         </optgroup>
         <optgroup label="Ações ERPG (Mestre joga os dados e insere)">
             <option value="1d4 + SED">Toque Sensível (1d4 + SED)</option>
@@ -2950,11 +2961,22 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
     const target = combatState.combatants.find(c => c.cid === targetCid);
     if(!target) return alert("Alvo não encontrado!");
     
-    let expr = document.getElementById('inp-dmg-attack').value;
+    let baseAttackStr = document.getElementById('inp-dmg-attack').value;
+    let expr = baseAttackStr;
     const customInp = document.getElementById('inp-dmg-custom');
     if(!customInp.classList.contains('hidden')) {
-        if(customInp.value.trim() !== '') {
-            expr = customInp.value.trim();
+        let typedVal = customInp.value.trim();
+        if(typedVal !== '') {
+            if (baseAttackStr === 'custom') {
+                expr = typedVal;
+            } else {
+                let plusIdx = baseAttackStr.indexOf('+');
+                if (plusIdx !== -1) {
+                    expr = typedVal + ' ' + baseAttackStr.substring(plusIdx);
+                } else {
+                    expr = typedVal;
+                }
+            }
         } else {
             return alert("Por favor, digite o dano final rolado no campo customizado!");
         }
