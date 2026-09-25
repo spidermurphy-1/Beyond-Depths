@@ -2742,15 +2742,79 @@ loadData();
 
 // --- SISTEMA DE DANO DO MESTRE ---
 
+window.updateMasterDamageUI = function() {
+    // 1. Custom input visibility
+    const aSelect = document.getElementById('inp-dmg-attack');
+    const c = document.getElementById('inp-dmg-custom');
+    if(aSelect.value.includes('+') || aSelect.value.includes('Arma') || aSelect.value === 'custom') {
+        c.classList.remove('hidden');
+        c.placeholder = aSelect.value === 'custom' ? 'Digite o Dano (Ex: 10 ou 2d6)' : 'Role: ' + aSelect.value + ' e digite o total';
+    } else {
+        c.classList.add('hidden');
+    }
+    
+    // 2. Attacker Zones
+    const attackerCid = document.getElementById('inp-dmg-attacker').value;
+    const attacker = combatState.combatants.find(c => c.cid === attackerCid);
+    const zoneWrapper = document.getElementById('wrapper-dmg-zone');
+    const zoneSelect = document.getElementById('inp-dmg-zone');
+    
+    // Reset options
+    zoneSelect.innerHTML = '<option value="">Nenhuma Especial</option>';
+    let hasZones = false;
+    
+    if (attacker && !attacker.isMonster) {
+        const char = characters.find(c => c.id === attacker.refId);
+        if (char && char.perks) {
+            // Find all perks they have invested points in
+            Object.keys(char.perks).forEach(attrKey => {
+                Object.keys(char.perks[attrKey]).forEach(perkName => {
+                    if (char.perks[attrKey][perkName] > 0) {
+                        // If it's a bodily zone perk, add it to options
+                        const zonePerks = ["Dotação / Membro", "Peitos/Peitoral", "Quadril/Glúteos", "Lábios/Fala", "Mãos/Dedos", "Pés/Pernas"];
+                        if (zonePerks.includes(perkName) || attrKey === 'sed') { 
+                            // Actually, let's just add any perk that has points, so the GM can select it as the "Zone/Advantage Used"
+                            if (!Array.from(zoneSelect.options).some(o => o.value === perkName)) {
+                                const opt = document.createElement('option');
+                                opt.value = perkName;
+                                opt.innerText = perkName;
+                                zoneSelect.appendChild(opt);
+                                hasZones = true;
+                            }
+                        }
+                    }
+                });
+            });
+        }
+    }
+    
+    if (hasZones) zoneWrapper.classList.remove('hidden');
+    else zoneWrapper.classList.add('hidden');
+};
+
 document.getElementById('btn-master-damage').addEventListener('click', () => {
     const tSelect = document.getElementById('inp-dmg-target');
+    const aSelectAttr = document.getElementById('inp-dmg-attacker');
     tSelect.innerHTML = '';
+    aSelectAttr.innerHTML = '<option value="">Nenhum / Ambiente</option>';
+    
     combatState.combatants.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.cid;
-        opt.innerText = c.name + (c.isMonster ? ' (Monstro)' : ' (Personagem)');
-        tSelect.appendChild(opt);
+        const optT = document.createElement('option');
+        optT.value = c.cid;
+        optT.innerText = c.name + (c.isMonster ? ' (Monstro)' : ' (Personagem)');
+        tSelect.appendChild(optT);
+        
+        const optA = document.createElement('option');
+        optA.value = c.cid;
+        optA.innerText = c.name + (c.isMonster ? ' (Monstro)' : ' (Personagem)');
+        aSelectAttr.appendChild(optA);
     });
+    
+    // Auto-select first target if available
+    if(combatState.combatants.length > 0) tSelect.value = combatState.combatants[0].cid;
+    
+    document.getElementById('wrapper-dmg-zone').classList.add('hidden');
+    document.getElementById('inp-dmg-zone').value = '';
     
     const aSelect = document.getElementById('inp-dmg-attack');
     aSelect.innerHTML = `
@@ -2790,23 +2854,96 @@ document.getElementById('btn-master-damage').addEventListener('click', () => {
     document.getElementById('inp-dmg-custom').placeholder = "Digite o Dano (Ex: 10 ou 2d6)";
     document.getElementById('inp-dmg-custom').value = '';
     
+    updateMasterDamageUI();
     document.getElementById('modal-apply-damage').showModal();
 });
 
-function rollDiceExpr(expr) {
+window.parsePerkBuffs = function(char, dmgType, isAttacker, zoneName = null) {
+    let buff = { flat: 0, pct: 0, diceCount: 0, diceFaces: 0, notes: [] };
+    if(!char || !char.perks) return buff;
+
+    const parseText = (text, perkName) => {
+        if (!text) return;
+        
+        let applicable = false;
+        let isLust = text.toLowerCase().includes('lust');
+        let isMag = text.toLowerCase().includes('mágic') || text.toLowerCase().includes('magic');
+        let isDef = text.toLowerCase().includes('defesa') || text.toLowerCase().includes('reduz') || text.toLowerCase().includes('resist');
+        
+        if (isAttacker && isDef) return; // Attackers don't get defense buffs on attack
+        if (!isAttacker && text.toLowerCase().includes('dano') && !isDef) return; // Defenders don't get attack buffs
+
+        if (isLust && dmgType !== 'LUST') return;
+        if (isMag && dmgType !== 'MAG') return;
+        
+        if (isAttacker) {
+            let mPct = text.match(/Dano.*?(\+|-)\s*(\d+)%/i);
+            if (mPct) { buff.pct += parseInt(mPct[1] + mPct[2]); buff.notes.push(`${perkName} (${mPct[1]}${mPct[2]}%)`); }
+            
+            let mDice = text.match(/Dano.*?(\+|-)\s*(\d+)d(\d+)/i);
+            if (mDice) { buff.diceCount += parseInt(mDice[2]); buff.diceFaces += parseInt(mDice[3]); buff.notes.push(`${perkName} (${mDice[1]}${mDice[2]}d${mDice[3]})`); }
+            else {
+                let mFlat = text.match(/Dano.*?(\+|-)\s*(\d+)(?!\w|d|%)/i);
+                if (mFlat) { buff.flat += parseInt(mFlat[1] + mFlat[2]); buff.notes.push(`${perkName} (${mFlat[1]}${mFlat[2]})`); }
+            }
+        } else {
+            let mPct = text.match(/Reduz.*?(\+|-)?\s*(\d+)%/i) || text.match(/Resist.*?(\+|-)?\s*(\d+)%/i) || text.match(/Dano.*?-\s*(\d+)%/i);
+            if (mPct) { buff.pct -= parseInt(mPct[2]); buff.notes.push(`${perkName} (-${mPct[2]}% Dano)`); }
+            
+            let mFlat = text.match(/Defesa.*?(\+|-)\s*(\d+)/i) || text.match(/Dano.*?-\s*(\d+)(?!\w|d|%)/i);
+            if (mFlat) { buff.flat += parseInt(mFlat[1] + mFlat[2]); buff.notes.push(`${perkName} (Defesa ${mFlat[1]}${mFlat[2]})`); }
+        }
+    };
+
+    Object.keys(char.perks).forEach(attr => {
+        Object.keys(char.perks[attr]).forEach(pName => {
+            let lvl = char.perks[attr][pName];
+            if (lvl > 0) {
+                if (isAttacker) {
+                    if (zoneName && pName === zoneName) parseText(PERKS_DB[attr].perks[pName][lvl - 1], pName);
+                    else if (!zoneName) {
+                        const zonePerks = ["Dotação / Membro", "Peitos/Peitoral", "Quadril/Glúteos", "Lábios/Fala", "Mãos/Dedos", "Pés/Pernas"];
+                        if (!zonePerks.includes(pName)) parseText(PERKS_DB[attr].perks[pName][lvl - 1], pName);
+                    }
+                } else {
+                    parseText(PERKS_DB[attr].perks[pName][lvl - 1], pName);
+                }
+            }
+        });
+    });
+    
+    return buff;
+};
+
+window.rollDiceExpr = function(expr) {
     if(!expr || typeof expr !== 'string') return 0;
-    const match = expr.toLowerCase().match(/^(\d+)d(\d+)$/);
-    if(match) {
-        let total = 0;
-        let count = parseInt(match[1]);
-        let faces = parseInt(match[2]);
-        for(let i=0; i<count; i++) total += Math.floor(Math.random() * faces) + 1;
-        return total;
+    
+    // Replace attributes like MAX(SED, FOR) with max values
+    expr = expr.replace(/MAX\(([^,]+),\s*([^)]+)\)/gi, (match, p1, p2) => {
+        let v1 = parseInt(p1) || 0;
+        let v2 = parseInt(p2) || 0;
+        return Math.max(v1, v2).toString();
+    });
+    
+    let parts = expr.toLowerCase().replace(/-/g, '+-').split('+').map(s => s.trim()).filter(s => s);
+    let total = 0;
+    
+    for(let p of parts) {
+        const match = p.match(/^(-?)(\d+)d(\d+)$/);
+        if(match) {
+            let sign = match[1] === '-' ? -1 : 1;
+            let count = parseInt(match[2]);
+            let faces = parseInt(match[3]);
+            let subtotal = 0;
+            for(let i=0; i<count; i++) subtotal += Math.floor(Math.random() * faces) + 1;
+            total += (subtotal * sign);
+        } else {
+            let val = parseInt(p);
+            if(!isNaN(val)) total += val;
+        }
     }
-    const flat = parseInt(expr);
-    if(!isNaN(flat)) return flat;
-    return 0;
-}
+    return total;
+};
 
 document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
     const targetCid = document.getElementById('inp-dmg-target').value;
@@ -2823,6 +2960,25 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
         }
     }
     
+    const attackerCid = document.getElementById('inp-dmg-attacker').value;
+    const attacker = combatState.combatants.find(c => c.cid === attackerCid);
+    let attackerChar = null;
+    
+    if(attacker && !attacker.isMonster) {
+        attackerChar = characters.find(c => c.id === attacker.refId);
+        if(attackerChar) {
+            const a = attackerChar.attr || {};
+            // Replace Attributes in Expression
+            expr = expr.replace(/FOR/gi, a.for || 0)
+                       .replace(/AGI/gi, a.agi || 0)
+                       .replace(/SED/gi, a.sed || 0)
+                       .replace(/MIS/gi, a.mis || 0)
+                       .replace(/CON/gi, a.con || 0)
+                       .replace(/VIG/gi, a.vig || 0)
+                       .replace(/VON/gi, a.von || 0);
+        }
+    }
+
     const dmgType = document.getElementById('inp-dmg-type').value; 
     const cond = document.getElementById('inp-dmg-cond').value; 
     const mod = parseInt(document.getElementById('inp-dmg-mod').value) || 0;
@@ -2834,25 +2990,53 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
     if(cond === 'vantagem') baseDano = Math.max(r1, r2);
     else if(cond === 'desvantagem') baseDano = Math.min(r1, r2);
     
-    let defesaTotal = 0;
+    // --- AUTOMATED PERKS SYSTEM ---
+    const zoneName = document.getElementById('inp-dmg-zone').value;
+    let atkBuffs = parsePerkBuffs(attackerChar, dmgType, true, zoneName);
+    
+    let defChar = target.isMonster ? null : characters.find(c => c.id === target.refId);
+    let defBuffs = parsePerkBuffs(defChar, dmgType, false, null);
+
+    // Apply Attacker Buffs
+    baseDano += atkBuffs.flat;
+    let extraDiceTotal = 0;
+    for(let i=0; i<atkBuffs.diceCount; i++) extraDiceTotal += Math.floor(Math.random() * atkBuffs.diceFaces) + 1;
+    baseDano += extraDiceTotal;
+    baseDano = Math.floor(baseDano * (1 + (atkBuffs.pct / 100)));
+
+    let logNotes = [];
+    if(atkBuffs.notes.length > 0) logNotes.push(`Buffs de Ataque: ${atkBuffs.notes.join(', ')}`);
+    if(defBuffs.notes.length > 0) logNotes.push(`Defesas Especiais: ${defBuffs.notes.join(', ')}`);
+
+    let defesaTotal = defBuffs.flat;
     let raceTpl = "";
     let classTpl = "";
-    let logNotes = [];
     
     if(!target.isMonster) {
-        const pChar = characters.find(c => c.id === target.refId);
-        if(pChar) {
-            const pMods = getCharModifiers(pChar);
-            if(dmgType === 'HP' || dmgType === 'MAG') defesaTotal = Math.floor(pMods.con * 1);
-            if(dmgType === 'LUST') defesaTotal = Math.floor(pMods.von * 1);
+        if(defChar) {
+            const pMods = getCharModifiers(defChar);
+            if(dmgType === 'HP' || dmgType === 'MAG') defesaTotal += Math.floor(pMods.con * 1);
+            if(dmgType === 'LUST') defesaTotal += Math.floor(pMods.von * 1);
             
-            raceTpl = pChar.race || "";
-            classTpl = pChar.class || "";
+            // Apply defensive perk percentages (e.g. Resist LUST 15% -> defBuffs.pct = -15)
+            if (defBuffs.pct !== 0) {
+                let block = Math.floor(baseDano * (Math.abs(defBuffs.pct) / 100));
+                if (defBuffs.pct < 0) {
+                    defesaTotal += block;
+                    logNotes.push(`Vantagens Defensivas (${Math.abs(defBuffs.pct)}%) bloquearam ${block}`);
+                } else {
+                    defesaTotal -= block;
+                    logNotes.push(`Vulnerabilidade (${defBuffs.pct}%) tomou +${block}`);
+                }
+            }
+            
+            raceTpl = defChar.race || "";
+            classTpl = defChar.class || "";
         }
     } else {
         const mObj = monsters.find(m => m.id === target.refId);
         if(mObj) {
-            if(dmgType === 'HP' || dmgType === 'MAG' || ['FOGO', 'GELO', 'ELETRICO', 'VENENO'].includes(dmgType)) defesaTotal = Math.floor((mObj.con || 5) * 1);
+            if(dmgType === 'HP' || dmgType === 'MAG' || ['FOGO', 'GELO', 'ELETRICO', 'VENENO'].includes(dmgType)) defesaTotal += Math.floor((mObj.con || 5) * 1);
             if(dmgType === 'LUST') defesaTotal = Math.floor((mObj.von || 5) * 1);
             
             // Analisa a tabela de modificadores dinâmicos do monstro
