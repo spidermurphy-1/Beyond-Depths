@@ -760,6 +760,39 @@ const PERK_COSTS = [0, 1, 2, 3, 5, 9, 14, 20];
 
 
 
+const RACE_TEMPLATES = {
+    "Humano": {
+        skills: [
+            {
+                name: "Resiliência",
+                type: "Passiva",
+                desc: "Movido por teimosia, quando o Humano atinge 50% ou menos de seu HP ou Stamina máximo, seu instinto de preservação é ativado. Ele recebe +4 de Defesa de Lust e reduz em 15% todo o LUST acumulado por ações adversas enquanto permanecer nessa condição."
+            }
+        ],
+        weaknesses: [
+            {
+                name: "Carne Ordinária",
+                desc: "Por possuírem corpos puramente biológicos, os humanos são naturalmente mais suscetíveis à essência do Círculo da Luxúria. Ações sexuais de controle ou ataque realizadas por Nativos do Abismo (Demônios) ignoram 3 pontos da Defesa de Lust natural do Humano."
+            }
+        ]
+    },
+    "Tiefling": {
+        skills: [
+            {
+                name: "Hellblood",
+                type: "Passiva",
+                desc: "Quando derrotado em combate seu sangue ferve em adrenalina, permitindo que possa agir por mais dois turnos antes de cair oficialmente. Derrotar um inimigo durante esse intervalo recarrega Hellblood, caso contrário apenas após descanso longo."
+            }
+        ],
+        weaknesses: [
+            {
+                name: "Linhagem Maligna",
+                desc: "O Tiefling é tentado pelo sangue de seus ancestrais e pode sair do controle em algum momento, temporariamente. Pode usar um ataque erótico em um aliado, roubar algo sem perceber, comportamento bestial, etc."
+            }
+        ]
+    }
+};
+
 const CLASS_TEMPLATES = {
     "Artífice": {
         baseStats: { hp: 110, st: 120, lust: 90, en: 30 },
@@ -1142,9 +1175,7 @@ document.getElementById('btn-new-item').addEventListener('click', () => {
         updatePointsCounter();
         document.getElementById('modal-character').showModal();
     } else if (currentTab === 'monsters') {
-        editingMonsterId = null;
-        document.getElementById('form-monster').reset();
-        document.getElementById('modal-monster').showModal();
+        openNewMonsterModal();
     } else if (currentTab === 'rpg') {
         document.getElementById('btn-combat-add').click();
     } else if (currentTab === 'armors') {
@@ -1779,25 +1810,91 @@ function renderDashboard() {
     // Skills Grid
     const gridSkills = document.getElementById('dash-skills-grid');
     gridSkills.innerHTML = '';
-    const mySkills = (char.equippedSkillIds || []).map(id => globalSkills.find(s => s.id === id)).filter(Boolean);
     
+    // Race Skills & Weaknesses
+    if (char.race && RACE_TEMPLATES[char.race]) {
+        const raceTpl = RACE_TEMPLATES[char.race];
+        if (raceTpl.skills) {
+            raceTpl.skills.forEach(sk => {
+                const card = document.createElement('div');
+                card.className = "border border-gray-400/40 bg-black/40 rounded p-3 text-sm";
+                card.innerHTML = `
+                    <div class="font-bold text-gray-300 mb-1 border-b border-gray-400/20 pb-1"><i class="fa-solid fa-dna mr-1"></i> ${escapeHTML(sk.name)} <span class="text-[10px] text-gray-500 float-right uppercase">${escapeHTML(char.race)}</span></div>
+                    <div class="text-xs text-gray-400 mb-2"><span class="font-bold">Tipo:</span> ${escapeHTML(sk.type)}</div>
+                    <div class="text-gray-300 italic text-xs">${escapeHTML(sk.desc)}</div>
+                `;
+                gridSkills.appendChild(card);
+            });
+        }
+        if (raceTpl.weaknesses) {
+            raceTpl.weaknesses.forEach(wk => {
+                const card = document.createElement('div');
+                card.className = "border border-red-500/30 bg-black/40 rounded p-3 text-sm";
+                card.innerHTML = `
+                    <div class="font-bold text-red-400 mb-1 border-b border-red-500/20 pb-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ${escapeHTML(wk.name)} <span class="text-[10px] text-gray-500 float-right uppercase">FRAQUEZA DA RAÇA</span></div>
+                    <div class="text-gray-300 italic text-xs">${escapeHTML(wk.desc)}</div>
+                `;
+                gridSkills.appendChild(card);
+            });
+        }
+    }
+
+    // Class Skills & Weaknesses
+    if (char.class) {
+        const tplKey = Object.keys(CLASS_TEMPLATES).find(k => k.toLowerCase() === char.class.toLowerCase());
+        if (tplKey && CLASS_TEMPLATES[tplKey]) {
+            const classTpl = CLASS_TEMPLATES[tplKey];
+            if (classTpl.skills) {
+                classTpl.skills.forEach(sk => {
+                    const card = document.createElement('div');
+                    card.className = "border border-blue-400/30 bg-black/40 rounded p-3 text-sm";
+                    card.innerHTML = `
+                        <div class="font-bold text-blue-300 mb-1 border-b border-blue-400/20 pb-1"><i class="fa-solid fa-book-journal-whills mr-1"></i> ${escapeHTML(sk.name)} <span class="text-[10px] text-gray-500 float-right uppercase">${escapeHTML(char.class)}</span></div>
+                        <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-xs text-gray-400 mb-2">
+                            <div><span class="font-bold">Tipo:</span> ${escapeHTML(sk.type || '-')}</div>
+                            <div><span class="font-bold">Custo:</span> ${escapeHTML(sk.cost || '-')}</div>
+                            <div class="col-span-2"><span class="font-bold">Teste:</span> ${escapeHTML(sk.test || '-')}</div>
+                        </div>
+                        <div class="text-gray-300 italic text-xs">${escapeHTML(sk.desc)}</div>
+                    `;
+                    gridSkills.appendChild(card);
+                });
+            }
+            if (classTpl.weaknesses) {
+                classTpl.weaknesses.forEach(wk => {
+                    const card = document.createElement('div');
+                    card.className = "border border-red-500/30 bg-black/40 rounded p-3 text-sm";
+                    card.innerHTML = `
+                        <div class="font-bold text-red-400 mb-1 border-b border-red-500/20 pb-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ${escapeHTML(wk.name)} <span class="text-[10px] text-gray-500 float-right uppercase">FRAQUEZA DA CLASSE</span></div>
+                        <div class="text-gray-300 italic text-xs">${escapeHTML(wk.desc)}</div>
+                    `;
+                    gridSkills.appendChild(card);
+                });
+            }
+        }
+    }
+
+    // Global Skills
+    const mySkills = (char.equippedSkillIds || []).map(id => globalSkills.find(s => s.id === id)).filter(Boolean);
     if (mySkills.length > 0) {
         mySkills.forEach(sk => {
             const card = document.createElement('div');
             card.className = "border border-gold/20 bg-black/30 rounded p-3 text-sm";
             card.innerHTML = `
-                <div class="font-bold text-gold mb-1 border-b border-gold/10 pb-1">${escapeHTML(sk.name)}</div>
+                <div class="font-bold text-gold mb-1 border-b border-gold/10 pb-1"><i class="fa-solid fa-star mr-1 text-xs"></i> ${escapeHTML(sk.name)}</div>
                 <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-xs text-gray-400 mb-2">
-                    <div><span class="font-bold">Tipo:</span> ${escapeHTML(sk.type)}</div>
-                    <div><span class="font-bold">Custo:</span> ${escapeHTML(sk.cost)}</div>
-                    <div class="col-span-2"><span class="font-bold">Teste:</span> ${escapeHTML(sk.test)}</div>
+                    <div><span class="font-bold">Tipo:</span> ${escapeHTML(sk.type || '-')}</div>
+                    <div><span class="font-bold">Custo:</span> ${escapeHTML(sk.cost || '-')}</div>
+                    <div class="col-span-2"><span class="font-bold">Teste:</span> ${escapeHTML(sk.test || '-')}</div>
                 </div>
                 <div class="text-gray-300 italic text-xs">${escapeHTML(sk.effect)}</div>
             `;
             gridSkills.appendChild(card);
         });
-    } else {
-        gridSkills.innerHTML = '<div class="text-sm text-gray-400">Nenhuma habilidade anexada.</div>';
+    }
+
+    if (gridSkills.children.length === 0) {
+        gridSkills.innerHTML = '<div class="text-sm text-gray-400">Nenhuma habilidade associada ao personagem.</div>';
     }
 
     updateBars(char, mods);
@@ -2236,6 +2333,30 @@ window.switchCharTab = function(tab) {
 }
 
 // --- MONSTER LOGIC ---
+window.addMonsterModifierRow = function(data = null) {
+    const list = document.getElementById('monster-modifiers-list');
+    const row = document.createElement('div');
+    row.className = 'flex gap-2 items-center bg-black/40 p-2 rounded border border-purple-500/20';
+    row.innerHTML = `
+        <input type="text" class="input-dark w-1/3 text-xs mod-trigger" placeholder="Gatilho (Fogo, Físico...)" required value="${data ? escapeHTML(data.trigger) : ''}">
+        <select class="input-dark w-1/3 text-xs mod-effect" required>
+            <option value="reducao" ${data && data.effect === 'reducao' ? 'selected' : ''}>Redução (%)</option>
+            <option value="vulnerabilidade" ${data && data.effect === 'vulnerabilidade' ? 'selected' : ''}>Dano Extra / Vuln (%)</option>
+            <option value="defesa_fixa" ${data && data.effect === 'defesa_fixa' ? 'selected' : ''}>Defesa Fixa (+X)</option>
+        </select>
+        <input type="number" class="input-dark w-1/4 text-xs mod-value" placeholder="Valor" required value="${data ? data.value : ''}">
+        <button type="button" class="btn-icon text-red-500 hover:text-red-400" onclick="this.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>
+    `;
+    list.appendChild(row);
+};
+
+window.openNewMonsterModal = function() {
+    editingMonsterId = null;
+    document.getElementById('form-monster').reset();
+    document.getElementById('monster-modifiers-list').innerHTML = '';
+    document.getElementById('modal-monster').showModal();
+}
+
 document.getElementById('form-monster').addEventListener('submit', (e) => {
     e.preventDefault();
     if (!isMaster()) return alert("Sem permissão. Apenas o Mestre pode criar monstros.");
@@ -2247,6 +2368,15 @@ document.getElementById('form-monster').addEventListener('submit', (e) => {
         return;
     }
     
+    const mods = [];
+    document.querySelectorAll('#monster-modifiers-list > div').forEach(row => {
+        mods.push({
+            trigger: row.querySelector('.mod-trigger').value.trim(),
+            effect: row.querySelector('.mod-effect').value,
+            value: parseInt(row.querySelector('.mod-value').value) || 0
+        });
+    });
+    
     const newMonster = {
         id: editingMonsterId || generateId(),
         ownerId: currentUser ? currentUser.uid : null,
@@ -2256,7 +2386,10 @@ document.getElementById('form-monster').addEventListener('submit', (e) => {
         stamina: parseInt(document.getElementById('inp-monster-st').value) || 50,
         lust: parseInt(document.getElementById('inp-monster-lust').value) || 100,
         ini: parseInt(document.getElementById('inp-monster-ini').value) || 10,
+        con: parseInt(document.getElementById('inp-monster-con').value) || 5,
+        von: parseInt(document.getElementById('inp-monster-von').value) || 5,
         desc: document.getElementById('inp-monster-desc').value,
+        modifiers: mods,
         isMonster: true
     };
     
@@ -2282,7 +2415,16 @@ window.openEditMonster = function(id) {
     document.getElementById('inp-monster-st').value = m.stamina;
     document.getElementById('inp-monster-lust').value = m.lust;
     document.getElementById('inp-monster-ini').value = m.ini || 10;
+    document.getElementById('inp-monster-con').value = m.con || 5;
+    document.getElementById('inp-monster-von').value = m.von || 5;
     document.getElementById('inp-monster-desc').value = m.desc || '';
+    
+    const list = document.getElementById('monster-modifiers-list');
+    list.innerHTML = '';
+    if(m.modifiers) {
+        m.modifiers.forEach(mod => addMonsterModifierRow(mod));
+    }
+    
     document.getElementById('modal-monster').showModal();
 };
 
@@ -2599,3 +2741,148 @@ window.openExtendedActionsModal = function() {
 initPerksUI();
 loadData();
 
+// --- SISTEMA DE DANO DO MESTRE ---
+
+document.getElementById('btn-master-damage').addEventListener('click', () => {
+    const tSelect = document.getElementById('inp-dmg-target');
+    tSelect.innerHTML = '';
+    combatState.combatants.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.cid;
+        opt.innerText = c.name + (c.isMonster ? ' (Monstro)' : ' (Personagem)');
+        tSelect.appendChild(opt);
+    });
+    
+    const aSelect = document.getElementById('inp-dmg-attack');
+    aSelect.innerHTML = `
+        <option value="1d4">Ataque Leve / Fricção Corporal (1d4)</option>
+        <option value="1d6">Ataque Médio / Magia Simples / Sedução (1d6)</option>
+        <option value="1d8">Ataque Pesado / Arma (1d8)</option>
+        <option value="1d10">Ataque Furtivo / Magia Forte (1d10)</option>
+        <option value="2d6">Golpe Brutal (2d6)</option>
+        <option value="custom">Ataque Livre / Customizado</option>
+    `;
+    
+    document.getElementById('inp-dmg-custom').classList.add('hidden');
+    document.getElementById('inp-dmg-custom').value = '';
+    
+    document.getElementById('modal-apply-damage').showModal();
+});
+
+function rollDiceExpr(expr) {
+    if(!expr || typeof expr !== 'string') return 0;
+    const match = expr.toLowerCase().match(/(\d+)d(\d+)/);
+    if(match) {
+        let total = 0;
+        let count = parseInt(match[1]);
+        let faces = parseInt(match[2]);
+        for(let i=0; i<count; i++) total += Math.floor(Math.random() * faces) + 1;
+        return total;
+    }
+    return 0;
+}
+
+document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
+    const targetCid = document.getElementById('inp-dmg-target').value;
+    const target = combatState.combatants.find(c => c.cid === targetCid);
+    if(!target) return alert("Alvo não encontrado!");
+    
+    let expr = document.getElementById('inp-dmg-attack').value;
+    if(expr === 'custom') {
+        expr = document.getElementById('inp-dmg-custom').value;
+    }
+    
+    const dmgType = document.getElementById('inp-dmg-type').value; 
+    const cond = document.getElementById('inp-dmg-cond').value; 
+    const mod = parseInt(document.getElementById('inp-dmg-mod').value) || 0;
+    
+    let r1 = rollDiceExpr(expr);
+    let r2 = rollDiceExpr(expr);
+    let baseDano = r1;
+    
+    if(cond === 'vantagem') baseDano = Math.max(r1, r2);
+    else if(cond === 'desvantagem') baseDano = Math.min(r1, r2);
+    
+    let defesaTotal = 0;
+    let raceTpl = "";
+    let classTpl = "";
+    let logNotes = [];
+    
+    if(!target.isMonster) {
+        const pChar = characters.find(c => c.id === target.refId);
+        if(pChar) {
+            const pMods = getCharModifiers(pChar);
+            if(dmgType === 'HP' || dmgType === 'MAG') defesaTotal = Math.floor(pMods.con * 1);
+            if(dmgType === 'LUST') defesaTotal = Math.floor(pMods.von * 1);
+            
+            raceTpl = pChar.race || "";
+            classTpl = pChar.class || "";
+        }
+    } else {
+        const mObj = monsters.find(m => m.id === target.refId);
+        if(mObj) {
+            if(dmgType === 'HP' || dmgType === 'MAG' || ['FOGO', 'GELO', 'ELETRICO', 'VENENO'].includes(dmgType)) defesaTotal = Math.floor((mObj.con || 5) * 1);
+            if(dmgType === 'LUST') defesaTotal = Math.floor((mObj.von || 5) * 1);
+            
+            // Analisa a tabela de modificadores dinâmicos do monstro
+            if(mObj.modifiers && mObj.modifiers.length > 0) {
+                mObj.modifiers.forEach(mod => {
+                    const trig = mod.trigger.toUpperCase();
+                    // Se o gatilho bater com o Dano (ex: FOGO == FOGO, MÁGICO == MAG)
+                    if(trig === dmgType || (trig === 'FÍSICO' && dmgType === 'HP') || (trig === 'MÁGICO' && dmgType === 'MAG')) {
+                        if(mod.effect === 'reducao') {
+                            const percent = mod.value / 100;
+                            // Se for redução de dano (Ex: 50% = DanoBruto * 0.5 abate)
+                            // A redução aplica direto sobre o Dano Base+Mod rolado
+                            // Mas na lógica aqui, é melhor ajustar o baseDano ou adicionar Defesa
+                            const dmgReduced = Math.floor((baseDano + mod) * percent);
+                            defesaTotal += dmgReduced;
+                            logNotes.push(`Redução Ativada (-${mod.value}% Dano)`);
+                        } else if(mod.effect === 'vulnerabilidade') {
+                            const percent = mod.value / 100;
+                            const dmgExtra = Math.floor((baseDano + mod) * percent);
+                            defesaTotal -= dmgExtra; // Reduz a defesa pra simular mais dano
+                            logNotes.push(`Vulnerabilidade Ativada (+${mod.value}% Dano)`);
+                        } else if(mod.effect === 'defesa_fixa') {
+                            defesaTotal += mod.value;
+                            logNotes.push(`Defesa Fixa (+${mod.value} Defesa)`);
+                        }
+                    }
+                });
+            }
+        }
+    }
+    
+    if(raceTpl === 'Humano' && dmgType === 'LUST') {
+        defesaTotal -= 3;
+        if(defesaTotal < 0) defesaTotal = 0;
+        logNotes.push("Carne Ordinária (Humano: -3 Def. Lust)");
+    }
+    
+    let danoTotal = baseDano + mod - defesaTotal;
+    if(danoTotal < 0) danoTotal = 0;
+    
+    if(classTpl === 'Artífice' && dmgType === 'MAG') {
+        danoTotal = Math.floor(danoTotal * 1.10);
+        logNotes.push("Descrente (Artífice: +10% Dano Recebido Mágico)");
+    }
+    
+    if(dmgType === 'LUST') {
+        adjustCombatStat(targetCid, 'lust', danoTotal);
+    } else {
+        adjustCombatStat(targetCid, 'hp', -danoTotal);
+    }
+    
+    const logMsg = `Mestre aplicou ${danoTotal} de Dano [${dmgType}] em ${target.name}. (Dano Bruto: ${baseDano+mod} [Rolado: ${baseDano}, Mod: ${mod}] - Defesa: ${defesaTotal}). Notas: ${logNotes.join(', ') || 'Nenhuma'}`;
+    
+    if(!target.isMonster) {
+        const pChar = characters.find(c => c.id === target.refId);
+        if(pChar) {
+            addLog(pChar, logMsg, 'info');
+            saveToDB('characters', pChar, characters, 'bd_characters');
+        }
+    }
+    
+    document.getElementById('modal-apply-damage').close();
+    alert(`Resultado:\nDano Base Rolado: ${baseDano}\nModificador: ${mod}\nDefesa do Alvo: ${defesaTotal}\n\nDano Final Recebido: ${danoTotal}\n\nNotas do Sistema: ${logNotes.join(', ') || 'Nenhuma'}`);
+});

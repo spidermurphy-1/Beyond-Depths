@@ -279,6 +279,7 @@
                     <p class="text-sm text-gray-300">Rastreador de Combate e Turnos</p>
                 </div>
                 <div class="flex gap-2">
+                    <button id="btn-master-damage" class="btn-icon bg-red-600/20 text-red-400 hover:bg-red-600/40 hidden" title="Mestre: Aplicar Dano"><i class="fa-solid fa-burst"></i></button>
                     <button id="btn-combat-add" class="btn-gold py-2 px-4 rounded text-sm"><i class="fa-solid fa-plus mr-1"></i> Adicionar Combatente</button>
                     <button id="btn-combat-next" class="btn-icon bg-purple-600/20 text-purple-400 hover:bg-purple-600/40" title="Próximo Turno"><i class="fa-solid fa-forward-step"></i></button>
                     <button id="btn-combat-clear" class="btn-icon text-red-400 hover:text-red-300" title="Limpar Combate"><i class="fa-solid fa-trash"></i></button>
@@ -582,6 +583,27 @@
                     <input type="number" id="inp-monster-ini" required class="input-dark" value="10">
                 </div>
             </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Defesa Física Base (CON)</label>
+                    <input type="number" id="inp-monster-con" required class="input-dark" value="5">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Defesa Mental Base (VON)</label>
+                    <input type="number" id="inp-monster-von" required class="input-dark" value="5">
+                </div>
+            </div>
+            
+            <div class="border border-purple-500/30 rounded-lg p-4 bg-purple-900/10">
+                <div class="flex justify-between items-center mb-2">
+                    <label class="block text-xs font-bold text-purple-400 uppercase">Tabela de Modificadores Específicos</label>
+                    <button type="button" class="btn-icon text-green-400 hover:text-green-300 text-xs font-bold border border-green-500/30 px-2 py-1 rounded" onclick="addMonsterModifierRow()"><i class="fa-solid fa-plus mr-1"></i> Add Modificador</button>
+                </div>
+                <div class="text-[10px] text-gray-400 mb-3 leading-tight">Adicione resistências, fraquezas elementais ou reduções de dano.<br>Ex: Gatilho 'Fogo', Efeito 'Dano Extra (%)', Valor '100' (recebe o dobro de dano). Gatilho 'Físico', Efeito 'Redução (%)', Valor '50' (sofre metade do dano).</div>
+                
+                <div id="monster-modifiers-list" class="space-y-2 max-h-40 overflow-y-auto custom-scrollbar pr-2">
+                    <!-- Dinâmico -->
+                </div>
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Ataques e Habilidades (Texto Livre)</label>
                 <textarea id="inp-monster-desc" rows="4" class="input-dark"></textarea>
@@ -689,6 +711,55 @@
         </div>
         <div class="p-5 overflow-y-auto max-h-[70vh] space-y-4" id="modal-vp-content">
             <!-- Populated via JS -->
+        </div>
+    </dialog>
+
+    <!-- Modal: GM Damage Application -->
+    <dialog id="modal-apply-damage" class="bg-gray-900 text-gray-200 p-0 rounded-lg shadow-2xl backdrop:bg-black/80 border border-red-500/30 w-[450px] max-w-[95%]">
+        <div class="p-4 border-b border-gray-800 flex justify-between items-center bg-red-900/20">
+            <h3 class="text-lg font-cinzel font-bold text-red-400"><i class="fa-solid fa-burst mr-2"></i>Aplicar Dano (Mestre)</h3>
+            <button class="btn-icon text-gray-400 hover:text-white" onclick="document.getElementById('modal-apply-damage').close()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="p-6 space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Alvo do Ataque</label>
+                <select id="inp-dmg-target" class="input-dark w-full"></select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Ataque Utilizado</label>
+                <select id="inp-dmg-attack" class="input-dark w-full mb-2" onchange="const c = document.getElementById('inp-dmg-custom'); if(this.value==='custom') c.classList.remove('hidden'); else c.classList.add('hidden');"></select>
+                <input type="text" id="inp-dmg-custom" class="input-dark w-full hidden" placeholder="Rolagem custom (ex: 2d6+4)">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Tipo de Dano</label>
+                    <select id="inp-dmg-type" class="input-dark w-full">
+                        <option value="HP">Físico (HP)</option>
+                        <option value="LUST">Lust (Sed)</option>
+                        <option value="MAG">Mágico Puro (HP)</option>
+                        <option value="FOGO">Elemental: Fogo (HP)</option>
+                        <option value="GELO">Elemental: Gelo (HP)</option>
+                        <option value="ELETRICO">Elemental: Elétrico (HP)</option>
+                        <option value="VENENO">Elemental: Veneno/Ácido (HP)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Condição do Ataque</label>
+                    <select id="inp-dmg-cond" class="input-dark w-full">
+                        <option value="normal">Normal</option>
+                        <option value="vantagem">Com Vantagem</option>
+                        <option value="desvantagem">Com Desvantagem</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Modificador Fixo (+Dano Opcional)</label>
+                <input type="number" id="inp-dmg-mod" class="input-dark w-full" placeholder="+0" value="0">
+            </div>
+            <div class="pt-4 flex justify-end gap-2">
+                <button type="button" class="btn-dark py-2 px-4 rounded" onclick="document.getElementById('modal-apply-damage').close()">Cancelar</button>
+                <button type="button" class="btn-gold py-2 px-4 rounded font-bold" id="btn-dmg-confirm">Rolar & Aplicar</button>
+            </div>
         </div>
     </dialog>
 
