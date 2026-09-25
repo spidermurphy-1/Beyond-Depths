@@ -31,10 +31,13 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="text-gray-200 font-inter antialiased h-screen w-screen overflow-hidden flex flex-col md:flex-row">
+<body class="text-gray-200 font-inter antialiased h-screen w-screen overflow-hidden flex flex-col md:flex-row relative">
     
+    <!-- Mobile Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/80 z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
+
     <!-- Sidebar: Character Manager -->
-    <aside class="w-full md:w-80 h-auto md:h-full glass-panel flex flex-col z-10 border-r border-gold/20">
+    <aside id="main-sidebar" class="fixed md:static inset-y-0 left-0 w-4/5 sm:w-1/2 md:w-80 h-full glass-panel flex flex-col z-50 border-r border-gold/20 transform -translate-x-full md:translate-x-0 transition-transform duration-300 bg-gray-950/95 md:bg-transparent shadow-2xl md:shadow-none">
         <div class="p-4 border-b border-gold/20 text-center relative">
             <h1 class="text-2xl font-cinzel text-gold drop-shadow-md">Beyond Depths</h1>
             <p class="text-xs text-gray-400 mt-1 uppercase tracking-wider">Gerenciador de Fichas</p>
@@ -75,31 +78,38 @@
     <!-- Main Dashboard -->
     <main class="flex-1 h-full overflow-y-auto relative p-4 md:p-8">
         
-        <div id="no-char-selected" class="h-full flex flex-col items-center justify-center text-gray-500">
+        <!-- Mobile Header (Hamburger) -->
+        <div class="md:hidden flex justify-between items-center mb-6 glass-panel p-3 rounded-lg sticky top-0 z-30 shadow-lg bg-black/80 backdrop-blur">
+            <button onclick="toggleSidebar()" class="text-gold text-2xl px-3 py-1 hover:text-white transition"><i class="fa-solid fa-bars"></i></button>
+            <h1 class="text-xl font-cinzel text-gold tracking-widest font-bold">Beyond Depths</h1>
+            <div class="w-10"></div> <!-- spacer for centering -->
+        </div>
+
+        <div id="no-char-selected" class="h-full flex flex-col items-center justify-center text-gray-500 pb-20">
             <i class="fa-solid fa-skull text-6xl mb-4 opacity-50"></i>
             <h2 class="text-2xl font-cinzel">Selecione um Personagem</h2>
         </div>
 
         <div id="dashboard-container" class="max-w-4xl mx-auto space-y-6 hidden pb-20">
             <!-- Header Info -->
-            <div class="flex justify-between items-start glass-panel p-6 rounded-lg">
-                <div class="flex items-center gap-4">
-                    <img id="dash-avatar" src="" alt="Avatar" class="w-16 h-16 rounded-full border-2 border-gold object-cover hidden">
-                    <div>
-                        <h2 id="dash-name" class="text-4xl font-cinzel text-gold mb-1">Nome do Personagem</h2>
+            <div class="flex flex-col md:flex-row justify-between items-center md:items-start glass-panel p-6 rounded-lg gap-6 text-center md:text-left relative">
+                <div class="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+                    <img id="dash-avatar" src="" alt="Avatar" class="w-20 h-20 md:w-16 md:h-16 rounded-full border-2 border-gold object-cover hidden">
+                    <div class="max-w-full">
+                        <h2 id="dash-name" class="text-3xl md:text-4xl font-cinzel text-gold mb-1 break-words">Nome do Personagem</h2>
                         <p id="dash-class" class="text-lg text-gray-300">Classe</p>
                         <p id="dash-gender-orientation" class="text-sm text-purple-400 mt-1 italic hidden"></p>
                     </div>
                 </div>
-                <div class="text-right">
-                    <span id="dash-condition" class="badge badge-normal">Normal</span>
-                    <div class="mt-4 flex gap-2">
-                        <button id="btn-export-char" class="btn-icon" title="Exportar Personagem"><i class="fa-solid fa-file-export"></i></button>
-                        <button id="btn-edit-char" class="btn-icon" title="Editar Atributos"><i class="fa-solid fa-pen"></i></button>
-                        <button id="btn-delete-char" class="btn-icon text-red-400 hover:text-red-300" title="Excluir"><i class="fa-solid fa-trash"></i></button>
+                <div class="flex flex-col items-center md:items-end w-full md:w-auto shrink-0 mt-2 md:mt-0">
+                    <span id="dash-condition" class="badge badge-normal mb-3 md:mb-0">Normal</span>
+                    <div class="mt-0 md:mt-4 flex gap-3 justify-center md:justify-end">
+                        <button id="btn-export-char" class="btn-icon text-lg md:text-base" title="Exportar Personagem"><i class="fa-solid fa-file-export"></i></button>
+                        <button id="btn-edit-char" class="btn-icon text-lg md:text-base" title="Editar Atributos"><i class="fa-solid fa-pen"></i></button>
+                        <button id="btn-delete-char" class="btn-icon text-lg md:text-base text-red-400 hover:text-red-300" title="Excluir"><i class="fa-solid fa-trash"></i></button>
                     </div>
-                    <div class="mt-2 text-right">
-                        <button type="button" class="px-3 py-1 bg-purple-900/40 text-purple-300 text-xs font-bold rounded border border-purple-500/30 hover:bg-purple-800/60 transition" onclick="openExtendedActionsModal()"><i class="fa-solid fa-book-open mr-1"></i> Livro de Ações</button>
+                    <div class="mt-4 md:mt-2 w-full md:w-auto text-center md:text-right">
+                        <button type="button" class="w-full md:w-auto px-4 py-2 md:px-3 md:py-1 bg-purple-900/40 text-purple-300 text-sm md:text-xs font-bold rounded border border-purple-500/30 hover:bg-purple-800/60 transition" onclick="openExtendedActionsModal()"><i class="fa-solid fa-book-open mr-1"></i> Livro de Ações</button>
                     </div>
                 </div>
             </div>

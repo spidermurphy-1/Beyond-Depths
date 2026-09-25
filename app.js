@@ -2655,6 +2655,18 @@ window.removeCombatant = function(cid) {
     renderRPG();
 };
 
+window.toggleSidebar = function() {
+    const sidebar = document.getElementById('main-sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if (sidebar.classList.contains('-translate-x-full')) {
+        sidebar.classList.remove('-translate-x-full');
+        overlay.classList.remove('hidden');
+    } else {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+    }
+};
+
 window.openExtendedActionsModal = function() {
     const char = getActiveChar();
     if (!char) return;
@@ -2907,17 +2919,24 @@ window.parsePerkBuffs = function(char, dmgType, isAttacker, zoneName = null) {
     };
 
     Object.keys(char.perks).forEach(attr => {
+        if (!PERKS_DB[attr]) return;
         Object.keys(char.perks[attr]).forEach(pName => {
             let lvl = char.perks[attr][pName];
             if (lvl > 0) {
+                const perkDef = PERKS_DB[attr].perks[pName];
+                if (!perkDef) return; // Prevent crash if perk no longer exists in DB
+                
+                const pText = perkDef[lvl - 1];
+                if (!pText) return;
+                
                 if (isAttacker) {
-                    if (zoneName && pName === zoneName) parseText(PERKS_DB[attr].perks[pName][lvl - 1], pName);
+                    if (zoneName && pName === zoneName) parseText(pText, pName);
                     else if (!zoneName) {
                         const zonePerks = ["Dotação / Membro", "Peitos/Peitoral", "Quadril/Glúteos", "Lábios/Fala", "Mãos/Dedos", "Pés/Pernas"];
-                        if (!zonePerks.includes(pName)) parseText(PERKS_DB[attr].perks[pName][lvl - 1], pName);
+                        if (!zonePerks.includes(pName)) parseText(pText, pName);
                     }
                 } else {
-                    parseText(PERKS_DB[attr].perks[pName][lvl - 1], pName);
+                    parseText(pText, pName);
                 }
             }
         });
@@ -2998,6 +3017,14 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
                        .replace(/CON/gi, a.con || 0)
                        .replace(/VIG/gi, a.vig || 0)
                        .replace(/VON/gi, a.von || 0);
+                       
+            // Resolve MAX() and MIN() functions before rolling
+            expr = expr.replace(/MAX\(\s*(\d+)\s*,\s*(\d+)\s*\)/gi, (m, p1, p2) => Math.max(parseInt(p1), parseInt(p2)));
+            expr = expr.replace(/MIN\(\s*(\d+)\s*,\s*(\d+)\s*\)/gi, (m, p1, p2) => Math.min(parseInt(p1), parseInt(p2)));
+            
+            // Allow string parsing of division like SED/FOR -> treated as MAX(SED, FOR) in old logic
+            // Wait, "1d6 + SED/FOR" -> user wants us to use the slash as "OR" (meaning MAX).
+            expr = expr.replace(/(\d+)\s*\/\s*(\d+)/g, (m, p1, p2) => Math.max(parseInt(p1), parseInt(p2)));
         }
     }
 
