@@ -2791,9 +2791,7 @@ document.getElementById('btn-master-damage').addEventListener('click', () => {
     // Auto-select first target if available
     if(combatState.combatants.length > 0) tSelect.value = combatState.combatants[0].cid;
     
-    document.getElementById('wrapper-dmg-zone').classList.add('hidden');
-    document.getElementById('inp-dmg-zone').value = '';
-    
+    // Removed wrapper-dmg-zone references
     const aSelect = document.getElementById('inp-dmg-attack');
     aSelect.innerHTML = `
         <optgroup label="Genéricos (Cálculo Automático)">
