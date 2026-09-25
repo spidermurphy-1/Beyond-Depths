@@ -2252,7 +2252,10 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
             logNotes.push("Carne Ordinária (Humano: -3 Def. Lust)");
         }
 
+        if (isNaN(defesaTotal) || defesaTotal === null) defesaTotal = 0;
+        
         let danoTotal = baseDano + mod - defesaTotal;
+        if (isNaN(danoTotal) || danoTotal === null) danoTotal = 0;
         if(danoTotal < 0) danoTotal = 0;
 
         if(classTpl === 'Artífice' && dmgType === 'MAG') {
