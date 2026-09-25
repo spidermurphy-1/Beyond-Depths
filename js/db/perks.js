@@ -1,10 +1,19 @@
-import re
+const PERK_COSTS = [0, 1, 2, 3, 5, 9, 14, 20];
 
-new_perks_db = """const PERKS_DB = {
+const PERKS_DB = {
     "sed": {
         "name": "Sedução",
         "icon": "fa-heart",
         "perks": {
+            "Dotação / Membro": [
+                "1: Tamanho notável. Dano LUST em penetração +1.",
+                "2: Volume que distrai por baixo das roupas. Dano LUST +1d2.",
+                "3: Formato e espessura perfeitamente estimulantes. Dano LUST +1d3.",
+                "4: Penetração Profunda: Libera Habilidade de causar Atordoamento ao penetrar. Dano LUST +1d4.",
+                "5: Inesgotável e pulsante, não perde a rigidez por dor. Dano LUST +2d2.",
+                "6: Proporções monstruosas que distendem a razão do alvo. Dano LUST +2d3.",
+                "7: O pilar absoluto do prazer. Destrói a sanidade (Mind Break) rapidamente. Dano LUST +3d4, Testes +3."
+            ],
             "Peitos/Peitoral": [
                 "1: Seu busto chama atenção. Dano de LUST +1",
                 "2: O balanço hipnotiza. Dano de LUST +1d2",
@@ -83,6 +92,24 @@ new_perks_db = """const PERKS_DB = {
         "name": "Força",
         "icon": "fa-dumbbell",
         "perks": {
+            "Armas Colossais / Machado e Montante": [
+                "1: Balanço pesado. Dano Físico Pesado +1.",
+                "2: Quebra escudos de madeira. Dano Físico Pesado +1d2.",
+                "3: Força contundente. Dano Físico Pesado +1d3.",
+                "4: Trespasse (Cleave): Se matar um alvo, o dano restante passa para um inimigo adjacente.",
+                "5: Golpes arremessam inimigos leves. Dano Físico Pesado +2d2.",
+                "6: Cada golpe estilhaça o solo (Dano em pequena área). Dano Físico Pesado +2d3.",
+                "7: Um furacão de puro aço pesado. Dano Físico Pesado +3d4, Testes +3"
+            ],
+            "Punhos / Artes Marciais": [
+                "1: Punhos calejados. Dano Físico +1 em socos.",
+                "2: Postura de luta. Dano Físico +1d2.",
+                "3: Socos precisos em pontos fracos. Dano Físico +1d3.",
+                "4: Quebra-Guarda: Libera Habilidade de ignorar a armadura do alvo por 1 turno. Dano +1d4",
+                "5: Sequência de golpes relâmpago. Dano Físico +2d2.",
+                "6: Golpes causam sangramento ou concussões graves. Dano Físico +2d3.",
+                "7: Mestria Absoluta. Mãos letais que atravessam carne e aço. Dano Físico +3d4, Testes +3"
+            ],
             "Braços": [
                 "1: Braços definidos. Dano Físico +1",
                 "2: Bíceps duros. Dano Físico +1d2",
@@ -143,6 +170,51 @@ new_perks_db = """const PERKS_DB = {
         "name": "Agilidade",
         "icon": "fa-person-running",
         "perks": {
+            "Visão de Águia / Arquearia": [
+                "1: Mira firme. Dano Físico à distância +1.",
+                "2: Olhos afiados. Dano à distância +1d2 e ignora meia-cobertura.",
+                "3: Tiros rápidos. Dano à distância +1d3.",
+                "4: Tiro Preciso: Libera Habilidade de mirar em pontos vitais (Dobra chance de Acerto Crítico).",
+                "5: Disparos atravessam alvos macios. Dano à distância +2d2.",
+                "6: Acerta o alvo de olhos vendados pelo som. Dano à distância +2d3.",
+                "7: Chuva de flechas/balas indefensável. Dano à distância +3d4, Testes de Mira +3"
+            ],
+            "Lâminas Curtas / Combate Veloz": [
+                "1: Precisão letal com adagas/facas. Dano Físico +1.",
+                "2: Cortes rápidos. Dano Físico +1d2.",
+                "3: Finta e Estocada. Dano Físico +1d3.",
+                "4: Sangramento: Acertos críticos causam perda de 1d4 HP contínua.",
+                "5: Ataca e recua sem gerar ataque de oportunidade. Dano Físico +2d2.",
+                "6: Mil cortes. Golpes quebram a defesa e armadura do alvo. Dano +2d3.",
+                "7: Tempestade de aço invisível. Dano Físico +3d4, Testes +3"
+            ],
+            "Armadilhas / Emboscada": [
+                "1: Sabe criar nós e armadilhas simples. Testes Furtivos +1.",
+                "2: Venenos rápidos nas lâminas. Dano de Emboscada +1d2.",
+                "3: Posição perfeita. Dano de Emboscada +1d3.",
+                "4: Fio de Tropeço: Libera armadilhas no meio do combate que causam Knockdown.",
+                "5: Prepara explosivos leves ou dardos peçonhentos. Dano Emboscada +2d2.",
+                "6: Inimigos que ativam sua armadilha ficam Desarmados/Atordoados.",
+                "7: Predador invisível. O campo minado perfeito. Dano Armadilha/Emboscada +3d4, Testes +3"
+            ],
+            "Pernas de Velocidade": [
+                "1: Passos rápidos. +1m de deslocamento livre.",
+                "2: Fôlego de corredor. Pode fugir de embates com Vantagem.",
+                "3: Agilidade pura. Ignora penalidade de terreno ao se mover.",
+                "4: Velocista: Libera a habilidade de usar 2 Ações de Movimento no turno.",
+                "5: Passos como o vento. +2 Defesa contra projéteis se moveu neste turno.",
+                "6: Quase teleporte visual de tão rápido. +2 Iniciativa.",
+                "7: Aceleração insana. Move-se antes de qualquer um reagir. +3 Iniciativa, Defesa +3"
+            ],
+            "Furtividade Absoluta / Sombras": [
+                "1: Sabe onde pisar. +1 Teste Furtividade.",
+                "2: Respiração silenciada. +1d2 Dano Furtivo.",
+                "3: Oculta-se em qualquer sombra leve. +1d3 Dano Furtivo.",
+                "4: Camuflagem: Libera Habilidade de ficar invisível a olho nu por 1 turno.",
+                "5: Bate-carteiras mestre e assassino silencioso. +2d2 Dano Furtivo.",
+                "6: Nem o faro de monstros te acha. +2d3 Dano Furtivo.",
+                "7: Um fantasma de sangue. Dano Furtivo letal imediato. +3d4, Testes +3"
+            ],
             "Flexibilidade": [
                 "1: Corpo flexível. Defesa +1",
                 "2: Alcance em posições exóticas. Defesa +1",
@@ -203,6 +275,15 @@ new_perks_db = """const PERKS_DB = {
         "name": "Constituição",
         "icon": "fa-shield-heart",
         "perks": {
+            "Muralha Viva / Uso de Escudo": [
+                "1: Postura defensiva firme. Defesa Física +1.",
+                "2: Sabe usar escudos. Redução Dano +1d2 se portando escudo.",
+                "3: Protege os flancos. Defesa Física +2.",
+                "4: Cobertura Aliada: Libera habilidade de receber o dano no lugar de um aliado adjacente.",
+                "5: Ignora 50% de dano de fogo/gelo ao se cobrir. Defesa Física +3.",
+                "6: Golpes fracos rebatem em você sem causar dano. Redução Dano +2d3.",
+                "7: Fortaleza Ambulante absoluta. Defesa +3, Testes de Bloqueio +3, Redução +2d4"
+            ],
             "Abdômen / Core": [
                 "1: Barriga firme. Redução de Dano Físico +1",
                 "2: Tanquinho. Redução de Dano Físico +1d2",
@@ -263,6 +344,15 @@ new_perks_db = """const PERKS_DB = {
         "name": "Vontade",
         "icon": "fa-brain",
         "perks": {
+"Provocação de Batalha (Aggro)": [
+                "1: Gritos imponentes. +1 em Testes de Intimidação.",
+                "2: Postura ameaçadora. Dano intimidador +1d2.",
+                "3: Insulta as mães dos inimigos. Atrai foco facilmente.",
+                "4: Chamado pro Duelo (Taunt): Força o inimigo a te focar por 2 turnos ou sofrer Desvantagem.",
+                "5: Inimigos têm -2 de Defesa se não baterem em você. Defesa Física +2.",
+                "6: Ao ser atacado corpo-a-corpo, você causa 1d4 de Dano LUST/Mental no atacante.",
+                "7: O senhor do campo de batalha, todos te atacam cegamente. Defesa +3, Testes +3"
+            ],
             "Resistência a Provocações": [
                 "1: Difícil de irritar ou seduzir. Defesa LUST +1",
                 "2: Mente calma perante xingamentos. Defesa LUST +1d2",
@@ -316,14 +406,79 @@ new_perks_db = """const PERKS_DB = {
                 "5: Coração Frio: Imunidade total a Pânico, Medo ou Choque.",
                 "6: Ignora penalidades de dor extrema por membros feridos.",
                 "7: Mente acima do corpo. Continua lutando mesmo despedaçado. Testes +3"
+            ],
+
+            "Foco Inabalável": [
+                "1: Concentração afiada. +1 em testes para evitar ser distraído.",
+                "2: Ruídos altos não quebram sua linha de pensamento.",
+                "3: Vantagem em testes mentais ao realizar trabalhos minuciosos.",
+                "4: Túnel de Foco: Ignora penalidades de ambiente caótico (ex: campo de batalha gritante).",
+                "5: Imune a magias de Desorientação.",
+                "6: Perfeição Absoluta. Nunca erra ataques por motivo de 'distração mágica'.",
+                "7: A Mente Fechada: Ninguém pode ler sua mente, tentar fazer isso causa 2d6 de Dano Mágico ao invasor."
+            ],
+            "Resiliência ao Medo": [
+                "1: Coragem testada. +1 de resistência contra Pânico.",
+                "2: Ignora auras de intimidação de monstros pequenos.",
+                "3: Você não recua. +2 contra magias de Terror.",
+                "4: Frio e Calculista: Imune ao status de Medo.",
+                "5: O medo dos aliados é mitigado se estiverem próximos a você.",
+                "6: Intimidadores sentem desconforto perante a sua apatia.",
+                "7: O Caçador de Pesadelos: Imunidade total a auras de Pavor. Você causa medo naquilo que tenta te assustar."
+            ],
+            "Instinto de Sobrevivência Mental": [
+                "1: Reflexo cognitivo. Sabe quando alguém tenta influenciar você magicamente.",
+                "2: Cria barreiras rasas na própria mente contra invasões de charme.",
+                "3: A dor psíquica se transforma em irritação leve.",
+                "4: Ceticismo Atroz: Magias ilusórias e de charme rolam com Desvantagem contra você.",
+                "5: Desperta imediatamente se colocado sob efeito de transe forçado.",
+                "6: Ao chegar a 0 LUST, rola um dado; par, você recupera 20 LUST em pura teimosia.",
+                "7: Incorruptível. Seu estado mental de LUST não pode ser alterado por poderes externos contra a sua vontade."
+            ],
+            "Aura de Autoridade": [
+                "1: Postura inabalável. NPCs sentem respeito instintivo.",
+                "2: Apenas um olhar silencia provocações fracas.",
+                "3: Vantagem em testes para resistir a ordens ou comandos absolutos (Geas).",
+                "4: Vontade Esmagadora: Reduz Dano LUST sofrido de magias de sedução em 1d4.",
+                "5: Comandos mentais lançados contra você falham miseravelmente 50% das vezes.",
+                "6: 'Eu não obedeço': Imune à condição Submisso.",
+                "7: O Rei Intocável. Imunidade absoluta a controle de ordens e encantamentos diretos."
+            ],
+            "Mente Desperta": [
+                "1: Sono sempre leve, nunca é pego em estado vulnerável.",
+                "2: Ignora o cansaço mental diário (1 nível de exaustão mental a menos).",
+                "3: Resiste a feitiços básicos de indução ao sono.",
+                "4: Despertar Brutal: Imune a magias de letargia, lentidão mental ou sono profundo.",
+                "5: Nunca pode ser apagado por traumas psicológicos.",
+                "6: A mente trabalha mesmo quando o corpo descansa, imunidade a ataques em sonhos.",
+                "7: Consciência Perpétua. Você está ciente de tudo, mesmo se o corpo físico for paralisado ou nocauteado."
+            ],
+            "Determinação Cega": [
+                "1: A meta acima de tudo. Ignora penalidades leves se focado num objetivo.",
+                "2: Resistência contra magias de Desânimo ou Tristeza induzida.",
+                "3: Se recusar a perder: +1 em Testes se o HP estiver muito baixo.",
+                "4: Teimosia Absoluta: Uma vez por dia, ignora um golpe letal que reduziria seu HP a 0, caindo para 1 HP em vez disso.",
+                "5: Imune a fraqueza mágica.",
+                "6: 'Nós vamos conseguir': Passa Vantagem inspiradora aos aliados se você estiver quase caindo.",
+                "7: A Recusa da Morte: Enquanto tiver determinação/foco, nem feitiços de Morte Instantânea funcionam contra você."
+            ],
+            "Fúria Fria": [
+                "1: Agressividade controlada. Transforma insultos em foco.",
+                "2: Quando provocam você, seus ataques não perdem precisão.",
+                "3: Quando recebe Dano LUST, o próximo Dano Físico que causar recebe +1.",
+                "4: Retribuição Calada: Quando alguém tenta controlar sua mente, ganha Vantagem no ataque contra essa pessoa.",
+                "5: Absorção Gélida: Quando recebe Dano LUST Crítico, devolve Dano Físico equivalente ao atacante.",
+                "6: Ignora qualquer debuff imposto por sedução ao realizar um ataque letal.",
+                "7: A Vontade é uma Arma. Sempre que for alvo de poder LUST/Sedução, converte o efeito falho em +2d6 de Dano Adicional."
             ]
-        }
+
+}
     },
     "vig": {
         "name": "Vigor",
         "icon": "fa-battery-full",
         "perks": {
-            "Fôlego": [
+"Fôlego": [
                 "1: Fôlego extra. +10 de Stamina máxima.",
                 "2: Conserva energia. Habilidades custam -2 Stamina (mínimo 1).",
                 "3: Recuperação ágil. Regenera 5 Stamina extra por turno ao não atacar.",
@@ -376,13 +531,105 @@ new_perks_db = """const PERKS_DB = {
                 "5: A Dor vira fúria cega. Ignora metade da Defesa Física inimiga na exaustão.",
                 "6: Ataques suicidas e violentos. Dano +2d3 e Vantagem garantida se HP < 10%.",
                 "7: Fera encurralada. Dano +3d4 e imune a Knockdown. Testes +3 quando ferido"
+            ],
+
+            "Fígado de Ferro": [
+                "1: Tolerância alcoólica e resistência leve a venenos.",
+                "2: O corpo processa drogas exóticas sem colaterais pesados.",
+                "3: Imune a venenos paralisantes comuns.",
+                "4: Sangue Limpo: Cura 1 nível de Envenenamento por turno passivamente.",
+                "5: Metabolismo Impecável: Imune a doenças biológicas e infecções.",
+                "6: Quebra toxinas e as transforma em 1d4 de Stamina.",
+                "7: Purificação Perfeita: Imunidade total a qualquer tipo de veneno, ácido ou contaminação."
+            ],
+            "Pulmões de Aço": [
+                "1: Prende a respiração por longos minutos sem penalidade.",
+                "2: Fôlego para correr sem cansar tão rápido.",
+                "3: Imune a afogamento rápido ou asfixia simples.",
+                "4: Fôlego Inesgotável: Ignora o primeiro nível de Exaustão.",
+                "5: Imune a gases venenosos e esporos através do controle respiratório.",
+                "6: Grito Desestabilizador: Usa o fôlego extremo para atordoar alvos próximos.",
+                "7: Sem Necessidade de Ar: Pode lutar debaixo d'água ou no vácuo sem nenhuma perda de performance."
+            ],
+            "Tolerância à Dor": [
+                "1: Arranhões não incomodam. +1 contra Dor leve.",
+                "2: Ignora a dor de cortes profundos.",
+                "3: Foco através do Sangue: Não sofre Desvantagem por dor severa.",
+                "4: Quebra de Limite: Se sofrer um acerto crítico, ganha +2 em Dano no próximo turno por adrenalina.",
+                "5: Ossos quebrados não te param. Movimento normal mesmo gravemente ferido.",
+                "6: Masoquismo Focado: Converte 10% do Dano Físico sofrido em Vantagem no ataque seguinte.",
+                "7: Máquina Insensível: Ignora completamente qualquer penalidade física decorrente de ferimentos."
+            ],
+            "Sangue Estancado": [
+                "1: Coagulação rápida. +1 de resistência contra cortes.",
+                "2: Pequenas feridas se fecham em segundos.",
+                "3: Imune a Condição: Sangramento Leve.",
+                "4: Coagulação Forçada: Custa 5 Stamina para parar um sangramento severo instantaneamente.",
+                "5: Reduz todo o dano cortante recebido em 1d4.",
+                "6: Imune a Hemorragias críticas e Feridas Abertas.",
+                "7: O Sangue Ferve, Mas Não Vaza. Reduz dano de armas brancas afiadas pela metade permanentemente."
+            ],
+            "Vigor Extremo": [
+                "1: Corpo descansado rende mais. +5 Stamina Máxima.",
+                "2: Fôlego duradouro. Ações de movimento custam menos Stamina.",
+                "3: Bateria Reserva: Quando Stamina chegar a 0, recupera 1d6 (1x por combate).",
+                "4: Motor a Querosene: Recupera passivamente +2 de Stamina no início do seu turno.",
+                "5: Nunca precisa dormir mais que 2 horas por dia para estar 100%.",
+                "6: Recupera passivamente +1d4 de Stamina no início do turno.",
+                "7: O Coração da Terra: Sua Stamina máxima aumenta em +30 e você nunca mais sente cansaço natural."
+            ],
+            "Casca Grossa": [
+                "1: Pele caleijada. Reduz 1 de Dano Físico puro recebido.",
+                "2: Músculos rígidos. HP Máximo +10.",
+                "3: Absorção Corporal: Ignora Dano Físico menor que 3 (não machuca).",
+                "4: Muro de Carne: Você ganha Vantagem em testes para não ser Empurrado ou Derrubado.",
+                "5: Reduz todo e qualquer Dano Físico sofrido em 2.",
+                "6: Imune a atordoamento (Stun) por impacto físico.",
+                "7: O Colosso Vivo: Reduz 20% de TODO o Dano Físico sofrido, antes de contar a armadura."
+            ],
+            "Motor Biológico": [
+                "1: Digestão rápida permite comer muito para ganhar bônus leve.",
+                "2: Gasta HP (2 pontos) para ganhar Stamina (2 pontos) como Ação Livre.",
+                "3: O corpo emana calor intenso ao queimar energia, imunidade ao frio.",
+                "4: Burst Metabólico: Gasta 10 HP para dobrar sua locomoção por 1 turno.",
+                "5: Consegue curar ossos através do consumo massivo de alimentos.",
+                "6: Gasta HP para adicionar Dano Extra (1 HP = +1 Dano, max +5).",
+                "7: Sobrecarga Celular: Aquece o corpo a 100°C, queimando inimigos próximos passivamente enquanto você tem Stamina."
             ]
-        }
+
+}
     },
     "mis": {
         "name": "Misticismo",
         "icon": "fa-book-journal-whills",
         "perks": {
+            "Senso Predatório / Magia Rastreadora": [
+                "1: Visão no escuro básica. Percepção Mágica +1.",
+                "2: Faro mágico leve. Testes Investigação +2.",
+                "3: Consegue ver pegadas térmicas/mágicas recentes.",
+                "4: Sentido Aranha Arcana: Nunca é pego de surpresa (Anula turno de Emboscada inimiga).",
+                "5: Lê as intenções hostis e marca um alvo (O alvo perde 2 de Defesa passiva).",
+                "6: Vê perfeitamente através de paredes finas e escuridão mágica.",
+                "7: Radar vivo. Sentidos ilimitados num raio de 50m. Testes +3 absolutos"
+            ],
+            "Magia Branca / Cura Divina": [
+                "1: Conhece primeiros socorros mágicos. Cura +1 HP extra.",
+                "2: Suas magias de cura fecham feridas na hora. Cura +1d2 HP extra.",
+                "3: Purifica venenos de baixo nível no toque. Cura +1d3 HP extra.",
+                "4: Canalização de Luz: Libera Feitiço de Cura em Área para aliados.",
+                "5: Ressuscitação primária (Traz alguém estabilizado instantaneamente).",
+                "6: Apenas estar perto de você recupera 1d6 HP passivo dos aliados por turno.",
+                "7: Salvação Milagrosa. Traz os quase mortos de volta a vida nova. Testes de Cura +3"
+            ],
+            "Magia Destrutiva (Elemental/Arcana)": [
+                "1: Pequenas chamas/raios saem dos dedos. Dano Mágico Físico +1.",
+                "2: Pode incendiar, congelar ou eletrocutar alvos. Dano Mágico +1d2.",
+                "3: Magia molda o campo de batalha. Dano Mágico +1d3.",
+                "4: Sobrecarga: Libera Feitiço de Área Destrutiva (Custo HP/Stamina). Dano +1d4",
+                "5: Ignora resistências elementais comuns. Dano Mágico +2d2.",
+                "6: Destruição concentrada que vaporiza armaduras. Dano Mágico +2d3.",
+                "7: Uma ogiva arcana ambulante. Dano Mágico Físico +3d4, Testes +3"
+            ],
             "Aura": [
                 "1: Presença leve que esfria/aquece o ar. Dano Mágico +1",
                 "2: Aura brilhante intimida fracos. Dano Mágico +1d2",
@@ -440,13 +687,3 @@ new_perks_db = """const PERKS_DB = {
         }
     }
 };
-"""
-
-with open("app.js", "r", encoding="utf-8") as f:
-    content = f.read()
-
-content = re.sub(r"const PERKS_DB = \{.*?\n\};\n?", new_perks_db + "\n", content, flags=re.DOTALL)
-
-with open("app.js", "w", encoding="utf-8") as f:
-    f.write(content)
-print("Done")
