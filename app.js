@@ -1159,6 +1159,10 @@ function updateBars(char, mods) {
     const en = Math.max(0, Math.min(maxEn, char.energy));
     document.getElementById('val-energy').innerText = en; document.getElementById('max-energy').innerText = maxEn;
     document.getElementById('bar-energy').style.width = (en / maxEn * 100) + '%';
+    
+    if (document.getElementById('chk-convert-lust')) {
+        document.getElementById('chk-convert-lust').checked = !!char.autoConvertLust;
+    }
 
     const lu = Math.max(0, Math.min(maxLu, char.lust));
     document.getElementById('val-lust').innerText = lu;
@@ -1316,6 +1320,37 @@ window.adjustStat = function(stat, amount) {
 
     saveToDB('characters', char, characters, 'bd_characters');
 }
+
+window.toggleLustConversion = function() {
+    const char = getActiveChar();
+    if(!char) return;
+    if(!canEdit(char)) return alert("Sem permissão.");
+    
+    char.autoConvertLust = document.getElementById('chk-convert-lust').checked;
+    saveToDB('characters', char, characters, 'bd_characters');
+};
+
+window.manualTransmuteLust = function() {
+    const char = getActiveChar();
+    if(!char) return;
+    if(!canEdit(char)) return alert("Sem permissão.");
+    
+    const cost = 2;
+    if (char.lust < cost) {
+        return alert("Lust insuficiente para transmutar! Você precisa de pelo menos 2 Lust.");
+    }
+    
+    char.lust -= cost;
+    char.energy = (char.energy || 0) + 1;
+    
+    const cStats = getClassStats(char.class);
+    if(char.energy > cStats.en) char.energy = cStats.en;
+    if(char.lust < 0) char.lust = 0;
+    
+    addLog(char, `Transmutação Ativa: Consumiu ${cost} Lust para recuperar 1 Magia.`, "info");
+    saveToDB('characters', char, characters, 'bd_characters');
+};
+
 window.applyDamage = () => adjustStat('hp', -15);
 window.rest = () => adjustStat('stamina', 30);
 window.relieve = () => adjustStat('lust', -20);
@@ -2249,7 +2284,7 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
         if(raceTpl === 'Humano' && dmgType === 'LUST') {
             defesaTotal -= 3;
             if(defesaTotal < 0) defesaTotal = 0;
-            logNotes.push("Carne Ordinária (Humano: -3 Def. Lust)");
+            logNotes.push("[Defesa do Alvo] Carne Ordinária (Humano: -3 Def. Lust)");
         }
 
         if (isNaN(defesaTotal) || defesaTotal === null) defesaTotal = 0;
@@ -2260,11 +2295,22 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
 
         if(classTpl === 'Artífice' && dmgType === 'MAG') {
             danoTotal = Math.floor(danoTotal * 1.10);
-            logNotes.push("Descrente (Artífice: +10% Dano Recebido Mágico)");
+            logNotes.push("[Fraqueza do Alvo] Descrente (Artífice: +10% Dano Recebido Mágico)");
         }
 
         if(dmgType === 'LUST') {
             adjustCombatStat(targetCid, 'lust', danoTotal);
+            
+            // Auto-conversão de Lust para Magia
+            const targetChar = !target.isMonster ? characters.find(c => c.id === target.refId) : null;
+            if(targetChar && targetChar.autoConvertLust && danoTotal >= 2) {
+                const energyGain = Math.floor(danoTotal / 2);
+                targetChar.energy = (targetChar.energy || 0) + energyGain;
+                const tStats = getClassStats(targetChar.class);
+                if(targetChar.energy > tStats.en) targetChar.energy = tStats.en;
+                saveToDB('characters', targetChar.id, targetChar, 'bd_characters');
+                logNotes.push(`Conversão Automática: +${energyGain} Magia gerada pelo golpe.`);
+            }
         } else {
             adjustCombatStat(targetCid, 'hp', -danoTotal);
         }
