@@ -256,9 +256,11 @@ document.getElementById('tab-monsters').onclick = () => { currentTab = 'monsters
 document.getElementById('tab-rpg').onclick = () => { currentTab = 'rpg'; updateTabsUI(); renderSidebar(); renderRPG(); }
 document.getElementById('tab-armors').onclick = () => { currentTab = 'armors'; updateTabsUI(); renderSidebar(); }
 document.getElementById('tab-skills').onclick = () => { currentTab = 'skills'; updateTabsUI(); renderSidebar(); }
+document.getElementById('tab-weapons').onclick = () => { currentTab = 'weapons'; updateTabsUI(); renderSidebar(); }
+document.getElementById('tab-accessories').onclick = () => { currentTab = 'accessories'; updateTabsUI(); renderSidebar(); }
 
 function updateTabsUI() {
-    ['chars','monsters','rpg','armors','skills'].forEach(t => {
+    ['chars','monsters','rpg','armors','skills','weapons','accessories'].forEach(t => {
         const el = document.getElementById(`tab-${t}`);
         if (!el) return;
         if (t === currentTab) {
@@ -324,6 +326,12 @@ document.getElementById('btn-new-item').addEventListener('click', () => {
     } else if (currentTab === 'armors') {
         document.getElementById('form-armor').reset();
         document.getElementById('modal-armor').showModal();
+    } else if (currentTab === 'weapons') {
+        document.getElementById('form-weapon').reset();
+        document.getElementById('modal-weapon').showModal();
+    } else if (currentTab === 'accessories') {
+        document.getElementById('form-accessory').reset();
+        document.getElementById('modal-accessory').showModal();
     } else if (currentTab === 'skills') {
         document.getElementById('form-skill').reset();
         document.getElementById('modal-skill').showModal();

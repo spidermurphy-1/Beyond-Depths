@@ -51,11 +51,13 @@
         </div>
         
         <div class="flex flex-wrap border-b border-gold/20 text-xs text-center bg-black/40">
-            <button id="tab-chars" class="w-1/2 py-2.5 bg-gold/10 text-gold font-bold transition border-r border-b border-gold/10">Fichas</button>
-            <button id="tab-monsters" class="w-1/2 py-2.5 text-gray-400 hover:text-gold transition border-b border-gold/10">Monstros</button>
-            <button id="tab-armors" class="w-1/2 py-2.5 text-gray-400 hover:text-gold transition border-r border-gold/10">Armaduras</button>
-            <button id="tab-skills" class="w-1/2 py-2.5 text-gray-400 hover:text-gold transition">Habilidades</button>
-            <button id="tab-rpg" class="w-full py-3 text-purple-400 hover:text-purple-300 transition font-bold uppercase tracking-wider border-t border-gold/20 bg-purple-900/10" title="Tracker de Combate"><i class="fa-solid fa-dragon mr-1"></i> Mesa RPG</button>
+            <button id="tab-chars" class="w-1/3 py-2.5 bg-gold/10 text-gold font-bold transition border-r border-b border-gold/10">Fichas</button>
+            <button id="tab-monsters" class="w-1/3 py-2.5 text-gray-400 hover:text-gold transition border-r border-b border-gold/10">Monstros</button>
+            <button id="tab-skills" class="w-1/3 py-2.5 text-gray-400 hover:text-gold transition border-b border-gold/10">Habilidades</button>
+            <button id="tab-armors" class="w-1/3 py-2.5 text-gray-400 hover:text-gold transition border-r border-b border-gold/10">Armaduras</button>
+            <button id="tab-weapons" class="w-1/3 py-2.5 text-gray-400 hover:text-gold transition border-r border-b border-gold/10">Armas</button>
+            <button id="tab-accessories" class="w-1/3 py-2.5 text-gray-400 hover:text-gold transition border-b border-gold/10">Acessórios</button>
+            <button id="tab-rpg" class="w-full py-3 text-purple-400 hover:text-purple-300 transition font-bold uppercase tracking-wider border-gold/20 bg-purple-900/10" title="Tracker de Combate"><i class="fa-solid fa-dragon mr-1"></i> Mesa RPG</button>
         </div>
         
         <div class="p-4 flex gap-2">
@@ -477,6 +479,211 @@
         <div class="p-4 border-t border-gold/20 flex justify-end gap-3 bg-black/20">
             <button id="btn-modal-cancel" class="px-4 py-2 text-sm text-gray-400 hover:text-white transition">Cancelar</button>
             <button id="btn-modal-save" class="px-4 py-2 btn-gold rounded text-sm font-bold">Salvar Ficha</button>
+        </div>
+    </dialog>
+    <!-- Modal Global Weapon -->
+    <dialog id="modal-weapon" class="glass-panel rounded-xl shadow-2xl p-0 max-w-md w-full">
+        <div class="p-6 border-b border-gold/20">
+            <h2 class="text-xl font-cinzel text-gold">Forjar Arma (Global)</h2>
+        </div>
+        <form method="dialog" id="form-weapon" class="p-6 max-h-[70vh] overflow-y-auto space-y-4">
+            <div class="flex gap-2">
+                <div class="flex-1">
+                    <label class="block text-xs text-gold uppercase mb-1">Nome da Arma</label>
+                    <input type="text" id="inp-w-name" class="input-dark w-full text-lg font-cinzel" required>
+                </div>
+                <div class="w-1/3">
+                    <label class="block text-xs text-gray-400 uppercase mb-1">Categoria</label>
+                    <select id="inp-w-category" class="input-dark w-full text-sm">
+                        <option value="Espada">Espada</option>
+                        <option value="Machado">Machado</option>
+                        <option value="Lança">Lança</option>
+                        <option value="Adaga">Adaga</option>
+                        <option value="Arco">Arco/Besta</option>
+                        <option value="Fogo">Arma de Fogo</option>
+                        <option value="Mágica">Arma Mágica</option>
+                        <option value="Outro">Outro</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <div class="w-1/2">
+                    <label class="block text-xs text-gray-400 uppercase mb-1">Raridade</label>
+                    <input type="text" id="inp-w-rarity" class="input-dark w-full text-sm" value="Comum">
+                </div>
+                <div class="w-1/2">
+                    <label class="block text-xs text-gray-400 uppercase mb-1">Material</label>
+                    <input type="text" id="inp-w-material" class="input-dark w-full text-sm" placeholder="Ex: Aço">
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <div class="w-1/2">
+                    <label class="block text-xs text-gray-400 uppercase mb-1">Durabilidade Máx.</label>
+                    <input type="number" id="inp-w-durability" class="input-dark w-full text-sm" value="50">
+                </div>
+                <div class="w-1/2">
+                    <label class="block text-xs text-gray-400 uppercase mb-1">Requisitos</label>
+                    <input type="text" id="inp-w-req" class="input-dark w-full text-sm" placeholder="Ex: FOR >= 5">
+                </div>
+            </div>
+            
+            <div class="border-t border-gold/10 pt-4 mt-2">
+                <h3 class="text-sm font-bold text-gold mb-2">Poder Ofensivo (Ataque)</h3>
+                <div class="flex gap-2 items-end">
+                    <div class="w-1/4">
+                        <label class="block text-xs text-gray-400 uppercase mb-1">Dados</label>
+                        <input type="number" id="inp-w-dice-c" class="input-dark w-full text-center" placeholder="Ex: 1" value="1">
+                    </div>
+                    <div class="text-gray-400 pb-2">d</div>
+                    <div class="w-1/4">
+                        <label class="block text-xs text-gray-400 uppercase mb-1">Faces</label>
+                        <input type="number" id="inp-w-dice-f" class="input-dark w-full text-center" placeholder="Ex: 8" value="8">
+                    </div>
+                    <div class="text-gray-400 pb-2">+</div>
+                    <div class="w-1/4">
+                        <label class="block text-xs text-gray-400 uppercase mb-1">Fixo</label>
+                        <input type="number" id="inp-w-dmg-mod" class="input-dark w-full text-center" placeholder="Ex: 2" value="0">
+                    </div>
+                </div>
+                <div class="mt-2 flex gap-2">
+                    <div class="flex-1">
+                        <label class="block text-xs text-gray-400 uppercase mb-1">Tipo de Dano Padrão</label>
+                        <select id="inp-w-dmg-type" class="input-dark w-full text-sm">
+                            <option value="HP">Físico (Não-Mágico)</option>
+                            <option value="HP_MAG">Físico (Mágico)</option>
+                            <option value="MAG">Mágico Puro (HP)</option>
+                            <option value="LUST">Lust (Não-Mágico)</option>
+                            <option value="LUST_MAG">Lust (Mágico)</option>
+                            <option value="FOGO">Fogo</option>
+                            <option value="GELO">Gelo</option>
+                            <option value="ELETRICO">Elétrico</option>
+                            <option value="VENENO">Veneno</option>
+                        </select>
+                    </div>
+                    <div class="w-1/3">
+                        <label class="block text-xs text-gray-400 uppercase mb-1">Custo ST</label>
+                        <input type="number" id="inp-w-st-cost" class="input-dark w-full text-sm" value="3">
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gold/10 pt-4 mt-2">
+                <h3 class="text-sm font-bold text-gold mb-2">Encantamento / Efeito ao Acertar</h3>
+                <div class="flex flex-col gap-2">
+                    <select id="inp-w-eff-type" class="input-dark w-full text-sm">
+                        <option value="none">Nenhum Efeito</option>
+                        <option value="sangramento">Sangramento</option>
+                        <option value="envenenamento_fisico">Envenenamento (Físico)</option>
+                        <option value="envenenamento_magico">Envenenamento (Mágico)</option>
+                        <option value="envenenamento_lust">Veneno de Luxúria</option>
+                        <option value="excitacao">Excitação Extrema</option>
+                        <option value="atordoado">Atordoamento</option>
+                    </select>
+                    <div class="flex gap-2">
+                        <div class="w-2/3">
+                            <label class="block text-xs text-gray-400 uppercase mb-1">Potência (Ex: 1d4, 10%, 5)</label>
+                            <input type="text" id="inp-w-eff-power" class="input-dark w-full text-sm">
+                        </div>
+                        <div class="w-1/3">
+                            <label class="block text-xs text-gray-400 uppercase mb-1">Duração (Turnos)</label>
+                            <input type="number" id="inp-w-eff-dur" class="input-dark w-full text-sm" value="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-2">
+                <label class="block text-xs text-gray-400 uppercase mb-1">Descrição / Narrativa</label>
+                <textarea id="inp-w-desc" class="input-dark w-full h-16 text-sm"></textarea>
+            </div>
+        </form>
+        <div class="p-4 border-t border-gold/20 flex justify-end gap-3 bg-black/20">
+            <button type="button" onclick="document.getElementById('modal-weapon').close()" class="px-4 py-2 text-sm text-gray-400 hover:text-white transition">Cancelar</button>
+            <button type="button" onclick="window.saveGlobalWeapon()" class="px-4 py-2 btn-gold rounded text-sm font-bold">Salvar Arma</button>
+        </div>
+    </dialog>
+
+    <!-- Modal Global Accessory -->
+    <dialog id="modal-accessory" class="glass-panel rounded-xl shadow-2xl p-0 max-w-md w-full">
+        <div class="p-6 border-b border-gold/20">
+            <h2 class="text-xl font-cinzel text-gold">Forjar Acessório (Global)</h2>
+        </div>
+        <form method="dialog" id="form-accessory" class="p-6 max-h-[70vh] overflow-y-auto space-y-4">
+            <div class="flex gap-2">
+                <div class="flex-1">
+                    <label class="block text-xs text-gold uppercase mb-1">Nome do Acessório</label>
+                    <input type="text" id="inp-acc-name" class="input-dark w-full text-lg font-cinzel" required>
+                </div>
+                <div class="w-1/3">
+                    <label class="block text-xs text-gray-400 uppercase mb-1">Categoria</label>
+                    <select id="inp-acc-category" class="input-dark w-full text-sm">
+                        <option value="Anel">Anel</option>
+                        <option value="Colar">Colar / Charm</option>
+                        <option value="Brinco">Brinco</option>
+                        <option value="Outro">Outro</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <div class="w-1/2">
+                    <label class="block text-xs text-gray-400 uppercase mb-1">Raridade</label>
+                    <input type="text" id="inp-acc-rarity" class="input-dark w-full text-sm" value="Comum">
+                </div>
+                <div class="w-1/2">
+                    <label class="block text-xs text-gray-400 uppercase mb-1">Requisitos</label>
+                    <input type="text" id="inp-acc-req" class="input-dark w-full text-sm">
+                </div>
+            </div>
+            
+            <div class="border-t border-gold/10 pt-4 mt-2">
+                <h3 class="text-sm font-bold text-gold mb-2">Bônus Passivos Ocultos</h3>
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="block text-xs text-gray-400 uppercase mb-1">Defesa Física</label>
+                        <input type="number" id="inp-acc-df" class="input-dark w-full text-center" value="0">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 uppercase mb-1">Defesa Lust</label>
+                        <input type="number" id="inp-acc-dlust" class="input-dark w-full text-center" value="0">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 uppercase mb-1">Agilidade</label>
+                        <input type="number" id="inp-acc-agi" class="input-dark w-full text-center" value="0">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 uppercase mb-1">Sedução</label>
+                        <input type="number" id="inp-acc-sed" class="input-dark w-full text-center" value="0">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 uppercase mb-1">Misticismo</label>
+                        <input type="number" id="inp-acc-mis" class="input-dark w-full text-center" value="0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gold/10 pt-4 mt-2">
+                <h3 class="text-sm font-bold text-gold mb-2">Aura / Encantamento Contínuo</h3>
+                <div class="flex flex-col gap-2">
+                    <select id="inp-acc-eff-type" class="input-dark w-full text-sm">
+                        <option value="none">Nenhum</option>
+                        <option value="imune_sangramento">Imune a Sangramento</option>
+                        <option value="imune_veneno">Imune a Veneno</option>
+                        <option value="imune_excitacao">Imune a Excitação</option>
+                        <option value="regen_hp">Regeneração HP</option>
+                        <option value="regen_st">Regeneração ST</option>
+                        <option value="custom">Outro (Apenas Narrativo)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mt-2">
+                <label class="block text-xs text-gray-400 uppercase mb-1">Descrição / Efeito Custom</label>
+                <textarea id="inp-acc-desc" class="input-dark w-full h-16 text-sm"></textarea>
+            </div>
+        </form>
+        <div class="p-4 border-t border-gold/20 flex justify-end gap-3 bg-black/20">
+            <button type="button" onclick="document.getElementById('modal-accessory').close()" class="px-4 py-2 text-sm text-gray-400 hover:text-white transition">Cancelar</button>
+            <button type="button" onclick="window.saveGlobalAccessory()" class="px-4 py-2 btn-gold rounded text-sm font-bold">Salvar Acessório</button>
         </div>
     </dialog>
 
@@ -959,5 +1166,8 @@
         </div>
     </dialog>
 
+    <script src="js/item_manager.js"></script>
+    <script src="js/status_effects.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
