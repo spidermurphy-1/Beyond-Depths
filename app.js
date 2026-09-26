@@ -409,6 +409,13 @@ document.getElementById('btn-save-g-armor').addEventListener('click', (e) => {
         alert("Já existe uma armadura cadastrada com esse nome!");
         return;
     }
+    
+    let selProtected = [];
+    const pzEl = document.getElementById('inp-g-armor-protected-zones');
+    if (pzEl) {
+        selProtected = Array.from(pzEl.selectedOptions).map(o => o.value);
+        if (selProtected.length > 3) selProtected = selProtected.slice(0, 3);
+    }
 
     const obj = {
         id: generateId(),
@@ -426,7 +433,7 @@ document.getElementById('btn-save-g-armor').addEventListener('click', (e) => {
         agiMod: document.getElementById('inp-g-armor-agi-mod')?.value || '',
         staminaCost: document.getElementById('inp-g-armor-stamina-cost')?.value || '',
         exposure: document.getElementById('inp-g-armor-exposure')?.value || '',
-        exposedPart: document.getElementById('inp-g-armor-exposed-part')?.value || '',
+        protectedZones: selProtected,
         special: document.getElementById('inp-g-armor-special')?.value || '',
         mods: {
             df: parseInt(document.getElementById('inp-g-armor-df').value) || 0,
@@ -863,6 +870,13 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
 
     const selSkills = Array.from(document.querySelectorAll('.inp-skill-slot')).map(s => s.value).filter(v => v !== "");
     const selConds = Array.from(document.querySelectorAll('.inp-cond-check')).filter(c => c.checked).map(c => c.value);
+    
+    let selErogenous = [];
+    const eroEl = document.getElementById('inp-erogenous-zones');
+    if (eroEl) {
+        selErogenous = Array.from(eroEl.selectedOptions).map(o => o.value);
+        if (selErogenous.length > 2) selErogenous = selErogenous.slice(0, 2);
+    }
 
     const newCharData = {
         name: document.getElementById('inp-name').value,
@@ -875,6 +889,7 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
         equippedArmorId: equipment.body, // Backwards compatibility if needed somewhere loosely
         equippedSkillIds: selSkills,
         activeConditionIds: selConds,
+        erogenousZones: selErogenous,
         isUnlockedPoints: isUnlocked,
         perks: JSON.parse(JSON.stringify(draftPerks)),
         attr: { 
@@ -946,7 +961,7 @@ function getClassStats(className) {
     return { hp: 10, st: 10, en: 35, lust: 100, ecstasy: 25 };
 }
 
-function getCharModifiers(char) {
+function getCharModifiers(char, targetZone = 'Qualquer') {
     const items = getEquippedItems(char);
     
     let mods = { df: 0, dlust: 0, agi: 0, sed: 0, mis: 0, hp_mult: 1, st_mult: 1, esq: 0, dlust_set: null, ecstasy_set: null, danFis: 0, danLust: 0, danMag: 0, danDist: 0, danFurt: 0 };
@@ -954,18 +969,37 @@ function getCharModifiers(char) {
     
     // Sum Equipment
     items.forEach(armor => {
+        const isWeapon = armor.type === 'weapon';
+        const isAccessory = armor.type === 'accessory';
+        
+        let protectsZone = true;
+        if (!isWeapon && !isAccessory && targetZone !== 'Qualquer') {
+            if (armor.protectedZones && armor.protectedZones.length > 0) {
+                if (!armor.protectedZones.includes(targetZone)) {
+                    protectsZone = false;
+                }
+            } else {
+                // Legacy armors or armors without specific zones
+                // Generally assume they protect the body/trunk, but we can just say if it doesn't explicitly protect it, it doesn't.
+                // To be safe, if they haven't set protected zones, we'll assume it protects everything if it's body armor, otherwise none.
+                if (armor.slot !== 'body') protectsZone = false; 
+            }
+        }
+        
         const baseArmorStats = getArmorBaseStats(armor.base || 'none');
         
-        if (baseArmorStats.mods.df || armor?.mods?.df) {
+        if (protectsZone && (baseArmorStats.mods.df || armor?.mods?.df)) {
             let v = (baseArmorStats.mods.df || 0) + (armor?.mods?.df || 0);
             mods.df += v;
             bk.df.push({label: armor.name, val: v});
         }
-        if (baseArmorStats.mods.dlust || armor?.mods?.dlust) {
+        if (protectsZone && (baseArmorStats.mods.dlust || armor?.mods?.dlust)) {
             let v = (baseArmorStats.mods.dlust || 0) + (armor?.mods?.dlust || 0);
             mods.dlust += v;
             bk.dlust.push({label: armor.name, val: v});
         }
+        
+        // Agility and other stats always apply regardless of hit zone
         if (baseArmorStats.mods.agi || armor?.mods?.agi) {
             let v = (baseArmorStats.mods.agi || 0) + (armor?.mods?.agi || 0);
             mods.agi += v;
@@ -1224,6 +1258,13 @@ function renderDashboard() {
         const gEl = document.getElementById('inp-gender'); if(gEl) gEl.value = char.gender || '';
         const oEl = document.getElementById('inp-orientation'); if(oEl) oEl.value = char.orientation || '';
         document.getElementById('inp-avatar').value = char.avatarUrl || "";
+        
+        const eroEl = document.getElementById('inp-erogenous-zones');
+        if (eroEl) {
+            Array.from(eroEl.options).forEach(opt => {
+                opt.selected = char.erogenousZones && char.erogenousZones.includes(opt.value);
+            });
+        }
         
         draftPerks = char.perks ? JSON.parse(JSON.stringify(char.perks)) : {};
         switchCharTab('base');
@@ -2401,6 +2442,7 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
         const dmgType = document.getElementById('inp-dmg-type').value;
         const cond = document.getElementById('inp-dmg-cond').value;
         const mod = parseInt(document.getElementById('inp-dmg-mod').value) || 0;
+        const targetZone = document.getElementById('inp-dmg-target-zone')?.value || 'Qualquer';
 
         let r1 = rollDiceExpr(expr);
         let r2 = rollDiceExpr(expr);
@@ -2429,13 +2471,19 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
         if(atkBuffs.notes.length > 0) logNotes.push(`Buffs de Ataque: ${atkBuffs.notes.join(', ')}`);
         if(defBuffs.notes.length > 0) logNotes.push(`Defesas Especiais: ${defBuffs.notes.join(', ')}`);
 
+        if (defChar && defChar.erogenousZones && defChar.erogenousZones.includes(targetZone) && ['LUST', 'LUST_MAG'].includes(dmgType)) {
+            let eroBoost = Math.floor(baseDano * 0.20);
+            baseDano += eroBoost;
+            logNotes.push(`Ataque em Zona Erógena! (${targetZone}: +${eroBoost} Dano Lust)`);
+        }
+
         let defesaTotal = defBuffs.flat;
         let raceTpl = "";
         let classTpl = "";
 
         if(!target.isMonster) {
             if(defChar) {
-                const pMods = getCharModifiers(defChar);
+                const pMods = getCharModifiers(defChar, targetZone);
                 if(['HP', 'HP_MAG', 'MAG'].includes(dmgType)) defesaTotal += Math.floor(pMods.con * 1);
                 if(['LUST', 'LUST_MAG'].includes(dmgType)) defesaTotal += Math.floor(pMods.von * 1);
 

@@ -384,6 +384,24 @@
                             <option value="Outro">Outro</option>
                         </select>
                     </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Zonas Erógenas (Máx 2)</label>
+                        <p class="text-[10px] text-gray-500 mb-1">Ataques LUST nestas regiões recebem +20% de dano. Segure Ctrl/Cmd para selecionar várias.</p>
+                        <select id="inp-erogenous-zones" multiple class="input-dark w-full h-24 text-sm custom-scrollbar">
+                            <option value="Cabeça">Cabeça</option>
+                            <option value="Pescoço">Pescoço</option>
+                            <option value="Nuca">Nuca</option>
+                            <option value="Tronco">Tronco</option>
+                            <option value="Seios">Seios</option>
+                            <option value="Braços">Braços</option>
+                            <option value="Pernas">Pernas</option>
+                            <option value="Bunda">Bunda</option>
+                            <option value="Ânus">Ânus</option>
+                            <option value="Virilha">Virilha</option>
+                            <option value="Pênis">Pênis</option>
+                            <option value="Testículos">Testículos</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div>
@@ -763,9 +781,20 @@
                     <input type="text" id="inp-g-armor-stamina-cost" class="input-dark text-sm" placeholder="Custo de Stamina (Ex: +2 ST por Esquiva)">
                     <div class="grid grid-cols-2 gap-2">
                         <input type="text" id="inp-g-armor-exposure" class="input-dark text-sm" placeholder="Nível Exposição (Ex: Alta)">
-                        <input type="text" id="inp-g-armor-exposed-part" class="input-dark text-sm" placeholder="Local Exposto (Ex: Peito)">
+                        <div>
+                            <label class="block text-[10px] text-gold uppercase mb-1" title="Zonas onde a Defesa da Armadura se aplica">Zonas Protegidas (Máx 3)</label>
+                            <select id="inp-g-armor-protected-zones" multiple class="input-dark w-full h-24 text-xs custom-scrollbar">
+                                <option value="Cabeça">Cabeça</option>
+                                <option value="Pescoço">Pescoço</option>
+                                <option value="Tronco">Tronco</option>
+                                <option value="Seios">Seios</option>
+                                <option value="Braços">Braços</option>
+                                <option value="Pernas">Pernas</option>
+                                <option value="Bunda">Bunda</option>
+                                <option value="Virilha">Virilha</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
             </div>
 
             <div class="border-t border-gray-600/30 pt-2 mt-2">
@@ -1142,6 +1171,25 @@
                         <option value="normal">Normal</option>
                         <option value="vantagem">Com Vantagem</option>
                         <option value="desvantagem">Com Desvantagem</option>
+                    </select>
+                </div>
+            <div class="grid grid-cols-2 gap-4 mt-2">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Região Alvo</label>
+                    <select id="inp-dmg-target-zone" class="input-dark w-full">
+                        <option value="Qualquer">Qualquer (Geral)</option>
+                        <option value="Cabeça">Cabeça</option>
+                        <option value="Pescoço">Pescoço</option>
+                        <option value="Nuca">Nuca</option>
+                        <option value="Tronco">Tronco</option>
+                        <option value="Seios">Seios</option>
+                        <option value="Braços">Braços</option>
+                        <option value="Pernas">Pernas</option>
+                        <option value="Bunda">Bunda</option>
+                        <option value="Ânus">Ânus</option>
+                        <option value="Virilha">Virilha</option>
+                        <option value="Pênis">Pênis</option>
+                        <option value="Testículos">Testículos</option>
                     </select>
                 </div>
             </div>
