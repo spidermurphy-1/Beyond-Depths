@@ -773,13 +773,19 @@ function updatePointsCounter() {
         
         totalDistributed += distributed;
         
+        // Limite absoluto: nenhum atributo inicial pode ultrapassar 5.
+        // O bônus da classe também conta para esse limite.
+        if (v > 5) {
+            isInvalidDistribution = true;
+            overLimitStr = " (Máx 5/atributo)";
+        }
         if (distributed > 3) {
             isInvalidDistribution = true;
-            overLimitStr = " (Máx +3/atrb)";
+            if (!overLimitStr) overLimitStr = " (Máx +3/atributo)";
         }
         if (distributed < 0) {
             isInvalidDistribution = true;
-            overLimitStr = " (Abaixo base)";
+            if (!overLimitStr) overLimitStr = " (Abaixo base)";
         }
     });
 
@@ -871,7 +877,7 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
         }
         if (pts.isInvalidDistribution) {
             switchCharTab('base');
-            return alert("Distribuição inválida: você não pode adicionar mais de +3 pontos em um único atributo (ou reduzir os atributos base da classe).");
+            return alert("Distribuição inválida: nenhum atributo inicial pode ser maior que 5, você não pode adicionar mais de +3 pontos em um único atributo e não pode reduzir os atributos base da classe.");
         }
     }
     

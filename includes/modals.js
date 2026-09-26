@@ -99,31 +99,31 @@ const modalsHtml = `
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-3 inp-attr-group">
                         <div>
                             <label class="block text-xs text-gray-400 mb-1">Constituição (HP/DF)</label>
-                            <input type="number" id="inp-con" value="0" class="input-dark" min="-10" max="20">
+                            <input type="number" id="inp-con" value="0" class="input-dark" min="-10" max="5">
                         </div>
                         <div>
                             <label class="block text-xs text-gray-400 mb-1">Força (Dano Físico)</label>
-                            <input type="number" id="inp-for" value="0" class="input-dark" min="-10" max="20">
+                            <input type="number" id="inp-for" value="0" class="input-dark" min="-10" max="5">
                         </div>
                         <div>
                             <label class="block text-xs text-gray-400 mb-1">Vigor (Stamina/Êxtase)</label>
-                            <input type="number" id="inp-vig" value="0" class="input-dark" min="-10" max="20">
+                            <input type="number" id="inp-vig" value="0" class="input-dark" min="-10" max="5">
                         </div>
                         <div>
                             <label class="block text-xs text-gray-400 mb-1">Agilidade (Esquiva/Iniciativa)</label>
-                            <input type="number" id="inp-agi" value="0" class="input-dark" min="-10" max="20">
+                            <input type="number" id="inp-agi" value="0" class="input-dark" min="-10" max="5">
                         </div>
                         <div>
                             <label class="block text-xs text-gray-400 mb-1">Vontade (Defesa Lust)</label>
-                            <input type="number" id="inp-von" value="0" class="input-dark" min="-10" max="20">
+                            <input type="number" id="inp-von" value="0" class="input-dark" min="-10" max="5">
                         </div>
                         <div>
                             <label class="block text-xs text-gray-400 mb-1">Sedução (Dano Lust)</label>
-                            <input type="number" id="inp-sed" value="0" class="input-dark" min="-10" max="20">
+                            <input type="number" id="inp-sed" value="0" class="input-dark" min="-10" max="5">
                         </div>
                         <div>
                             <label class="block text-xs text-gray-400 mb-1">Misticismo (Magia)</label>
-                            <input type="number" id="inp-mis" value="0" class="input-dark" min="-10" max="20">
+                            <input type="number" id="inp-mis" value="0" class="input-dark" min="-10" max="5">
                         </div>
                     </div>
                 </div>
