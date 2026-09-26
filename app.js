@@ -434,8 +434,11 @@ document.getElementById('btn-save-g-armor').addEventListener('click', (e) => {
         protectedZones: selProtected,
         special: document.getElementById('inp-g-armor-special')?.value || '',
         mods: {
-            df: parseInt(document.getElementById('inp-g-armor-df').value) || 0,
-            dlust: parseInt(document.getElementById('inp-g-armor-dlust').value) || 0,
+            df_hp: parseInt(document.getElementById('inp-g-armor-df-hp').value) || 0,
+            df_hpmag: parseInt(document.getElementById('inp-g-armor-df-hpmag').value) || 0,
+            df_mag: parseInt(document.getElementById('inp-g-armor-df-mag').value) || 0,
+            df_lust: parseInt(document.getElementById('inp-g-armor-df-lust').value) || 0,
+            df_lustmag: parseInt(document.getElementById('inp-g-armor-df-lustmag').value) || 0,
             agi: parseInt(document.getElementById('inp-g-armor-agi').value) || 0,
             sed: parseInt(document.getElementById('inp-g-armor-sed').value) || 0,
             mis: parseInt(document.getElementById('inp-g-armor-mis').value) || 0,
@@ -987,8 +990,8 @@ function getClassStats(className) {
 function getCharModifiers(char, targetZone = 'Qualquer') {
     const items = getEquippedItems(char);
     
-    let mods = { df: 0, dlust: 0, agi: 0, sed: 0, mis: 0, hp_mult: 1, st_mult: 1, esq: 0, dlust_set: null, ecstasy_set: null, danFis: 0, danLust: 0, danMag: 0, danDist: 0, danFurt: 0 };
-    let bk = { hp: [], st: [], en: [], lust: [], df: [], dlust: [], esq: [], danFis: [], danLust: [], agi: [], sed: [], mis: [], con: [], for: [], vig: [], von: [] };
+    let mods = { df_hp: 0, df_hpmag: 0, df_mag: 0, df_lust: 0, df_lustmag: 0, agi: 0, sed: 0, mis: 0, hp_mult: 1, st_mult: 1, esq: 0, dlust_set: null, ecstasy_set: null, danFis: 0, danLust: 0, danMag: 0, danDist: 0, danFurt: 0 };
+    let bk = { hp: [], st: [], en: [], lust: [], df_hp: [], df_hpmag: [], df_mag: [], df_lust: [], df_lustmag: [], esq: [], danFis: [], danLust: [], agi: [], sed: [], mis: [], con: [], for: [], vig: [], von: [] };
     
     // Sum Equipment
     items.forEach(armor => {
@@ -1011,15 +1014,31 @@ function getCharModifiers(char, targetZone = 'Qualquer') {
         
         const baseArmorStats = getArmorBaseStats(armor.base || 'none');
         
-        if (protectsZone && (baseArmorStats.mods.df || armor?.mods?.df)) {
-            let v = (baseArmorStats.mods.df || 0) + (armor?.mods?.df || 0);
-            mods.df += v;
-            bk.df.push({label: armor.name, val: v});
+        if (protectsZone && (baseArmorStats.mods.df || armor?.mods?.df_hp)) {
+            let v = (baseArmorStats.mods.df || 0) + (armor?.mods?.df_hp || 0);
+            mods.df_hp += v;
+            bk.df_hp.push({label: armor.name + ' (HP)', val: v});
         }
-        if (protectsZone && (baseArmorStats.mods.dlust || armor?.mods?.dlust)) {
-            let v = (baseArmorStats.mods.dlust || 0) + (armor?.mods?.dlust || 0);
-            mods.dlust += v;
-            bk.dlust.push({label: armor.name, val: v});
+        if (protectsZone && armor?.mods?.df_hpmag) {
+            let v = armor.mods.df_hpmag;
+            mods.df_hpmag += v;
+            bk.df_hpmag.push({label: armor.name + ' (HP_MAG)', val: v});
+        }
+        if (protectsZone && armor?.mods?.df_mag) {
+            let v = armor.mods.df_mag;
+            mods.df_mag += v;
+            bk.df_mag.push({label: armor.name + ' (MAG)', val: v});
+        }
+        
+        if (protectsZone && (baseArmorStats.mods.dlust || armor?.mods?.df_lust)) {
+            let v = (baseArmorStats.mods.dlust || 0) + (armor?.mods?.df_lust || 0);
+            mods.df_lust += v;
+            bk.df_lust.push({label: armor.name + ' (LUST)', val: v});
+        }
+        if (protectsZone && armor?.mods?.df_lustmag) {
+            let v = armor.mods.df_lustmag;
+            mods.df_lustmag += v;
+            bk.df_lustmag.push({label: armor.name + ' (LUST_MAG)', val: v});
         }
         
         // Agility and other stats always apply regardless of hit zone
@@ -2563,8 +2582,20 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
         if(!target.isMonster) {
             if(defChar) {
                 const pMods = getCharModifiers(defChar, targetZone);
-                if(['HP', 'HP_MAG', 'MAG'].includes(dmgType)) defesaTotal += Math.floor(pMods.con * 1);
+                if(['HP', 'HP_MAG', 'MAG', 'FOGO', 'GELO', 'ELETRICO', 'VENENO'].includes(dmgType)) defesaTotal += Math.floor(pMods.con * 1);
                 if(['LUST', 'LUST_MAG'].includes(dmgType)) defesaTotal += Math.floor(pMods.von * 1);
+
+                let eqDef = 0;
+                if (dmgType === 'HP') eqDef = pMods.df_hp || 0;
+                else if (dmgType === 'HP_MAG') eqDef = pMods.df_hpmag || 0;
+                else if (['MAG', 'FOGO', 'GELO', 'ELETRICO', 'VENENO'].includes(dmgType)) eqDef = pMods.df_mag || 0;
+                else if (dmgType === 'LUST') eqDef = pMods.df_lust || 0;
+                else if (dmgType === 'LUST_MAG') eqDef = pMods.df_lustmag || 0;
+
+                if (eqDef > 0) {
+                    defesaTotal += eqDef;
+                    logNotes.push(`Armadura/Acessórios (${eqDef})`);
+                }
 
                 if (defBuffs.pct !== 0) {
                     let block = Math.floor(baseDano * (Math.abs(defBuffs.pct) / 100));

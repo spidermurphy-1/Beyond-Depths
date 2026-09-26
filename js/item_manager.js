@@ -65,8 +65,11 @@ window.saveGlobalAccessory = function() {
         reqVal: parseInt(document.getElementById('inp-acc-req-val')?.value) || 0,
         
         mods: {
-            df: parseInt(document.getElementById('inp-acc-df').value) || 0,
-            dlust: parseInt(document.getElementById('inp-acc-dlust').value) || 0,
+            df_hp: parseInt(document.getElementById('inp-acc-df-hp').value) || 0,
+            df_hpmag: parseInt(document.getElementById('inp-acc-df-hpmag').value) || 0,
+            df_mag: parseInt(document.getElementById('inp-acc-df-mag').value) || 0,
+            df_lust: parseInt(document.getElementById('inp-acc-df-lust').value) || 0,
+            df_lustmag: parseInt(document.getElementById('inp-acc-df-lustmag').value) || 0,
             agi: parseInt(document.getElementById('inp-acc-agi').value) || 0,
             sed: parseInt(document.getElementById('inp-acc-sed').value) || 0,
             mis: parseInt(document.getElementById('inp-acc-mis').value) || 0
