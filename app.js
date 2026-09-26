@@ -58,7 +58,8 @@ let combatState = JSON.parse(localStorage.getItem('bd_combat_state')) || { round
 let globalArmors = [];
 let globalSkills = [];
 let activeCharId = null;
-let currentTab = 'chars'; // chars, armors, skills, monsters, rpg
+const urlParams = new URLSearchParams(window.location.search);
+let currentTab = urlParams.get('tab') || 'chars'; // chars, armors, skills, monsters, rpg, weapons, accessories
 let unsubscribeMonsters = null;
 
 function generateId() { return 'id_' + Math.random().toString(36).substr(2, 9); }
@@ -251,13 +252,35 @@ document.getElementById('btn-login-submit').addEventListener('click', (e) => {
 });
 
 // --- SIDEBAR TABS ---
-document.getElementById('tab-chars').onclick = () => { currentTab = 'chars'; updateTabsUI(); renderSidebar(); }
-document.getElementById('tab-monsters').onclick = () => { currentTab = 'monsters'; updateTabsUI(); renderSidebar(); }
-document.getElementById('tab-rpg').onclick = () => { currentTab = 'rpg'; updateTabsUI(); renderSidebar(); renderRPG(); }
-document.getElementById('tab-armors').onclick = () => { currentTab = 'armors'; updateTabsUI(); renderSidebar(); }
-document.getElementById('tab-skills').onclick = () => { currentTab = 'skills'; updateTabsUI(); renderSidebar(); }
-document.getElementById('tab-weapons').onclick = () => { currentTab = 'weapons'; updateTabsUI(); renderSidebar(); }
-document.getElementById('tab-accessories').onclick = () => { currentTab = 'accessories'; updateTabsUI(); renderSidebar(); }
+function switchTab(tabName) {
+    if (currentTab !== tabName) {
+        currentTab = tabName;
+        history.pushState({ tab: tabName }, '', '?tab=' + tabName);
+    }
+    updateTabsUI();
+    renderSidebar();
+    if (tabName === 'rpg') renderRPG();
+}
+
+window.addEventListener('popstate', (e) => {
+    if (e.state && e.state.tab) {
+        currentTab = e.state.tab;
+    } else {
+        const params = new URLSearchParams(window.location.search);
+        currentTab = params.get('tab') || 'chars';
+    }
+    updateTabsUI();
+    renderSidebar();
+    if (currentTab === 'rpg') renderRPG();
+});
+
+document.getElementById('tab-chars').onclick = () => switchTab('chars');
+document.getElementById('tab-monsters').onclick = () => switchTab('monsters');
+document.getElementById('tab-rpg').onclick = () => switchTab('rpg');
+document.getElementById('tab-armors').onclick = () => switchTab('armors');
+document.getElementById('tab-skills').onclick = () => switchTab('skills');
+document.getElementById('tab-weapons').onclick = () => switchTab('weapons');
+document.getElementById('tab-accessories').onclick = () => switchTab('accessories');
 
 function updateTabsUI() {
     ['chars','monsters','rpg','armors','skills','weapons','accessories'].forEach(t => {
@@ -352,6 +375,10 @@ function renderSidebar() {
         return;
     } else if (currentTab === 'armors') {
         arr = globalArmors;
+    } else if (currentTab === 'weapons') {
+        arr = globalWeapons;
+    } else if (currentTab === 'accessories') {
+        arr = globalAccessories;
     } else if (currentTab === 'skills') {
         arr = globalSkills.filter(s => isMaster() || (currentUser && s.ownerId === currentUser.uid));
     }
@@ -384,13 +411,20 @@ function renderSidebar() {
                 ${canEdit(item) ? `<button onclick="deleteFromDB('monsters', '${item.id}', monsters, 'bd_monsters')" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-trash"></i></button>` : ''}
             `;
         } else {
-            const sub = currentTab === 'armors' ? `DF: +${item.mods.df}` : `Tipo: ${item.type}`;
+            let sub = `Tipo: ${item.type || item.category || 'Item'}`;
+            if (currentTab === 'armors') sub = `DF (HP): +${item.mods?.df_hp || 0}`;
+            else if (currentTab === 'weapons') sub = `Dano: ${item.damage}`;
+            
+            const viewModalName = (currentTab === 'armors' ? 'armor' : (currentTab === 'weapons' ? 'weapon' : (currentTab === 'accessories' ? 'accessory' : 'skill')));
+            const dbName = currentTab === 'skills' ? 'global_skills' : `global_${currentTab}`;
+            const dbArrayName = currentTab === 'skills' ? 'globalSkills' : (currentTab === 'armors' ? 'globalArmors' : (currentTab === 'weapons' ? 'globalWeapons' : 'globalAccessories'));
+            
             div.innerHTML = `
-                <div class="flex-1 cursor-pointer" onclick="openViewModal('${currentTab === 'armors' ? 'armor' : 'skill'}', '${item.id}')">
+                <div class="flex-1 cursor-pointer" onclick="openViewModal('${viewModalName}', '${item.id}')">
                     <div class="font-bold text-sm text-gray-200">${escapeHTML(item.name)}</div>
                     <div class="text-xs text-gray-400">${escapeHTML(sub)}</div>
                 </div>
-                ${canEdit(item) ? `<button onclick="deleteFromDB('${currentTab === 'armors' ? 'global_armors' : 'global_skills'}', '${item.id}', ${currentTab === 'armors' ? 'globalArmors' : 'globalSkills'}, 'bd_${currentTab}')" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-trash"></i></button>` : ''}
+                ${canEdit(item) ? `<button onclick="deleteFromDB('${dbName}', '${item.id}', ${dbArrayName}, 'bd_${currentTab}')" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-trash"></i></button>` : ''}
             `;
         }
         listEl.appendChild(div);
