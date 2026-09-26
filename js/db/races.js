@@ -76,6 +76,20 @@ const RACE_TEMPLATES = {
                 name: "Sangue Enfraquecido",
                 desc: "Os Celestiais possuem apenas uma pequena parcela do poder que seus ancestrais angelicais possuíam. Ao chegar a 25% ou menos de HP ou >=80% de Lust, perdem suas vantagens até que sua vida volte acima desse limite."
             }
+    },
+    "Palhaxotas": {
+        skills: [
+            {
+                name: "Última Provocação",
+                type: "Passiva",
+                desc: "Quando a Palhaxota entra em [Mind Break] (apenas por LUST chegar a 100%), todos os adversários em condição de combatê-la devem realizar um teste de Vontade contra a sedução dela. Em caso de falha, o adversário é forçado a foder ela, caso ele sofra um dano em Lust maior que o resultado do teste de sedução ele pode repetir o teste de vontade. Ao final, caso adversário entre em mind break, a Palhaxota recupera 50% da Stamina e 40% da Energia Sexual, saindo imediatamente do [Mind Break]."
+            }
+        ],
+        weaknesses: [
+            {
+                name: "Falta de Resistência Física",
+                desc: "Sofre 10% a mais de dano físico e não pode equipar armaduras médias ou pesadas."
+            }
         ]
     }
 };

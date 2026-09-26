@@ -154,5 +154,37 @@ const CLASS_TEMPLATES = {
                 desc: "Naturalmente os tanques possuem um vinculo de proteção para com aqueles que ele se preocupa, sacrificando-se sempre que seu sacrifício significar a possibilidade de salvar um companheiro."
             }
         ]
+    },
+    "Jester": {
+        baseStats: { hp: 75, maxHp: 75, stamina: 100, maxStamina: 100, lust: 0, maxLust: 150, sexEnergy: 0, maxSexEnergy: 60 },
+        attrMods: { sed: 3, agi: 2 },
+        skillsToCreate: [
+            {
+                name: "Carta Oculta",
+                type: "Passiva",
+                cost: "-",
+                test: "Sedução vs Vontade",
+                desc: "O Jester atrai completamente o olhar do alvo através de um teste de Sedução. Em sucesso contra a Vontade dele, escolhe uma parte do corpo para prender a atenção. O alvo não percebe adequadamente ações ao redor. O Jester trata suas ações contra o alvo como surpresa, recebendo bônus igual à diferença do teste em suas aplicações de dano, e o alvo sofre -2 em Esquiva/Defesa exclusivamente contra ele. Críticos aumentam o bônus em 10% e reduzem o valor necessário para crítico em 1. Dano acumulado igual ou superior ao resultado da Sedução desperta o alvo e concede a ele um turno adicional.",
+                classRestricted: "Jester"
+            },
+            {
+                name: "Microdança",
+                type: "Passiva",
+                cost: "-",
+                test: "-",
+                desc: "Os micro-movimentos constantes da Jester irradiam tensão sexual. Enquanto sob Carta Oculta (ou realizando ações de Sedução), o alvo sofre 1d4 + metade do modificador de SED no início de cada turno. Em crítico de Sedução ou ataque beneficiado pela Carta Oculta: o alvo recebe +2 de LUST, adquire Vulnerabilidade Erótica por 1 rodadas (efeitos de Sedução aumentam 30%) e a Jester recupera 2 ponto de Energia Sexual.",
+                classRestricted: "Jester"
+            }
+        ],
+        weaknesses: [
+            {
+                name: "Corpo Exposto",
+                desc: "O estilo provocativo e a necessidade de ser vista reduzem a capacidade de se esconder. O Jester sofre -3 em testes de Furtividade e é sempre o primeiro a ser notado em situações de atenção coletiva."
+            },
+            {
+                name: "Dependência de Atenção",
+                desc: "Se passar 3 turnos consecutivos sem causar dano sexual a alguém ela começa a ficar ansiosa e impaciente recebendo -3 em testes de vontade."
+            }
+        ]
     }
 };
