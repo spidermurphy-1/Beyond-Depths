@@ -60,6 +60,7 @@ let globalSkills = [];
 let activeCharId = null;
 const urlParams = new URLSearchParams(window.location.search);
 let currentTab = urlParams.get('tab') || 'chars'; // chars, armors, skills, monsters, rpg, weapons, accessories
+updateTabsUI();
 let unsubscribeMonsters = null;
 
 function generateId() { return 'id_' + Math.random().toString(36).substr(2, 9); }
@@ -255,7 +256,11 @@ document.getElementById('btn-login-submit').addEventListener('click', (e) => {
 function switchTab(tabName) {
     if (currentTab !== tabName) {
         currentTab = tabName;
-        history.pushState({ tab: tabName }, '', '?tab=' + tabName);
+        try {
+            history.pushState({ tab: tabName }, '', '?tab=' + tabName);
+        } catch (e) {
+            console.warn('history.pushState not supported on file:// protocol');
+        }
     }
     updateTabsUI();
     renderSidebar();
