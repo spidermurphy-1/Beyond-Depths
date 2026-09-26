@@ -20,6 +20,17 @@ let currentUser = null;
 let unsubscribeChars = null;
 let unsubscribeArmors = null;
 let unsubscribeSkills = null;
+let unsubscribeWeapons = null;
+let unsubscribeAccessories = null;
+
+// Expose the runtime state to auxiliary modules (item_manager.js).
+// `let` variables are not properties of window, so the old item manager
+// could not see the authenticated user/database instance.
+Object.defineProperties(window, {
+    db: { configurable: true, get: () => db },
+    auth: { configurable: true, get: () => auth },
+    currentUser: { configurable: true, get: () => currentUser }
+});
 
 if (firebaseConfig.apiKey) {
     try {
@@ -109,6 +120,8 @@ function saveToDB(collection, item, localArray, storageKey) {
     if(collection === 'characters') renderDashboard();
 }
 
+window.saveToDB = saveToDB;
+
 function deleteFromDB(collection, id, localArray, storageKey) {
     if (db && currentUser) {
         db.collection(collection).doc(id).delete().then(() => {
@@ -142,9 +155,23 @@ function loadData() {
         auth.onAuthStateChanged(user => {
             currentUser = user;
             updateAuthUI();
-            if (unsubscribeChars) { unsubscribeChars(); unsubscribeArmors(); unsubscribeSkills(); }
-            
+
+            // Stop every realtime listener before replacing the authenticated session.
+            if (unsubscribeChars) unsubscribeChars();
+            if (unsubscribeArmors) unsubscribeArmors();
+            if (unsubscribeSkills) unsubscribeSkills();
+            if (unsubscribeMonsters) unsubscribeMonsters();
+            if (unsubscribeWeapons) unsubscribeWeapons();
+            if (unsubscribeAccessories) unsubscribeAccessories();
+            unsubscribeChars = unsubscribeArmors = unsubscribeSkills = null;
+            unsubscribeMonsters = unsubscribeWeapons = unsubscribeAccessories = null;
+
             if (user) {
+                if (typeof window.initItemListeners === 'function') {
+                    const itemUnsubs = window.initItemListeners(db) || {};
+                    unsubscribeWeapons = itemUnsubs.weapons || null;
+                    unsubscribeAccessories = itemUnsubs.accessories || null;
+                }
                 unsubscribeChars = db.collection('characters').onSnapshot(snap => {
                     characters = snap.docs.map(doc => migrateChar(doc.data()));
                     if (activeCharId && !characters.find(c => c.id === activeCharId)) activeCharId = null;
@@ -168,6 +195,9 @@ function loadData() {
                 });
             } else {
                 characters = []; monsters = []; globalArmors = []; globalSkills = []; activeCharId = null;
+                if (typeof window.initItemListeners === 'function') {
+                    window.initItemListeners(null);
+                }
                 renderSidebar(); renderDashboard();
             }
         });
@@ -340,8 +370,14 @@ function renderSidebar() {
             `;
         } else {
             let sub = `Tipo: ${item.type || item.category || 'Item'}`;
-            if (currentTab === 'armors') sub = `DF (HP): +${item.mods?.df_hp || 0}`;
-            else if (currentTab === 'weapons') sub = `Dano: ${item.damage}`;
+            if (currentTab === 'armors') sub = `DF (HP): +${item.mods?.df_hp || item.mods?.df || 0}`;
+            else if (currentTab === 'weapons') {
+                const dc = Number(item.diceCount) || 0;
+                const df = Number(item.diceFaces) || 0;
+                const dm = Number(item.dmgMod) || 0;
+                const dmg = dc && df ? `${dc}d${df}${dm > 0 ? '+' + dm : dm < 0 ? dm : ''}` : (item.damage || '-');
+                sub = `Dano: ${dmg}`;
+            }
             
             const viewModalName = (currentTab === 'armors' ? 'armor' : (currentTab === 'weapons' ? 'weapon' : (currentTab === 'accessories' ? 'accessory' : 'skill')));
             const dbName = currentTab === 'skills' ? 'global_skills' : `global_${currentTab}`;
@@ -482,6 +518,55 @@ window.openViewModal = function(type, id) {
                 </ul>
             </div>
             ` : ''}
+        `;
+    } else if (type === 'weapon') {
+        const wp = globalWeapons.find(w => w.id === id);
+        if (!wp) return;
+        const dice = `${Number(wp.diceCount) || 0}d${Number(wp.diceFaces) || 0}${(Number(wp.dmgMod) || 0) > 0 ? '+' + Number(wp.dmgMod) : (Number(wp.dmgMod) || 0) < 0 ? Number(wp.dmgMod) : ''}`;
+        titleEl.innerHTML = `<i class="fa-solid fa-khanda text-gold mr-2"></i>FICHA DE ARMA`;
+        contentEl.innerHTML = `
+            <div class="mb-4 text-center">
+                <div class="font-bold text-lg text-gold mb-1">⚔️ ${escapeHTML(wp.name)}</div>
+                ${wp.desc ? `<div class="italic text-gray-400 text-sm">${escapeHTML(wp.desc)}</div>` : ''}
+            </div>
+            <div class="mb-4">
+                <div class="text-gold font-bold border-b border-gold/20 pb-1 mb-2">Dados da Arma</div>
+                <ul class="text-sm text-gray-300 space-y-1">
+                    <li><strong class="text-gray-400">Categoria:</strong> ${escapeHTML(wp.category || '-')}</li>
+                    <li><strong class="text-gray-400">Dano:</strong> ${escapeHTML(dice)}</li>
+                    <li><strong class="text-gray-400">Tipo de dano:</strong> ${escapeHTML(wp.dmgType || 'HP')}</li>
+                    <li><strong class="text-gray-400">Custo de Stamina:</strong> ${escapeHTML(wp.stCost ?? 0)}</li>
+                    <li><strong class="text-gray-400">Durabilidade:</strong> ${escapeHTML(wp.durability ?? '-')} / ${escapeHTML(wp.maxDurability ?? '-')}</li>
+                    <li><strong class="text-gray-400">Requisito:</strong> ${escapeHTML(wp.reqAttr || 'none')} ${wp.reqVal ? `(${escapeHTML(wp.reqVal)})` : ''}</li>
+                </ul>
+            </div>
+            ${wp.effectType && wp.effectType !== 'none' ? `<div class="mb-4"><div class="text-gold font-bold border-b border-gold/20 pb-1 mb-2">Efeito</div><div class="text-sm text-gray-300">${escapeHTML(wp.effectType)} ${wp.effectPower ? '• ' + escapeHTML(wp.effectPower) : ''}${wp.effectDuration ? ' • ' + escapeHTML(wp.effectDuration) + ' turnos' : ''}</div></div>` : ''}
+        `;
+    } else if (type === 'accessory') {
+        const ac = globalAccessories.find(a => a.id === id);
+        if (!ac) return;
+        const m = ac.mods || {};
+        const rows = [
+            ['DF Física', m.df_hp], ['DF Física Mágica', m.df_hpmag], ['DF Mágica', m.df_mag],
+            ['DF Lust', m.df_lust], ['DF Lust Mágica', m.df_lustmag], ['AGI', m.agi], ['SED', m.sed], ['MIS', m.mis]
+        ].filter(([,v]) => Number(v) !== 0);
+        titleEl.innerHTML = `<i class="fa-solid fa-gem text-gold mr-2"></i>FICHA DE ACESSÓRIO`;
+        contentEl.innerHTML = `
+            <div class="mb-4 text-center">
+                <div class="font-bold text-lg text-gold mb-1">💎 ${escapeHTML(ac.name)}</div>
+                ${ac.desc ? `<div class="italic text-gray-400 text-sm">${escapeHTML(ac.desc)}</div>` : ''}
+            </div>
+            <div class="mb-4">
+                <div class="text-gold font-bold border-b border-gold/20 pb-1 mb-2">Dados</div>
+                <ul class="text-sm text-gray-300 space-y-1">
+                    <li><strong class="text-gray-400">Categoria:</strong> ${escapeHTML(ac.category || '-')}</li>
+                    <li><strong class="text-gray-400">Requisito:</strong> ${escapeHTML(ac.reqAttr || 'none')} ${ac.reqVal ? `(${escapeHTML(ac.reqVal)})` : ''}</li>
+                </ul>
+            </div>
+            <div>
+                <div class="text-gold font-bold border-b border-gold/20 pb-1 mb-2">Modificadores</div>
+                ${rows.length ? rows.map(([k,v]) => `<div class="flex justify-between text-sm text-gray-300 py-1"><span>${escapeHTML(k)}</span><span class="text-gold">${Number(v) > 0 ? '+' : ''}${escapeHTML(v)}</span></div>`).join('') : '<div class="text-sm text-gray-500">Nenhum modificador direto.</div>'}
+            </div>
         `;
     } else if (type === 'armor') {
         const ar = globalArmors.find(a => a.id === id);
@@ -911,21 +996,30 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
 function getActiveChar() { return characters.find(c => c.id === activeCharId); }
 
 function getEquippedItems(char) {
-    if (!char.equipment) {
-        if (char.equippedArmorId) {
-            const legacyArmor = globalArmors.find(a => a.id === char.equippedArmorId);
-            return legacyArmor ? [legacyArmor] : [];
-        }
-        return [];
+    if (!char) return [];
+
+    // Characters may reference armor, weapons and accessories from different
+    // Firestore collections. The previous implementation searched only
+    // globalArmors, making all weapon/accessory equipment appear missing.
+    const allItems = [
+        ...(Array.isArray(globalArmors) ? globalArmors : []),
+        ...(Array.isArray(globalWeapons) ? globalWeapons : []),
+        ...(Array.isArray(globalAccessories) ? globalAccessories : [])
+    ];
+
+    const ids = [];
+    if (char.equipment && typeof char.equipment === 'object') {
+        Object.values(char.equipment).forEach(id => {
+            if (id) ids.push(id);
+        });
+    } else if (char.equippedArmorId) {
+        ids.push(char.equippedArmorId);
     }
-    const items = [];
-    Object.values(char.equipment).forEach(id => {
-        if (id) {
-            const armor = globalArmors.find(a => a.id === id);
-            if (armor && !items.some(i => i.id === armor.id)) items.push(armor);
-        }
-    });
-    return items;
+
+    return ids
+        .map(id => allItems.find(item => item.id === id))
+        .filter(Boolean)
+        .filter((item, index, arr) => arr.findIndex(x => x.id === item.id) === index);
 }
 
 function getClassStats(className) {
@@ -944,13 +1038,25 @@ function getClassStats(className) {
 function getCharModifiers(char, targetZone = 'Qualquer') {
     const items = getEquippedItems(char);
     
-    let mods = { df_hp: 0, df_hpmag: 0, df_mag: 0, df_lust: 0, df_lustmag: 0, agi: 0, sed: 0, mis: 0, hp_mult: 1, st_mult: 1, esq: 0, dlust_set: null, ecstasy_set: null, danFis: 0, danLust: 0, danMag: 0, danDist: 0, danFurt: 0 };
-    let bk = { hp: [], st: [], en: [], lust: [], df_hp: [], df_hpmag: [], df_mag: [], df_lust: [], df_lustmag: [], esq: [], danFis: [], danLust: [], agi: [], sed: [], mis: [], con: [], for: [], vig: [], von: [] };
+    let mods = { df: 0, dlust: 0, df_hp: 0, df_hpmag: 0, df_mag: 0, df_lust: 0, df_lustmag: 0, agi: 0, sed: 0, mis: 0, hp_mult: 1, st_mult: 1, esq: 0, dlust_set: null, ecstasy_set: null, danFis: 0, danLust: 0, danMag: 0, danDist: 0, danFurt: 0 };
+    let bk = { hp: [], st: [], en: [], lust: [], df: [], dlust: [], df_hp: [], df_hpmag: [], df_mag: [], df_lust: [], df_lustmag: [], esq: [], danFis: [], danLust: [], agi: [], sed: [], mis: [], con: [], for: [], vig: [], von: [] };
     
     // Sum Equipment
     items.forEach(armor => {
         const isWeapon = armor.type === 'weapon';
         const isAccessory = armor.type === 'accessory';
+
+        // Accessories use their own modifier schema and are not tied to a hit zone.
+        if (isAccessory && armor.mods) {
+            ['df_hp','df_hpmag','df_mag','df_lust','df_lustmag'].forEach(k => {
+                const v = Number(armor.mods[k]) || 0;
+                if (v) { mods[k] += v; bk[k].push({label: armor.name, val: v}); }
+            });
+            ['agi','sed','mis'].forEach(k => {
+                const v = Number(armor.mods[k]) || 0;
+                if (v) { mods[k] += v; bk[k].push({label: armor.name, val: v}); }
+            });
+        }
         
         let protectsZone = true;
         if (!isWeapon && !isAccessory && targetZone !== 'Qualquer') {
@@ -1467,22 +1573,37 @@ function renderAttributesAndDerivedStats(char, mods) {
     const equipContainer = document.getElementById('dash-equipment-list');
     if (items.length > 0) {
         let html = '';
-        items.forEach(armor => {
+        items.forEach(item => {
+            const isWeapon = item.type === 'weapon';
+            const isAccessory = item.type === 'accessory';
+            const viewType = isWeapon ? 'weapon' : isAccessory ? 'accessory' : 'armor';
             let modHtml = '';
-            const aMod = armor.mods || {};
-            if(aMod.df) modHtml += `<span class="${aMod.df > 0 ? 'text-green-400' : 'text-red-400'}">DF ${aMod.df > 0 ? '+'+aMod.df : aMod.df}</span>`;
-            if(aMod.dlust) modHtml += `<span class="${aMod.dlust > 0 ? 'text-green-400' : 'text-red-400'}">DLUST ${aMod.dlust > 0 ? '+'+aMod.dlust : aMod.dlust}</span>`;
-            if(aMod.agi) modHtml += `<span class="${aMod.agi > 0 ? 'text-green-400' : 'text-red-400'}">AGI ${aMod.agi > 0 ? '+'+aMod.agi : aMod.agi}</span>`;
-            if(aMod.sed) modHtml += `<span class="${aMod.sed > 0 ? 'text-green-400' : 'text-red-400'}">SED ${aMod.sed > 0 ? '+'+aMod.sed : aMod.sed}</span>`;
-            if(aMod.mis) modHtml += `<span class="${aMod.mis > 0 ? 'text-green-400' : 'text-red-400'}">MIS ${aMod.mis > 0 ? '+'+aMod.mis : aMod.mis}</span>`;
-            
+            const aMod = item.mods || {};
+
+            if (isWeapon) {
+                const dc = Number(item.diceCount) || 0;
+                const df = Number(item.diceFaces) || 0;
+                const dm = Number(item.dmgMod) || 0;
+                const dmg = dc && df ? `${dc}d${df}${dm > 0 ? '+' + dm : dm < 0 ? dm : ''}` : (item.damage || '-');
+                modHtml += `<span class="text-red-300">${escapeHTML(dmg)} ${escapeHTML(item.dmgType || 'HP')}</span>`;
+                if (item.durability !== undefined) modHtml += `<span class="text-gray-400">Dur. ${item.durability}/${item.maxDurability || item.durability}</span>`;
+            } else {
+                if(aMod.df || aMod.df_hp) modHtml += `<span class="text-green-400">DF ${aMod.df_hp || aMod.df > 0 ? '+' + (aMod.df_hp || aMod.df) : (aMod.df_hp || aMod.df)}</span>`;
+                if(aMod.dlust || aMod.df_lust) modHtml += `<span class="text-purple-300">DLUST ${aMod.df_lust || aMod.dlust > 0 ? '+' + (aMod.df_lust || aMod.dlust) : (aMod.df_lust || aMod.dlust)}</span>`;
+                if(aMod.agi) modHtml += `<span class="text-green-400">AGI ${aMod.agi > 0 ? '+'+aMod.agi : aMod.agi}</span>`;
+                if(aMod.sed) modHtml += `<span class="text-pink-300">SED ${aMod.sed > 0 ? '+'+aMod.sed : aMod.sed}</span>`;
+                if(aMod.mis) modHtml += `<span class="text-blue-300">MIS ${aMod.mis > 0 ? '+'+aMod.mis : aMod.mis}</span>`;
+            }
+
+            const icon = isWeapon ? 'fa-khanda' : isAccessory ? 'fa-gem' : 'fa-shield-halved';
+            const kind = isWeapon ? 'Arma' : isAccessory ? 'Acessório' : (item.slot || 'Equipamento');
             html += `
-            <div class="p-3 bg-black/40 rounded border border-gray-700/50 flex justify-between items-center cursor-pointer hover:border-gold/50 transition-colors" onclick="openViewModal('armor', '${armor.id}')">
+            <div class="p-3 bg-black/40 rounded border border-gray-700/50 flex justify-between items-center cursor-pointer hover:border-gold/50 transition-colors" onclick="openViewModal('${viewType}', '${item.id}')">
                 <div>
-                    <div class="font-bold text-gold text-sm"><i class="fa-solid fa-shield-halved mr-1"></i> ${escapeHTML(armor.name)}</div>
-                    <div class="text-[10px] text-gray-400 uppercase">${escapeHTML(armor.slot || 'Equipamento')} | ${getArmorBaseStats(armor.base).name}</div>
+                    <div class="font-bold text-gold text-sm"><i class="fa-solid ${icon} mr-1"></i> ${escapeHTML(item.name)}</div>
+                    <div class="text-[10px] text-gray-400 uppercase">${escapeHTML(kind)}${item.category ? ' | ' + escapeHTML(item.category) : ''}</div>
                 </div>
-                <div class="flex gap-2 text-[10px] md:text-xs flex-wrap justify-end max-w-[50%]">
+                <div class="flex gap-2 text-[10px] md:text-xs flex-wrap justify-end max-w-[55%]">
                     ${modHtml || '<span class="text-gray-600">Sem bônus diretos</span>'}
                 </div>
             </div>`;
