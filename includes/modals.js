@@ -1,4 +1,4 @@
-document.write(`\n<!-- Modal Character Creation / Edit -->
+const modalsHtml = `\n<!-- Modal Character Creation / Edit -->
     <dialog id="modal-character" class="glass-panel rounded-xl shadow-2xl p-0 w-full max-w-2xl">
         <div class="p-4 border-b border-gold/20 flex flex-col gap-3">
             <h2 class="text-2xl font-cinzel text-gold" id="modal-title">Nova Ficha</h2>
@@ -914,4 +914,5 @@ document.write(`\n<!-- Modal Character Creation / Edit -->
     </dialog>
 
     <!-- Firebase SDK (Compat) -->
-    \n`);\n
+    \n`;
+document.currentScript.insertAdjacentHTML('afterend', modalsHtml);\n

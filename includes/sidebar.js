@@ -1,4 +1,4 @@
-document.write(`\n
+const sidebarHtml = `\n
     <!-- Mobile Overlay -->
     <div id="sidebar-overlay" class="fixed inset-0 bg-black/80 z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
 
@@ -42,4 +42,5 @@ document.write(`\n
             </div>
         </div>
     </aside>
-\n`);\n
+\n`;
+document.currentScript.insertAdjacentHTML('afterend', sidebarHtml);\n
