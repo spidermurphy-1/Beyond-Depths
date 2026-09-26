@@ -597,26 +597,30 @@ window.openViewModal = function(type, id) {
                 <ul class="text-sm text-gray-300 space-y-1 ml-1">
                     <li><strong class="text-gray-400">Categoria:</strong> ${escapeHTML(ar.category || ar.type || '-')}</li>
                     <li><strong class="text-gray-400">Raridade:</strong> ${escapeHTML(ar.rarity || 'Comum')}</li>
-                    <li><strong class="text-gray-400">Requisitos:</strong> ${escapeHTML(ar.req || '-')}</li>
-                    <li><strong class="text-gray-400">Material:</strong> ${escapeHTML(ar.durability || '-')}</li>
+                    <li><strong class="text-gray-400">Requisito:</strong> ${escapeHTML(ar.reqAttr || 'none')} ${ar.reqVal ? `(${escapeHTML(ar.reqVal)})` : ''}</li>
+                    <li><strong class="text-gray-400">Durabilidade:</strong> ${escapeHTML(ar.durability ?? '-')} / ${escapeHTML(ar.maxDurability ?? '-')}</li>
                 </ul>
             </div>
 
             <div class="mb-4">
                 <div class="text-gold font-bold border-b border-gold/20 pb-1 mb-2"><i class="fa-solid fa-shield mr-1"></i> Atributos Defensivos</div>
                 <ul class="text-sm text-gray-300 space-y-1 ml-1">
-                    <li><strong class="text-gray-400">Defesa Física:</strong> ${escapeHTML(ar.defPhys || `+${ar.mods?.df || 0}`)}</li>
-                    <li><strong class="text-gray-400">Defesa de Lust:</strong> ${escapeHTML(ar.defLust || `+${ar.mods?.dlust || 0}`)}</li>
-                    <li><strong class="text-gray-400">Bônus de Atributo:</strong> ${escapeHTML(ar.attrBonus || '-')}</li>
+                    <li><strong class="text-gray-400">Defesa Física (HP):</strong> ${escapeHTML(ar.defPhys || `+${ar.mods?.df_hp ?? 0}`)}</li>
+                    <li><strong class="text-gray-400">Defesa de Lust Geral:</strong> ${escapeHTML(ar.defLust || `+${ar.mods?.df_lust ?? 0}`)}</li>
+                    ${ar.mods?.df_hpmag ? `<li><strong class="text-gray-400">Def. Físico-Mágica:</strong> +${escapeHTML(ar.mods.df_hpmag)}</li>` : ''}
+                    ${ar.mods?.df_mag ? `<li><strong class="text-gray-400">Def. Mágica Pura:</strong> +${escapeHTML(ar.mods.df_mag)}</li>` : ''}
+                    ${ar.mods?.df_lustmag ? `<li><strong class="text-gray-400">Def. Lust Mágica:</strong> +${escapeHTML(ar.mods.df_lustmag)}</li>` : ''}
                 </ul>
             </div>
 
             <div class="mb-4">
-                <div class="text-gold font-bold border-b border-gold/20 pb-1 mb-2"><i class="fa-solid fa-person-running mr-1"></i> Penalidades & Mobilidade</div>
+                <div class="text-gold font-bold border-b border-gold/20 pb-1 mb-2"><i class="fa-solid fa-person-running mr-1"></i> Bônus e Penalidades</div>
                 <ul class="text-sm text-gray-300 space-y-1 ml-1">
-                    <li><strong class="text-gray-400">Modificador de Agilidade:</strong> ${escapeHTML(ar.agiMod || (ar.mods?.agi ? `${ar.mods.agi} AGI` : '-'))}</li>
-                    <li><strong class="text-gray-400">Custo de Stamina:</strong> ${escapeHTML(ar.staminaCost || '-')}</li>
-                    <li><strong class="text-gray-400">Exposição:</strong> ${escapeHTML(ar.exposure || '-')} ${ar.exposedPart ? `<span class="text-red-400 italic">(Local: ${escapeHTML(ar.exposedPart)})</span>` : ''}</li>
+                    <li><strong class="text-gray-400">Modificador de Agilidade:</strong> ${escapeHTML(ar.agiMod || (ar.mods?.agi ? `${ar.mods.agi}` : '-'))}</li>
+                    <li><strong class="text-gray-400">Custo de Stamina:</strong> ${escapeHTML(ar.staminaCost || (ar.mods?.st_cost ? `${ar.mods.st_cost}` : '-'))}</li>
+                    ${ar.mods?.sed ? `<li><strong class="text-gray-400">Sedução:</strong> ${escapeHTML(ar.mods.sed)}</li>` : ''}
+                    ${ar.mods?.mis ? `<li><strong class="text-gray-400">Misticismo:</strong> ${escapeHTML(ar.mods.mis)}</li>` : ''}
+                    ${(ar.exposure || ar.exposedPart) ? `<li><strong class="text-gray-400">Exposição:</strong> ${escapeHTML(ar.exposure || '-')} ${ar.exposedPart ? `<span class="text-red-400 italic">(Local: ${escapeHTML(ar.exposedPart)})</span>` : ''}</li>` : ''}
                 </ul>
             </div>
 
@@ -632,7 +636,7 @@ window.openViewModal = function(type, id) {
                 <summary class="text-[10px] text-gray-400 uppercase cursor-pointer hover:text-white">Automação de Base (Oculta)</summary>
                 <div class="pt-2 mt-2 border-t border-gray-600/30 text-xs text-gray-300">
                     Base ID: ${escapeHTML(ar.base)}<br>
-                    Mods Adicionais: DF ${ar.mods.df}, DLUST ${ar.mods.dlust}, AGI ${ar.mods.agi}, SED ${ar.mods.sed}, MIS ${ar.mods.mis}
+                    Mods Adicionais: DF ${ar.mods.df_hp ?? 0}, DLUST ${ar.mods.df_lust ?? 0}, AGI ${ar.mods.agi ?? 0}, SED ${ar.mods.sed ?? 0}, MIS ${ar.mods.mis ?? 0}
                 </div>
             </details>
             ` : ''}
