@@ -507,7 +507,7 @@
         <form method="dialog" id="form-weapon" class="p-6 max-h-[70vh] overflow-y-auto space-y-4">
             <div class="flex gap-2">
                 <div class="flex-1">
-                    <label class="block text-xs text-gold uppercase mb-1">Nome da Arma</label>
+                    <label class="block text-xs font-bold text-gold uppercase mb-1">Nome da Arma</label>
                     <input type="text" id="inp-w-name" class="input-dark w-full text-lg font-cinzel" required>
                 </div>
                 <div class="w-1/3">
@@ -525,24 +525,31 @@
                 </div>
             </div>
             <div class="flex gap-2">
-                <div class="w-1/2">
-                    <label class="block text-xs text-gray-400 uppercase mb-1">Raridade</label>
-                    <input type="text" id="inp-w-rarity" class="input-dark w-full text-sm" value="Comum">
-                </div>
-                <div class="w-1/2">
-                    <label class="block text-xs text-gray-400 uppercase mb-1">Material</label>
-                    <input type="text" id="inp-w-material" class="input-dark w-full text-sm" placeholder="Ex: Aço">
-                </div>
-            </div>
-            <div class="flex gap-2">
-                <div class="w-1/2">
+                <div class="w-1/3">
                     <label class="block text-xs text-gray-400 uppercase mb-1">Durabilidade Máx.</label>
                     <input type="number" id="inp-w-durability" class="input-dark w-full text-sm" value="50">
                 </div>
-                <div class="w-1/2">
-                    <label class="block text-xs text-gray-400 uppercase mb-1">Requisitos</label>
-                    <input type="text" id="inp-w-req" class="input-dark w-full text-sm" placeholder="Ex: FOR >= 5">
+                <div class="w-1/3">
+                    <label class="block text-xs text-gray-400 uppercase mb-1">Requisito (Atributo)</label>
+                    <select id="inp-w-req-attr" class="input-dark w-full text-sm">
+                        <option value="none">Nenhum</option>
+                        <option value="for">Força (FOR)</option>
+                        <option value="vig">Vigor (VIG)</option>
+                        <option value="agi">Agilidade (AGI)</option>
+                        <option value="con">Conhecimento (CON)</option>
+                        <option value="von">Vontade (VON)</option>
+                    </select>
                 </div>
+                <div class="w-1/3">
+                    <label class="block text-xs text-gray-400 uppercase mb-1">Requisito (Valor)</label>
+                    <input type="number" id="inp-w-req-val" class="input-dark w-full text-sm" value="0">
+                </div>
+            </div>
+            
+            <div class="mt-2 hidden">
+                <input type="text" id="inp-w-rarity" class="hidden">
+                <input type="text" id="inp-w-material" class="hidden">
+                <input type="text" id="inp-w-req" class="hidden">
             </div>
             
             <div class="border-t border-gold/10 pt-4 mt-2">
@@ -629,7 +636,7 @@
         <form method="dialog" id="form-accessory" class="p-6 max-h-[70vh] overflow-y-auto space-y-4">
             <div class="flex gap-2">
                 <div class="flex-1">
-                    <label class="block text-xs text-gold uppercase mb-1">Nome do Acessório</label>
+                    <label class="block text-xs font-bold text-gold uppercase mb-1">Nome do Acessório</label>
                     <input type="text" id="inp-acc-name" class="input-dark w-full text-lg font-cinzel" required>
                 </div>
                 <div class="w-1/3">
@@ -642,15 +649,28 @@
                     </select>
                 </div>
             </div>
+            
             <div class="flex gap-2">
                 <div class="w-1/2">
-                    <label class="block text-xs text-gray-400 uppercase mb-1">Raridade</label>
-                    <input type="text" id="inp-acc-rarity" class="input-dark w-full text-sm" value="Comum">
+                    <label class="block text-[10px] text-gray-400 uppercase">Requisito (Atributo)</label>
+                    <select id="inp-acc-req-attr" class="input-dark w-full">
+                        <option value="none">Nenhum</option>
+                        <option value="for">Força (FOR)</option>
+                        <option value="vig">Vigor (VIG)</option>
+                        <option value="agi">Agilidade (AGI)</option>
+                        <option value="con">Conhecimento (CON)</option>
+                        <option value="von">Vontade (VON)</option>
+                    </select>
                 </div>
                 <div class="w-1/2">
-                    <label class="block text-xs text-gray-400 uppercase mb-1">Requisitos</label>
-                    <input type="text" id="inp-acc-req" class="input-dark w-full text-sm">
+                    <label class="block text-[10px] text-gray-400 uppercase">Requisito (Valor)</label>
+                    <input type="number" id="inp-acc-req-val" class="input-dark w-full" value="0">
                 </div>
+            </div>
+            
+            <div class="flex gap-2 hidden">
+                <input type="text" id="inp-acc-rarity" value="Comum">
+                <input type="text" id="inp-acc-req">
             </div>
             
             <div class="border-t border-gold/10 pt-4 mt-2">
@@ -712,102 +732,15 @@
         </div>
         <form method="dialog" id="form-armor" class="p-6 max-h-[70vh] overflow-y-auto space-y-4">
             <!-- Dados Básicos -->
-            <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Nome do Equipamento</label>
-                <input type="text" id="inp-g-armor-name" required class="input-dark">
-            </div>
-            <div>
-                <label class="block text-xs text-gray-400 mb-1">Descrição Narrativa</label>
-                <textarea id="inp-g-armor-desc" class="input-dark min-h-[60px]" placeholder="Insira aqui a história do equipamento..."></textarea>
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-                <div>
-                    <label class="block text-[10px] text-gray-400 uppercase">Slot</label>
-                    <select id="inp-g-armor-slot" class="input-dark">
-                        <option value="body">Corpo</option>
-                        <option value="head">Cabeça</option>
-                        <option value="back">Costas</option>
-                        <option value="waist">Cintura</option>
-                        <option value="ring">Anel</option>
-                        <option value="charm">Charm</option>
-                        <option value="hand_1">Mão (Uma mão)</option>
-                        <option value="hand_2">Duas Mãos</option>
-                        <option value="feet">Pés</option>
-                        <option value="intimate">Partes Íntimas</option>
-                    </select>
+            <div class="flex gap-2">
+                <div class="flex-1">
+                    <label class="block text-xs font-bold text-gold uppercase mb-1">Nome da Armadura</label>
+                    <input type="text" id="inp-g-armor-name" required class="input-dark w-full text-lg font-cinzel">
                 </div>
-                <div>
-                    <label class="block text-[10px] text-gray-400 uppercase">Categoria</label>
-                    <select id="inp-g-armor-category" class="input-dark">
-                        <option value="Leve">Leve</option>
-                        <option value="Pesada">Pesada</option>
-                        <option value="Sexual">Sexual</option>
-                        <option value="Híbrida">Híbrida</option>
-                        <option value="Arma Branca">Arma Branca</option>
-                        <option value="Arma Mágica">Arma Mágica</option>
-                        <option value="Traje Comum">Traje Comum</option>
-                        <option value="Acessório">Acessório</option>
-                    </select>
-                </div>
-            </div>
-            <div>
-                <label class="block text-[10px] text-gray-400 uppercase">Raridade</label>
-                <input type="text" id="inp-g-armor-rarity" class="input-dark" value="Comum">
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-                <div>
-                    <label class="block text-[10px] text-gray-400 uppercase">Requisitos de Uso</label>
-                    <input type="text" id="inp-g-armor-req" class="input-dark" placeholder="Ex: Vigor ≥ 5">
-                </div>
-                <div>
-                    <label class="block text-[10px] text-gray-400 uppercase">Durabilidade / Material</label>
-                    <input type="text" id="inp-g-armor-durability" class="input-dark" placeholder="Ex: Aço, 100/100">
-                </div>
-            </div>
-            
-            <div class="border-t border-gray-600/30 pt-2 mt-2">
-                <label class="block text-xs font-bold text-gold uppercase mb-1">Atributos Defensivos</label>
-                <div class="space-y-2">
-                    <input type="text" id="inp-g-armor-def-phys" class="input-dark text-sm" placeholder="Defesa Física (Ex: Reduz 1d4 / +3 Def)">
-                    <input type="text" id="inp-g-armor-def-lust" class="input-dark text-sm" placeholder="Defesa de Lust (Ex: +4 Def)">
-                    <input type="text" id="inp-g-armor-attr-bonus" class="input-dark text-sm" placeholder="Bônus de Atributo (Ex: +2 Vigor)">
-                </div>
-            </div>
-
-            <div class="border-t border-gray-600/30 pt-2 mt-2">
-                <label class="block text-xs font-bold text-gold uppercase mb-1">Penalidades & Mobilidade</label>
-                <div class="space-y-2">
-                    <input type="text" id="inp-g-armor-agi-mod" class="input-dark text-sm" placeholder="Modificador de Agilidade (Ex: -1 AGI)">
-                    <input type="text" id="inp-g-armor-stamina-cost" class="input-dark text-sm" placeholder="Custo de Stamina (Ex: +2 ST por Esquiva)">
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="inp-g-armor-exposure" class="input-dark text-sm" placeholder="Nível Exposição (Ex: Alta)">
-                        <div>
-                            <label class="block text-[10px] text-gold uppercase mb-1" title="Zonas onde a Defesa da Armadura se aplica">Zonas Protegidas (Máx 3)</label>
-                            <select id="inp-g-armor-protected-zones" multiple class="input-dark w-full h-24 text-xs custom-scrollbar">
-                                <option value="Cabeça">Cabeça</option>
-                                <option value="Pescoço">Pescoço</option>
-                                <option value="Tronco">Tronco</option>
-                                <option value="Seios">Seios</option>
-                                <option value="Braços">Braços</option>
-                                <option value="Pernas">Pernas</option>
-                                <option value="Bunda">Bunda</option>
-                                <option value="Virilha">Virilha</option>
-                            </select>
-                        </div>
-                    </div>
-            </div>
-
-            <div class="border-t border-gray-600/30 pt-2 mt-2">
-                <label class="block text-xs font-bold text-gold uppercase mb-1">Efeito Especial / Passiva</label>
-                <textarea id="inp-g-armor-special" class="input-dark min-h-[50px]" placeholder="Propriedade Única..."></textarea>
-            </div>
-
-            <details class="bg-black/30 rounded p-2 mt-4 border border-gray-600/30">
-                <summary class="text-[10px] text-gray-400 uppercase cursor-pointer hover:text-white">Automação do Sistema (Mecânica Oculta)</summary>
-                <div class="pt-2 mt-2 border-t border-gray-600/30">
-                    <label class="block text-xs text-gray-400 mb-1">Base (Modificadores Automáticos de HP/Stamina)</label>
-                    <select id="inp-g-armor-base" class="input-dark mb-2">
-                        <option value="none">Sem Armadura</option>
+                <div class="w-1/3">
+                    <label class="block text-xs text-gray-400 uppercase mb-1">Base Automática</label>
+                    <select id="inp-g-armor-base" class="input-dark w-full text-sm">
+                        <option value="none">Sem Base</option>
                         <option value="heavy">Pesada</option>
                         <option value="light">Leve</option>
                         <option value="seduction">Sedução</option>
@@ -815,16 +748,92 @@
                         <option value="mixed_hs">Híbrida: Pesada + Sedução</option>
                         <option value="mixed_ls">Híbrida: Leve + Sedução</option>
                     </select>
-                    <div class="grid grid-cols-5 gap-1">
-                        <div><label class="block text-[9px] text-gray-400 uppercase">DF</label><input type="number" id="inp-g-armor-df" value="0" class="input-dark text-center px-1"></div>
-                        <div><label class="block text-[9px] text-gray-400 uppercase">DLUST</label><input type="number" id="inp-g-armor-dlust" value="0" class="input-dark text-center px-1"></div>
-                        <div><label class="block text-[9px] text-gray-400 uppercase">AGI</label><input type="number" id="inp-g-armor-agi" value="0" class="input-dark text-center px-1"></div>
-                        <div><label class="block text-[9px] text-gray-400 uppercase">SED</label><input type="number" id="inp-g-armor-sed" value="0" class="input-dark text-center px-1"></div>
-                        <div><label class="block text-[9px] text-gray-400 uppercase">MIS</label><input type="number" id="inp-g-armor-mis" value="0" class="input-dark text-center px-1"></div>
-                        <div><label class="block text-[9px] text-red-400 uppercase" title="Custo de Stamina ao agir/esquivar">ST COST</label><input type="number" id="inp-g-armor-st-cost" value="0" class="input-dark text-center px-1"></div>
+                </div>
+            </div>
+
+            <div class="flex gap-2">
+                <div class="w-1/4">
+                    <label class="block text-[10px] text-gray-400 uppercase">Slot</label>
+                    <select id="inp-g-armor-slot" class="input-dark w-full">
+                        <option value="body">Corpo</option>
+                        <option value="head">Cabeça</option>
+                        <option value="back">Costas</option>
+                        <option value="waist">Cintura</option>
+                        <option value="feet">Pés</option>
+                        <option value="intimate">Partes Íntimas</option>
+                    </select>
+                </div>
+                <div class="w-1/4">
+                    <label class="block text-[10px] text-gray-400 uppercase">Durabilidade Máx.</label>
+                    <input type="number" id="inp-g-armor-durability" class="input-dark w-full" value="100">
+                </div>
+                <div class="w-1/4">
+                    <label class="block text-[10px] text-gray-400 uppercase">Requisito (Atributo)</label>
+                    <select id="inp-g-armor-req-attr" class="input-dark w-full">
+                        <option value="none">Nenhum</option>
+                        <option value="for">Força (FOR)</option>
+                        <option value="vig">Vigor (VIG)</option>
+                        <option value="agi">Agilidade (AGI)</option>
+                        <option value="con">Conhecimento (CON)</option>
+                        <option value="von">Vontade (VON)</option>
+                    </select>
+                </div>
+                <div class="w-1/4">
+                    <label class="block text-[10px] text-gray-400 uppercase">Requisito (Valor)</label>
+                    <input type="number" id="inp-g-armor-req-val" class="input-dark w-full" value="0">
+                </div>
+            </div>
+            
+            <div class="border-t border-gold/10 pt-4 mt-2">
+                <h3 class="text-sm font-bold text-gold mb-2">Bônus e Penalidades Mecânicas</h3>
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="block text-xs text-gray-400 uppercase mb-1">Defesa Física</label>
+                        <input type="number" id="inp-g-armor-df" class="input-dark w-full text-center" value="0">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 uppercase mb-1">Defesa Lust</label>
+                        <input type="number" id="inp-g-armor-dlust" class="input-dark w-full text-center" value="0">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 uppercase mb-1">Agilidade</label>
+                        <input type="number" id="inp-g-armor-agi" class="input-dark w-full text-center" value="0">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 uppercase mb-1">Sedução</label>
+                        <input type="number" id="inp-g-armor-sed" class="input-dark w-full text-center" value="0">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 uppercase mb-1">Misticismo</label>
+                        <input type="number" id="inp-g-armor-mis" class="input-dark w-full text-center" value="0">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-red-400 uppercase mb-1" title="Custo de ST ao esquivar">Custo ST</label>
+                        <input type="number" id="inp-g-armor-st-cost" class="input-dark w-full text-center" value="0">
                     </div>
                 </div>
-            </details>
+            </div>
+
+            <div class="border-t border-gold/10 pt-4 mt-2">
+                <label class="block text-[10px] text-gold uppercase mb-1" title="Zonas onde a Defesa da Armadura se aplica">Zonas Protegidas (Defesa)</label>
+                <select id="inp-g-armor-protected-zones" multiple class="input-dark w-full h-24 text-xs custom-scrollbar">
+                    <option value="Cabeça">Cabeça</option>
+                    <option value="Pescoço">Pescoço</option>
+                    <option value="Tronco">Tronco</option>
+                    <option value="Seios">Seios</option>
+                    <option value="Braços">Braços</option>
+                    <option value="Pernas">Pernas</option>
+                    <option value="Bunda">Bunda</option>
+                    <option value="Virilha">Virilha</option>
+                </select>
+            </div>
+            
+            <div class="mt-2 hidden">
+                <!-- Keep ID for compatibility temporarily if needed -->
+                <textarea id="inp-g-armor-desc" class="hidden"></textarea>
+                <textarea id="inp-g-armor-special" class="hidden"></textarea>
+                <input type="text" id="inp-g-armor-exposure" class="hidden">
+            </div>
         </form>
         <div class="p-4 border-t border-gold/20 flex justify-end gap-3 bg-black/20">
             <button type="button" onclick="document.getElementById('modal-armor').close()" class="px-4 py-2 text-sm text-gray-400 hover:text-white transition">Cancelar</button>

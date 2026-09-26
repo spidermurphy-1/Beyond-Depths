@@ -27,9 +27,8 @@ window.saveGlobalWeapon = function() {
         ownerId: window.currentUser ? window.currentUser.uid : 'local',
         type: 'weapon',
         category: document.getElementById('inp-w-category').value,
-        rarity: document.getElementById('inp-w-rarity').value,
-        req: document.getElementById('inp-w-req').value,
-        material: document.getElementById('inp-w-material').value,
+        reqAttr: document.getElementById('inp-w-req-attr')?.value || 'none',
+        reqVal: parseInt(document.getElementById('inp-w-req-val')?.value) || 0,
         durability: parseInt(document.getElementById('inp-w-durability').value) || 100,
         maxDurability: parseInt(document.getElementById('inp-w-durability').value) || 100,
         
@@ -62,8 +61,8 @@ window.saveGlobalAccessory = function() {
         ownerId: window.currentUser ? window.currentUser.uid : 'local',
         type: 'accessory',
         category: document.getElementById('inp-acc-category').value,
-        rarity: document.getElementById('inp-acc-rarity').value,
-        req: document.getElementById('inp-acc-req').value,
+        reqAttr: document.getElementById('inp-acc-req-attr')?.value || 'none',
+        reqVal: parseInt(document.getElementById('inp-acc-req-val')?.value) || 0,
         
         mods: {
             df: parseInt(document.getElementById('inp-acc-df').value) || 0,

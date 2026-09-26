@@ -414,7 +414,6 @@ document.getElementById('btn-save-g-armor').addEventListener('click', (e) => {
     const pzEl = document.getElementById('inp-g-armor-protected-zones');
     if (pzEl) {
         selProtected = Array.from(pzEl.selectedOptions).map(o => o.value);
-        if (selProtected.length > 3) selProtected = selProtected.slice(0, 3);
     }
 
     const obj = {
@@ -424,11 +423,10 @@ document.getElementById('btn-save-g-armor').addEventListener('click', (e) => {
         desc: document.getElementById('inp-g-armor-desc').value,
         slot: document.getElementById('inp-g-armor-slot')?.value || 'body',
         category: document.getElementById('inp-g-armor-category')?.value || 'Leve',
-        rarity: document.getElementById('inp-g-armor-rarity')?.value || 'Comum',
-        req: document.getElementById('inp-g-armor-req')?.value || '',
-        durability: document.getElementById('inp-g-armor-durability')?.value || '',
-        defPhys: document.getElementById('inp-g-armor-def-phys')?.value || '',
-        defLust: document.getElementById('inp-g-armor-def-lust')?.value || '',
+        reqAttr: document.getElementById('inp-g-armor-req-attr')?.value || 'none',
+        reqVal: parseInt(document.getElementById('inp-g-armor-req-val')?.value) || 0,
+        durability: parseInt(document.getElementById('inp-g-armor-durability')?.value) || 100,
+        maxDurability: parseInt(document.getElementById('inp-g-armor-durability')?.value) || 100,
         attrBonus: document.getElementById('inp-g-armor-attr-bonus')?.value || '',
         agiMod: document.getElementById('inp-g-armor-agi-mod')?.value || '',
         staminaCost: document.getElementById('inp-g-armor-stamina-cost')?.value || '',
@@ -859,6 +857,16 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
         charm: document.getElementById('inp-equip-charm').value
     };
     
+    const attrBase = { 
+        con: parseInt(document.getElementById('inp-con').value) || 0,
+        for: parseInt(document.getElementById('inp-for').value) || 0,
+        vig: parseInt(document.getElementById('inp-vig').value) || 0,
+        agi: parseInt(document.getElementById('inp-agi').value) || 0,
+        von: parseInt(document.getElementById('inp-von').value) || 0,
+        sed: parseInt(document.getElementById('inp-sed').value) || 0,
+        mis: parseInt(document.getElementById('inp-mis').value) || 0
+    };
+
     // Class restrictions
     if (classNameVal.includes('sacerdote') && equipment.body) {
         const armor = globalArmors.find(a => a.id === equipment.body);
@@ -866,6 +874,29 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
             alert("Sacerdotes não podem equipar armaduras pesadas no corpo. Armadura desequipada.");
             equipment.body = "";
         }
+    }
+
+    // Requirements Validation
+    let removedItems = [];
+    Object.keys(equipment).forEach(slot => {
+        let itemId = equipment[slot];
+        if (!itemId) return;
+        
+        let item = globalWeapons.find(w => w.id === itemId) || 
+                   globalArmors.find(a => a.id === itemId) || 
+                   globalAccessories.find(a => a.id === itemId);
+                   
+        if (item && item.reqAttr && item.reqAttr !== 'none' && item.reqVal > 0) {
+            let charAttrVal = attrBase[item.reqAttr] || 0;
+            if (charAttrVal < item.reqVal) {
+                equipment[slot] = "";
+                removedItems.push(`${item.name} (Requer ${item.reqAttr.toUpperCase()} >= ${item.reqVal})`);
+            }
+        }
+    });
+
+    if (removedItems.length > 0) {
+        alert("Os seguintes itens foram desequipados pois você não atende aos requisitos mecânicos:\\n\\n" + removedItems.join("\\n"));
     }
 
     const selSkills = Array.from(document.querySelectorAll('.inp-skill-slot')).map(s => s.value).filter(v => v !== "");
@@ -892,15 +923,7 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
         erogenousZones: selErogenous,
         isUnlockedPoints: isUnlocked,
         perks: JSON.parse(JSON.stringify(draftPerks)),
-        attr: { 
-            con: parseInt(document.getElementById('inp-con').value) || 0,
-            for: parseInt(document.getElementById('inp-for').value) || 0,
-            vig: parseInt(document.getElementById('inp-vig').value) || 0,
-            agi: parseInt(document.getElementById('inp-agi').value) || 0,
-            von: parseInt(document.getElementById('inp-von').value) || 0,
-            sed: parseInt(document.getElementById('inp-sed').value) || 0,
-            mis: parseInt(document.getElementById('inp-mis').value) || 0
-        }
+        attr: attrBase
     };
 
     if (editingCharId) {
@@ -2201,6 +2224,15 @@ document.getElementById('btn-master-damage').addEventListener('click', () => {
     tSelect.innerHTML = '';
     aSelectAttr.innerHTML = '<option value="">Nenhum / Ambiente</option>';
     
+    // Add change listener to update weapons if not already added
+    if (!aSelectAttr.dataset.listenerAdded) {
+        aSelectAttr.addEventListener('change', (e) => {
+            window.populateAttackerWeapons(e.target.value);
+            window.updateMasterDamageUI();
+        });
+        aSelectAttr.dataset.listenerAdded = "true";
+    }
+    
     combatState.combatants.forEach(c => {
         const optT = document.createElement('option');
         optT.value = c.cid;
@@ -2216,9 +2248,50 @@ document.getElementById('btn-master-damage').addEventListener('click', () => {
     // Auto-select first target if available
     if(combatState.combatants.length > 0) tSelect.value = combatState.combatants[0].cid;
     
-    // Removed wrapper-dmg-zone references
+    window.populateAttackerWeapons('');
+    
+    document.getElementById('inp-dmg-custom').classList.remove('hidden');
+    document.getElementById('inp-dmg-custom').placeholder = "Digite o Dano (Ex: 10 ou 2d6)";
+    document.getElementById('inp-dmg-custom').value = '';
+    
+    window.updateMasterDamageUI();
+    document.getElementById('modal-apply-damage').showModal();
+});
+
+window.populateAttackerWeapons = function(cid) {
     const aSelect = document.getElementById('inp-dmg-attack');
-    aSelect.innerHTML = `
+    let weaponGroup = '';
+    
+    if (cid) {
+        let combatant = combatState.combatants.find(c => c.cid === cid);
+        if (combatant && !combatant.isMonster) {
+            let char = characters.find(c => c.id === combatant.refId);
+            if (char && char.equipment) {
+                let equippedWeapons = [];
+                ['hand_1', 'hand_2'].forEach(slot => {
+                    if (char.equipment[slot]) {
+                        let wp = globalWeapons.find(w => w.id === char.equipment[slot]);
+                        if (wp && !equippedWeapons.find(ew => ew.id === wp.id)) {
+                            equippedWeapons.push(wp);
+                        }
+                    }
+                });
+                
+                if (equippedWeapons.length > 0) {
+                    weaponGroup = `<optgroup label="Armas Equipadas">`;
+                    equippedWeapons.forEach(wp => {
+                        let dmgStr = `${wp.diceCount}d${wp.diceFaces}`;
+                        if (wp.dmgMod > 0) dmgStr += `+${wp.dmgMod}`;
+                        else if (wp.dmgMod < 0) dmgStr += `${wp.dmgMod}`;
+                        weaponGroup += `<option value="weapon:${wp.id}">Atacar com ${wp.name} (${dmgStr}) [Dur: ${wp.durability}/${wp.maxDurability}]</option>`;
+                    });
+                    weaponGroup += `</optgroup>`;
+                }
+            }
+        }
+    }
+
+    aSelect.innerHTML = weaponGroup + `
         <optgroup label="Genéricos (Cálculo Automático)">
             <option value="1d4">Ataque Leve / Fricção (1d4)</option>
             <option value="1d6">Ataque Médio / Magia (1d6)</option>
@@ -2229,8 +2302,6 @@ document.getElementById('btn-master-damage').addEventListener('click', () => {
         <optgroup label="Ações Físicas (Mestre joga os dados e insere)">
             <option value="1d4 + FOR">Soco Simples / Chute Rápido (1d4 + FOR)</option>
             <option value="1d8 + FOR">Golpe Pesado (1d8 + FOR)</option>
-            <option value="Dano da Arma + FOR">Arma Corpo-a-Corpo (Arma + FOR)</option>
-            <option value="Dano da Arma + AGI">Arma à Distância / Arco (Arma + AGI)</option>
             <option value="2d4 + FOR">Arremesso de Corpo (2d4 + FOR)</option>
             <option value="1d6 + FOR">Encontrão / Investida (1d6 + FOR)</option>
             <option value="1d4 + FOR">Golpe Baixo (1d4 + FOR)</option>
@@ -2258,14 +2329,7 @@ document.getElementById('btn-master-damage').addEventListener('click', () => {
             <option value="custom" selected>Ataque Livre / Customizado</option>
         </optgroup>
     `;
-    
-    document.getElementById('inp-dmg-custom').classList.remove('hidden');
-    document.getElementById('inp-dmg-custom').placeholder = "Digite o Dano (Ex: 10 ou 2d6)";
-    document.getElementById('inp-dmg-custom').value = '';
-    
-    updateMasterDamageUI();
-    document.getElementById('modal-apply-damage').showModal();
-});
+};
 
 window.getAttackTags = function(attackName) {
     let tags = [];
@@ -2396,6 +2460,21 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
 
         let baseAttackStr = document.getElementById('inp-dmg-attack').value;
         let expr = baseAttackStr;
+        let weaponToDegrade = null;
+        
+        if (baseAttackStr.startsWith('weapon:')) {
+            let wpId = baseAttackStr.split(':')[1];
+            let wp = globalWeapons.find(w => w.id === wpId);
+            if (wp) {
+                weaponToDegrade = wp;
+                expr = `${wp.diceCount}d${wp.diceFaces}`;
+                if (wp.dmgMod > 0) expr += `+${wp.dmgMod}`;
+                else if (wp.dmgMod < 0) expr += `${wp.dmgMod}`;
+                // add + FOR if it's melee for automatic calculation (optional, handled by master mostly)
+                // Actually the master will just type the total damage in the custom field usually
+            }
+        }
+
         const customInp = document.getElementById('inp-dmg-custom');
         
         if(!customInp.classList.contains('hidden')) {
@@ -2590,6 +2669,42 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
         let danoTotal = baseDano + mod - defesaTotal;
         if (isNaN(danoTotal) || danoTotal === null) danoTotal = 0;
         if(danoTotal < 0) danoTotal = 0;
+
+        // --- DURABILITY DEGRADATION ---
+        let itemsSaved = false;
+        if (weaponToDegrade && weaponToDegrade.durability > 0) {
+            weaponToDegrade.durability -= 1;
+            logNotes.push(`Durabilidade da arma (${weaponToDegrade.name}) reduziu para ${weaponToDegrade.durability}/${weaponToDegrade.maxDurability}`);
+            if (weaponToDegrade.durability <= 0) {
+                logNotes.push(`⚠️ A arma (${weaponToDegrade.name}) quebrou!`);
+            }
+            window.saveToDB('global_weapons', weaponToDegrade, globalWeapons, 'bd_weapons');
+            itemsSaved = true;
+        }
+
+        if (defChar && defChar.equipment && targetZone !== 'Qualquer' && ['HP', 'HP_MAG'].includes(dmgType)) {
+            ['head', 'body', 'back', 'waist', 'feet', 'intimate'].forEach(slot => {
+                let armorId = defChar.equipment[slot];
+                if (armorId) {
+                    let ar = globalArmors.find(a => a.id === armorId);
+                    if (ar && ar.protectedZones && ar.protectedZones.includes(targetZone)) {
+                        if (ar.durability > 0) {
+                            ar.durability -= 1;
+                            logNotes.push(`Durabilidade da armadura (${ar.name}) reduziu para ${ar.durability}/${ar.maxDurability}`);
+                            if (ar.durability <= 0) {
+                                logNotes.push(`⚠️ A armadura (${ar.name}) quebrou e precisa ser reparada!`);
+                            }
+                            window.saveToDB('global_armors', ar, globalArmors, 'bd_armors');
+                            itemsSaved = true;
+                        }
+                    }
+                }
+            });
+        }
+        
+        if(itemsSaved && window.renderCharacterModal && document.getElementById('modal-edit-char').open) {
+            window.renderCharacterModal(defChar || attackerChar);
+        }
 
         if (humanoResilienciaAtiva && ['LUST', 'LUST_MAG'].includes(dmgType)) {
             danoTotal = Math.floor(danoTotal * 0.85);
