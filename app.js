@@ -2287,6 +2287,15 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
             logNotes.push("[Defesa do Alvo] Carne Ordinária (Humano: -3 Def. Lust)");
         }
 
+        if(classTpl === 'Bulwark') {
+            defesaTotal += 3;
+            logNotes.push("[Defesa do Alvo] Égide de Defesa (Bulwark: +3 Defesa Geral)");
+            if(dmgType === 'HP') {
+                defesaTotal += 2;
+                logNotes.push("[Defesa do Alvo] Vanguarda (Bulwark: +2 Redução Física)");
+            }
+        }
+
         if (isNaN(defesaTotal) || defesaTotal === null) defesaTotal = 0;
         
         let danoTotal = baseDano + mod - defesaTotal;
@@ -2296,6 +2305,16 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
         if(classTpl === 'Artífice' && dmgType === 'MAG') {
             danoTotal = Math.floor(danoTotal * 1.10);
             logNotes.push("[Fraqueza do Alvo] Descrente (Artífice: +10% Dano Recebido Mágico)");
+        }
+
+        if(raceTpl === 'Sexualizados') {
+            if(dmgType === 'LUST') {
+                danoTotal = Math.floor(danoTotal * 1.15);
+                logNotes.push("[Fraqueza do Alvo] Carne Ordinária (Sexualizado: +15% Dano Lust)");
+            } else {
+                danoTotal = Math.floor(danoTotal * 1.10);
+                logNotes.push("[Fraqueza do Alvo] Carne Ordinária (Sexualizado: +10% Dano Recebido)");
+            }
         }
 
         if(dmgType === 'LUST') {

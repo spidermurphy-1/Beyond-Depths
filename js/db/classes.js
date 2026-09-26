@@ -121,5 +121,38 @@ const CLASS_TEMPLATES = {
             { name: "Foca em mim!", type: "Ativa", cost: "1 Ação", test: "Vontade CD 14", effect: "Corpo vulnerável torna-se irresistível. Obriga o alvo a focar a Oferenda como objetivo principal.", classRestricted: "Oferenda" },
             { name: "Fraqueza: Corpo e Mente Cativa", type: "Passiva", cost: "Passivo", test: "-", effect: "Amarras alteram conforme o patrono. Impossível livrar-se. Sem aliados no combate, rende-se imediatamente.", classRestricted: "Oferenda" }
         ]
+    },
+    "Bulwark": {
+        baseStats: { hp: 200, st: 50, lust: 130, en: 30 },
+        attrMods: { for: 1, von: 1, agi: -2 },
+        skills: [
+            {
+                name: "Égide de Defesa",
+                type: "Passiva",
+                desc: "+3 Defesa GERAL. Aumenta defesa física, Constituição e sexual."
+            },
+            {
+                name: "Vanguarda",
+                type: "Passiva",
+                desc: "Em equipe, os tanques se tornam mais INTRÉPIDOS, ganhando +2 em dano de força e +2 em redução de dano físico, dando passivamente para seus aliados também resistência."
+            },
+            {
+                name: "TERREMOTO!",
+                type: "Ativa",
+                cost: "10 turnos",
+                test: "-",
+                desc: "O tanque pode e consegue com um PISAR PESADO no chão tremer tudo a sua frente, atordoando e deixando vulneravel TODOS OS ALVOS (até mesmo aliados se estiverem no caminho.) por pelo menos 2 turnos, reduzindo em -2 a agilidade dos mesmos."
+            }
+        ],
+        weaknesses: [
+            {
+                name: "Lentidão",
+                desc: "Os tanques apesar de grandes e fortes, são lentos demais . . . Recebem -2 em esquiva."
+            },
+            {
+                name: "Matilha",
+                desc: "Naturalmente os tanques possuem um vinculo de proteção para com aqueles que ele se preocupa, sacrificando-se sempre que seu sacrifício significar a possibilidade de salvar um companheiro."
+            }
+        ]
     }
 };
