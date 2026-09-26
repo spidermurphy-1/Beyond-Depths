@@ -386,21 +386,20 @@
                     </div>
                     <div class="col-span-2">
                         <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Zonas Erógenas (Máx 2)</label>
-                        <p class="text-[10px] text-gray-500 mb-1">Ataques LUST nestas regiões recebem +20% de dano. Segure Ctrl/Cmd para selecionar várias.</p>
-                        <select id="inp-erogenous-zones" multiple class="input-dark w-full h-24 text-sm custom-scrollbar">
-                            <option value="Cabeça">Cabeça</option>
-                            <option value="Pescoço">Pescoço</option>
-                            <option value="Nuca">Nuca</option>
-                            <option value="Tronco">Tronco</option>
-                            <option value="Seios">Seios</option>
-                            <option value="Braços">Braços</option>
-                            <option value="Pernas">Pernas</option>
-                            <option value="Bunda">Bunda</option>
-                            <option value="Ânus">Ânus</option>
-                            <option value="Virilha">Virilha</option>
-                            <option value="Pênis">Pênis</option>
-                            <option value="Testículos">Testículos</option>
-                        </select>
+                        <div id="inp-erogenous-zones" class="grid grid-cols-2 gap-1 text-xs text-gray-300">
+                            <label class="flex items-center gap-1 cursor-pointer hover:text-white"><input type="checkbox" value="Cabeça" class="inp-ero-zone"> Cabeça</label>
+                            <label class="flex items-center gap-1 cursor-pointer hover:text-white"><input type="checkbox" value="Pescoço" class="inp-ero-zone"> Pescoço</label>
+                            <label class="flex items-center gap-1 cursor-pointer hover:text-white"><input type="checkbox" value="Nuca" class="inp-ero-zone"> Nuca</label>
+                            <label class="flex items-center gap-1 cursor-pointer hover:text-white"><input type="checkbox" value="Tronco" class="inp-ero-zone"> Tronco</label>
+                            <label class="flex items-center gap-1 cursor-pointer hover:text-white"><input type="checkbox" value="Seios" class="inp-ero-zone"> Seios</label>
+                            <label class="flex items-center gap-1 cursor-pointer hover:text-white"><input type="checkbox" value="Braços" class="inp-ero-zone"> Braços</label>
+                            <label class="flex items-center gap-1 cursor-pointer hover:text-white"><input type="checkbox" value="Pernas" class="inp-ero-zone"> Pernas</label>
+                            <label class="flex items-center gap-1 cursor-pointer hover:text-white"><input type="checkbox" value="Bunda" class="inp-ero-zone"> Bunda</label>
+                            <label class="flex items-center gap-1 cursor-pointer hover:text-white"><input type="checkbox" value="Ânus" class="inp-ero-zone"> Ânus</label>
+                            <label class="flex items-center gap-1 cursor-pointer hover:text-white"><input type="checkbox" value="Virilha" class="inp-ero-zone"> Virilha</label>
+                            <label class="flex items-center gap-1 cursor-pointer hover:text-white"><input type="checkbox" value="Pênis" class="inp-ero-zone"> Pênis</label>
+                            <label class="flex items-center gap-1 cursor-pointer hover:text-white"><input type="checkbox" value="Testículos" class="inp-ero-zone"> Testículos</label>
+                        </div>
                     </div>
                 </div>
 
@@ -840,16 +839,16 @@
 
             <div class="border-t border-gold/10 pt-4 mt-2">
                 <label class="block text-[10px] text-gold uppercase mb-1" title="Zonas onde a Defesa da Armadura se aplica">Zonas Protegidas (Defesa)</label>
-                <select id="inp-g-armor-protected-zones" multiple class="input-dark w-full h-24 text-xs custom-scrollbar">
-                    <option value="Cabeça">Cabeça</option>
-                    <option value="Pescoço">Pescoço</option>
-                    <option value="Tronco">Tronco</option>
-                    <option value="Seios">Seios</option>
-                    <option value="Braços">Braços</option>
-                    <option value="Pernas">Pernas</option>
-                    <option value="Bunda">Bunda</option>
-                    <option value="Virilha">Virilha</option>
-                </select>
+                <div id="inp-g-armor-protected-zones" class="grid grid-cols-2 gap-1 text-xs text-gray-300">
+                    <label class="flex items-center gap-1 cursor-pointer hover:text-white"><input type="checkbox" value="Cabeça" class="inp-armor-zone"> Cabeça</label>
+                    <label class="flex items-center gap-1 cursor-pointer hover:text-white"><input type="checkbox" value="Pescoço" class="inp-armor-zone"> Pescoço</label>
+                    <label class="flex items-center gap-1 cursor-pointer hover:text-white"><input type="checkbox" value="Tronco" class="inp-armor-zone"> Tronco</label>
+                    <label class="flex items-center gap-1 cursor-pointer hover:text-white"><input type="checkbox" value="Seios" class="inp-armor-zone"> Seios</label>
+                    <label class="flex items-center gap-1 cursor-pointer hover:text-white"><input type="checkbox" value="Braços" class="inp-armor-zone"> Braços</label>
+                    <label class="flex items-center gap-1 cursor-pointer hover:text-white"><input type="checkbox" value="Pernas" class="inp-armor-zone"> Pernas</label>
+                    <label class="flex items-center gap-1 cursor-pointer hover:text-white"><input type="checkbox" value="Bunda" class="inp-armor-zone"> Bunda</label>
+                    <label class="flex items-center gap-1 cursor-pointer hover:text-white"><input type="checkbox" value="Virilha" class="inp-armor-zone"> Virilha</label>
+                </div>
             </div>
             
             <div class="mt-2 hidden">

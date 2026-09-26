@@ -410,11 +410,7 @@ document.getElementById('btn-save-g-armor').addEventListener('click', (e) => {
         return;
     }
     
-    let selProtected = [];
-    const pzEl = document.getElementById('inp-g-armor-protected-zones');
-    if (pzEl) {
-        selProtected = Array.from(pzEl.selectedOptions).map(o => o.value);
-    }
+    let selProtected = Array.from(document.querySelectorAll('.inp-armor-zone:checked')).map(cb => cb.value);
 
     const obj = {
         id: generateId(),
@@ -905,12 +901,8 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
     const selSkills = Array.from(document.querySelectorAll('.inp-skill-slot')).map(s => s.value).filter(v => v !== "");
     const selConds = Array.from(document.querySelectorAll('.inp-cond-check')).filter(c => c.checked).map(c => c.value);
     
-    let selErogenous = [];
-    const eroEl = document.getElementById('inp-erogenous-zones');
-    if (eroEl) {
-        selErogenous = Array.from(eroEl.selectedOptions).map(o => o.value);
-        if (selErogenous.length > 2) selErogenous = selErogenous.slice(0, 2);
-    }
+    let selErogenous = Array.from(document.querySelectorAll('.inp-ero-zone:checked')).map(cb => cb.value);
+    if (selErogenous.length > 2) selErogenous = selErogenous.slice(0, 2);
 
     const newCharData = {
         name: document.getElementById('inp-name').value,
@@ -1301,12 +1293,9 @@ function renderDashboard() {
         const oEl = document.getElementById('inp-orientation'); if(oEl) oEl.value = char.orientation || '';
         document.getElementById('inp-avatar').value = char.avatarUrl || "";
         
-        const eroEl = document.getElementById('inp-erogenous-zones');
-        if (eroEl) {
-            Array.from(eroEl.options).forEach(opt => {
-                opt.selected = char.erogenousZones && char.erogenousZones.includes(opt.value);
-            });
-        }
+        document.querySelectorAll('.inp-ero-zone').forEach(cb => {
+            cb.checked = char.erogenousZones && char.erogenousZones.includes(cb.value);
+        });
         
         draftPerks = char.perks ? JSON.parse(JSON.stringify(char.perks)) : {};
         switchCharTab('base');
