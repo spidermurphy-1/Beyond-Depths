@@ -58,9 +58,7 @@ let combatState = JSON.parse(localStorage.getItem('bd_combat_state')) || { round
 let globalArmors = [];
 let globalSkills = [];
 let activeCharId = null;
-const urlParams = new URLSearchParams(window.location.search);
-let currentTab = urlParams.get('tab') || 'chars'; // chars, armors, skills, monsters, rpg, weapons, accessories
-updateTabsUI();
+const currentTab = window.currentTab;
 let unsubscribeMonsters = null;
 
 function generateId() { return 'id_' + Math.random().toString(36).substr(2, 9); }
@@ -253,86 +251,11 @@ document.getElementById('btn-login-submit').addEventListener('click', (e) => {
 });
 
 // --- SIDEBAR TABS ---
-function switchTab(tabName) {
-    if (currentTab !== tabName) {
-        currentTab = tabName;
-        try {
-            history.pushState({ tab: tabName }, '', '?tab=' + tabName);
-        } catch (e) {
-            console.warn('history.pushState not supported on file:// protocol');
-        }
-    }
-    updateTabsUI();
-    renderSidebar();
-    if (tabName === 'rpg') renderRPG();
-}
+// removed switchTab and updateTabsUI
 
-window.addEventListener('popstate', (e) => {
-    if (e.state && e.state.tab) {
-        currentTab = e.state.tab;
-    } else {
-        const params = new URLSearchParams(window.location.search);
-        currentTab = params.get('tab') || 'chars';
-    }
-    updateTabsUI();
-    renderSidebar();
-    if (currentTab === 'rpg') renderRPG();
-});
+// removed onclick tab listeners
 
-document.getElementById('tab-chars').onclick = () => switchTab('chars');
-document.getElementById('tab-monsters').onclick = () => switchTab('monsters');
-document.getElementById('tab-rpg').onclick = () => switchTab('rpg');
-document.getElementById('tab-armors').onclick = () => switchTab('armors');
-document.getElementById('tab-skills').onclick = () => switchTab('skills');
-document.getElementById('tab-weapons').onclick = () => switchTab('weapons');
-document.getElementById('tab-accessories').onclick = () => switchTab('accessories');
-
-function updateTabsUI() {
-    ['chars','monsters','rpg','armors','skills','weapons','accessories'].forEach(t => {
-        const el = document.getElementById(`tab-${t}`);
-        if (!el) return;
-        if (t === currentTab) {
-            if (t === 'rpg') {
-                el.classList.add('text-purple-300', 'bg-purple-900/30');
-                el.classList.remove('text-purple-400', 'bg-purple-900/10');
-            } else {
-                el.classList.add('bg-gold/10', 'text-gold', 'font-bold');
-                el.classList.remove('text-gray-400');
-            }
-        } else {
-            if (t === 'rpg') {
-                el.classList.add('text-purple-400', 'bg-purple-900/10');
-                el.classList.remove('text-purple-300', 'bg-purple-900/30');
-            } else {
-                el.classList.add('text-gray-400');
-                el.classList.remove('bg-gold/10', 'text-gold', 'font-bold');
-            }
-        }
-    });
-
-    const btnNew = document.getElementById('btn-new-item');
-    const btnImp = document.getElementById('btn-import-char');
-    if(currentTab === 'rpg') {
-        btnNew.innerHTML = '<i class="fa-solid fa-plus mr-1"></i> Add Mesa';
-        btnNew.classList.replace('btn-gold', 'bg-purple-600');
-        btnNew.classList.add('text-white', 'hover:bg-purple-500');
-        btnImp.classList.add('hidden');
-    } else {
-        btnNew.innerHTML = '<i class="fa-solid fa-plus mr-1"></i> Novo';
-        btnNew.classList.replace('bg-purple-600', 'btn-gold');
-        btnNew.classList.remove('text-white', 'hover:bg-purple-500');
-        btnImp.classList.remove('hidden');
-    }
-
-    if (currentTab === 'rpg') {
-        document.getElementById('dashboard-container').classList.add('hidden');
-        document.getElementById('no-char-selected').classList.add('hidden');
-        document.getElementById('rpg-dashboard-container').classList.remove('hidden');
-    } else {
-        document.getElementById('rpg-dashboard-container').classList.add('hidden');
-        renderDashboard();
-    }
-}
+// removed updateTabsUI
 
 document.getElementById('btn-new-item').addEventListener('click', () => {
     if (db && !currentUser) return alert("Faça login para criar conteúdo.");
@@ -2884,3 +2807,14 @@ function populateDropdowns() {
 
 // Call initially
 setTimeout(populateDropdowns, 100);
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (window.currentTab === 'rpg') {
+        document.getElementById('dashboard-container').classList.add('hidden');
+        document.getElementById('no-char-selected').classList.add('hidden');
+        document.getElementById('rpg-dashboard-container').classList.remove('hidden');
+    } else {
+        document.getElementById('rpg-dashboard-container').classList.add('hidden');
+        renderDashboard();
+    }
+});
