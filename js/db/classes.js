@@ -61,13 +61,13 @@ const CLASS_TEMPLATES = {
     },
     "Caçador": {
         baseStats: { hp: 110, st: 110, lust: 120, en: 35 },
-        attrMods: { for: 3, con: 2 },
+        attrMods: { agi: 3, con: 2 },
         skills: [
             {
                 name: "Munição Adaptável",
                 type: "Ativa",
                 cost: "2 Energia Sexual (Opcional)",
-                test: "Força",
+                test: "Agilidade",
                 desc: "Pode utilizar munição tradicional (2d8 de dano físico) ou Munição de Energia Sexual (dano direto na LUST). Se em contato próximo, o dano na LUST passa de 2d8 para 3d6. Tipo de munição deve ser selecionado antes do disparo."
             },
             {
