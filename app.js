@@ -69,6 +69,10 @@ let combatState = JSON.parse(localStorage.getItem('bd_combat_state')) || { round
 let globalArmors = [];
 let globalSkills = [];
 let activeCharId = null;
+let editingArmorId = null;
+let editingWeaponId = null;
+let editingAccessoryId = null;
+let editingSkillId = null;
 const currentTab = window.currentTab;
 let unsubscribeMonsters = null;
 
@@ -305,15 +309,19 @@ document.getElementById('btn-new-item').addEventListener('click', () => {
     } else if (currentTab === 'rpg') {
         document.getElementById('btn-combat-add').click();
     } else if (currentTab === 'armors') {
+        editingArmorId = null;
         document.getElementById('form-armor').reset();
         document.getElementById('modal-armor').showModal();
     } else if (currentTab === 'weapons') {
+        window.editingWeaponId = null;
         document.getElementById('form-weapon').reset();
         document.getElementById('modal-weapon').showModal();
     } else if (currentTab === 'accessories') {
+        window.editingAccessoryId = null;
         document.getElementById('form-accessory').reset();
         document.getElementById('modal-accessory').showModal();
     } else if (currentTab === 'skills') {
+        editingSkillId = null;
         document.getElementById('form-skill').reset();
         document.getElementById('modal-skill').showModal();
     }
@@ -388,7 +396,12 @@ function renderSidebar() {
                     <div class="font-bold text-sm text-gray-200">${escapeHTML(item.name)}</div>
                     <div class="text-xs text-gray-400">${escapeHTML(sub)}</div>
                 </div>
-                ${canEdit(item) ? `<button onclick="deleteFromDB('${dbName}', '${item.id}', ${dbArrayName}, 'bd_${currentTab}')" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-trash"></i></button>` : ''}
+                ${canEdit(item) ? `
+                <div class="flex flex-col gap-1 sm:flex-row sm:gap-2">
+                    <button onclick="openEditItem('${viewModalName}', '${item.id}')" class="text-blue-400 hover:text-blue-300 px-1" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                    <button onclick="deleteFromDB('${dbName}', '${item.id}', ${dbArrayName}, 'bd_${currentTab}')" class="text-red-400 hover:text-red-300 px-1" title="Apagar"><i class="fa-solid fa-trash"></i></button>
+                </div>
+                ` : ''}
             `;
         }
         listEl.appendChild(div);
@@ -403,7 +416,7 @@ document.getElementById('btn-save-g-armor').addEventListener('click', (e) => {
     
     const nameVal = document.getElementById('inp-g-armor-name').value.trim();
     
-    if (globalArmors.some(a => a.name.toLowerCase() === nameVal.toLowerCase())) {
+    if (globalArmors.some(a => a.name.toLowerCase() === nameVal.toLowerCase() && a.id !== editingArmorId)) {
         alert("Já existe uma armadura cadastrada com esse nome!");
         return;
     }
@@ -411,7 +424,7 @@ document.getElementById('btn-save-g-armor').addEventListener('click', (e) => {
     let selProtected = Array.from(document.querySelectorAll('.inp-armor-zone:checked')).map(cb => cb.value);
 
     const obj = {
-        id: generateId(),
+        id: editingArmorId || generateId(),
         name: nameVal,
         base: document.getElementById('inp-g-armor-base').value,
         desc: document.getElementById('inp-g-armor-desc').value,
@@ -450,13 +463,13 @@ document.getElementById('btn-save-g-skill').addEventListener('click', (e) => {
     
     const nameVal = document.getElementById('inp-g-skill-name').value.trim();
     
-    if (globalSkills.some(s => s.name.toLowerCase() === nameVal.toLowerCase())) {
+    if (globalSkills.some(s => s.name.toLowerCase() === nameVal.toLowerCase() && s.id !== editingSkillId)) {
         alert("Já existe uma habilidade cadastrada com esse nome!");
         return;
     }
     
     const obj = {
-        id: generateId(),
+        id: editingSkillId || generateId(),
         name: nameVal,
         type: document.getElementById('inp-g-skill-type').value,
         cost: document.getElementById('inp-g-skill-cost').value,
@@ -626,6 +639,22 @@ window.openViewModal = function(type, id) {
         `;
     }
     
+    let itemObj = null;
+    if (type === 'skill') itemObj = globalSkills.find(s => s.id === id);
+    else if (type === 'weapon') itemObj = globalWeapons.find(w => w.id === id);
+    else if (type === 'accessory') itemObj = globalAccessories.find(a => a.id === id);
+    else if (type === 'armor') itemObj = globalArmors.find(a => a.id === id);
+
+    if (itemObj && canEdit(itemObj)) {
+        contentEl.innerHTML += `
+            <div class="mt-4 pt-4 border-t border-gold/20 flex justify-center">
+                <button onclick="document.getElementById('modal-view').close(); openEditItem('${type}', '${id}')" class="btn-gold px-6 py-2 rounded text-sm font-bold flex items-center gap-2 hover:bg-gold-dark transition">
+                    <i class="fa-solid fa-pen"></i> Editar Item
+                </button>
+            </div>
+        `;
+    }
+
     document.getElementById('modal-view').showModal();
 };
 
@@ -2945,3 +2974,85 @@ document.addEventListener('DOMContentLoaded', () => {
         renderDashboard();
     }
 });
+
+window.openEditItem = function(type, id) {
+    if (type === 'armor') {
+        const ar = globalArmors.find(a => a.id === id);
+        if (!ar || !canEdit(ar)) return alert("Sem permissão ou item não encontrado.");
+        editingArmorId = ar.id;
+        document.getElementById('inp-g-armor-name').value = ar.name || '';
+        document.getElementById('inp-g-armor-desc').value = ar.desc || '';
+        document.getElementById('inp-g-armor-req').value = ar.req || '';
+        document.getElementById('inp-g-armor-durability').value = ar.durability || '';
+        document.getElementById('inp-g-armor-def-phys').value = ar.defPhys || '';
+        document.getElementById('inp-g-armor-def-lust').value = ar.defLust || '';
+        document.getElementById('inp-g-armor-attr-bonus').value = ar.attrBonus || '';
+        document.getElementById('inp-g-armor-agi-mod').value = ar.agiMod || '';
+        document.getElementById('inp-g-armor-stamina-cost').value = ar.staminaCost || '';
+        document.getElementById('inp-g-armor-exposure').value = ar.exposure || '';
+        document.getElementById('inp-g-armor-exposed-part').value = ar.exposedPart || '';
+        document.getElementById('inp-g-armor-special').value = ar.special || '';
+        document.getElementById('inp-g-armor-category').value = ar.category || ar.type || '';
+        document.getElementById('inp-g-armor-rarity').value = ar.rarity || 'Comum';
+        const baseSelect = document.getElementById('inp-g-armor-base');
+        if(baseSelect) baseSelect.value = ar.base || 'custom';
+        document.getElementById('modal-armor').showModal();
+    } else if (type === 'weapon') {
+        const wp = globalWeapons.find(w => w.id === id);
+        if (!wp || !canEdit(wp)) return alert("Sem permissão ou item não encontrado.");
+        editingWeaponId = wp.id;
+        document.getElementById('inp-w-name').value = wp.name || '';
+        document.getElementById('inp-w-desc').value = wp.desc || '';
+        document.getElementById('inp-w-category').value = wp.category || '';
+        document.getElementById('inp-w-dmg-type').value = wp.dmgType || 'HP';
+        document.getElementById('inp-w-dice-c').value = wp.diceCount || '';
+        document.getElementById('inp-w-dice-f').value = wp.diceFaces || '';
+        document.getElementById('inp-w-dmg-mod').value = wp.dmgMod || '';
+        document.getElementById('inp-w-st-cost').value = wp.stCost || '';
+        document.getElementById('inp-w-durability').value = wp.durability || '';
+        document.getElementById('inp-w-req-attr').value = wp.reqAttr || 'none';
+        document.getElementById('inp-w-req-val').value = wp.reqVal || '';
+        document.getElementById('inp-w-eff-type').value = wp.effectType || 'none';
+        document.getElementById('inp-w-eff-power').value = wp.effectPower || '';
+        document.getElementById('inp-w-eff-dur').value = wp.effectDuration || '';
+        document.getElementById('modal-weapon').showModal();
+    } else if (type === 'accessory') {
+        const ac = globalAccessories.find(a => a.id === id);
+        if (!ac || !canEdit(ac)) return alert("Sem permissão ou item não encontrado.");
+        editingAccessoryId = ac.id;
+        document.getElementById('inp-acc-name').value = ac.name || '';
+        document.getElementById('inp-acc-desc').value = ac.desc || '';
+        document.getElementById('inp-acc-category').value = ac.category || '';
+        document.getElementById('inp-acc-req-attr').value = ac.reqAttr || 'none';
+        document.getElementById('inp-acc-req-val').value = ac.reqVal || '';
+        
+        const m = ac.mods || {};
+        document.getElementById('inp-acc-df-hp').value = m.df_hp || '';
+        document.getElementById('inp-acc-df-hpmag').value = m.df_hpmag || '';
+        document.getElementById('inp-acc-df-mag').value = m.df_mag || '';
+        document.getElementById('inp-acc-df-lust').value = m.df_lust || '';
+        document.getElementById('inp-acc-df-lustmag').value = m.df_lustmag || '';
+        document.getElementById('inp-acc-agi').value = m.agi || '';
+        document.getElementById('inp-acc-sed').value = m.sed || '';
+        document.getElementById('inp-acc-mis').value = m.mis || '';
+        
+        document.getElementById('modal-accessory').showModal();
+    } else if (type === 'skill') {
+        const sk = globalSkills.find(s => s.id === id);
+        if (!sk || !canEdit(sk)) return alert("Sem permissão ou item não encontrado.");
+        editingSkillId = sk.id;
+        document.getElementById('inp-g-skill-name').value = sk.name || '';
+        document.getElementById('inp-g-skill-type').value = sk.type || '';
+        document.getElementById('inp-g-skill-cost').value = sk.cost || '';
+        document.getElementById('inp-g-skill-test').value = sk.test || '';
+        document.getElementById('inp-g-skill-desc').value = sk.desc || '';
+        document.getElementById('inp-g-skill-cast-time').value = sk.castTime || '';
+        document.getElementById('inp-g-skill-cooldown').value = sk.cooldown || '';
+        document.getElementById('inp-g-skill-range').value = sk.range || '';
+        document.getElementById('inp-g-skill-effect').value = sk.effect || '';
+        document.getElementById('inp-g-skill-sec-effect').value = sk.secEffect || '';
+        document.getElementById('inp-g-skill-scaling').value = sk.scaling || '';
+        document.getElementById('inp-g-skill-penalty').value = sk.penalty || '';
+        document.getElementById('modal-skill').showModal();
+    }
+};

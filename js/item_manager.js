@@ -60,9 +60,14 @@ window.saveGlobalWeapon = function() {
 
     const nameVal = document.getElementById('inp-w-name').value.trim();
     if (!nameVal) return alert('Nome obrigatório');
+    
+    if (window.globalWeapons && window.globalWeapons.some(w => w.name.toLowerCase() === nameVal.toLowerCase() && w.id !== window.editingWeaponId)) {
+        alert("Já existe uma arma com esse nome.");
+        return;
+    }
 
     const obj = {
-        id: 'w_' + Date.now(),
+        id: window.editingWeaponId || 'w_' + Date.now(),
         name: nameVal,
         ownerId: window.currentUser ? window.currentUser.uid : 'local',
         type: 'weapon',
@@ -92,8 +97,13 @@ window.saveGlobalAccessory = function() {
     const nameVal = document.getElementById('inp-acc-name').value.trim();
     if (!nameVal) return alert('Nome obrigatório');
 
+    if (window.globalAccessories && window.globalAccessories.some(a => a.name.toLowerCase() === nameVal.toLowerCase() && a.id !== window.editingAccessoryId)) {
+        alert("Já existe um acessório com esse nome.");
+        return;
+    }
+
     const obj = {
-        id: 'acc_' + Date.now(),
+        id: window.editingAccessoryId || 'acc_' + Date.now(),
         name: nameVal,
         ownerId: window.currentUser ? window.currentUser.uid : 'local',
         type: 'accessory',
