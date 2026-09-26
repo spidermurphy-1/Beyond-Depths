@@ -487,48 +487,87 @@
             <h2 class="text-xl font-cinzel text-gold">Forjar Armadura (Global)</h2>
         </div>
         <form method="dialog" id="form-armor" class="p-6 max-h-[70vh] overflow-y-auto space-y-4">
+            <!-- Dados Básicos -->
             <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Nome</label>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Nome do Equipamento</label>
                 <input type="text" id="inp-g-armor-name" required class="input-dark">
             </div>
             <div>
-                <label class="block text-xs text-gray-400 mb-1">Base (Modificadores Automáticos)</label>
-                <select id="inp-g-armor-base" class="input-dark mb-1">
-                    <option value="none">Sem Armadura</option>
-                    <option value="heavy">Pesada</option>
-                    <option value="light">Leve</option>
-                    <option value="seduction">Sedução</option>
-                    <option value="mixed_hl">Híbrida: Pesada + Leve</option>
-                    <option value="mixed_hs">Híbrida: Pesada + Sedução</option>
-                    <option value="mixed_ls">Híbrida: Leve + Sedução</option>
-                </select>
+                <label class="block text-xs text-gray-400 mb-1">Descrição Narrativa</label>
+                <textarea id="inp-g-armor-desc" class="input-dark min-h-[60px]" placeholder="Insira aqui a história do equipamento..."></textarea>
             </div>
-            <div class="grid grid-cols-3 gap-2">
+            <div class="grid grid-cols-2 gap-2">
                 <div>
-                    <label class="block text-[10px] text-gray-400 uppercase">DF Extra</label>
-                    <input type="number" id="inp-g-armor-df" value="0" class="input-dark text-center">
+                    <label class="block text-[10px] text-gray-400 uppercase">Categoria</label>
+                    <select id="inp-g-armor-category" class="input-dark">
+                        <option value="Leve">Leve</option>
+                        <option value="Pesada">Pesada</option>
+                        <option value="Sexual">Sexual</option>
+                        <option value="Híbrida">Híbrida</option>
+                        <option value="Traje Comum">Traje Comum</option>
+                    </select>
                 </div>
                 <div>
-                    <label class="block text-[10px] text-gray-400 uppercase">DLUST Extra</label>
-                    <input type="number" id="inp-g-armor-dlust" value="0" class="input-dark text-center">
-                </div>
-                <div>
-                    <label class="block text-[10px] text-gray-400 uppercase">AGI Extra</label>
-                    <input type="number" id="inp-g-armor-agi" value="0" class="input-dark text-center">
-                </div>
-                <div>
-                    <label class="block text-[10px] text-gray-400 uppercase">SED Extra</label>
-                    <input type="number" id="inp-g-armor-sed" value="0" class="input-dark text-center">
-                </div>
-                <div>
-                    <label class="block text-[10px] text-gray-400 uppercase">MIS Extra</label>
-                    <input type="number" id="inp-g-armor-mis" value="0" class="input-dark text-center">
+                    <label class="block text-[10px] text-gray-400 uppercase">Raridade</label>
+                    <input type="text" id="inp-g-armor-rarity" class="input-dark" value="Comum">
                 </div>
             </div>
-            <div>
-                <label class="block text-xs text-gray-400 mb-1">Propriedades Especiais</label>
-                <textarea id="inp-g-armor-desc" class="input-dark min-h-[60px]"></textarea>
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="block text-[10px] text-gray-400 uppercase">Requisitos de Uso</label>
+                    <input type="text" id="inp-g-armor-req" class="input-dark" placeholder="Ex: Vigor ≥ 5">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 uppercase">Durabilidade / Material</label>
+                    <input type="text" id="inp-g-armor-durability" class="input-dark" placeholder="Ex: Aço, 100/100">
+                </div>
             </div>
+            
+            <div class="border-t border-gray-600/30 pt-2 mt-2">
+                <label class="block text-xs font-bold text-gold uppercase mb-1">Atributos Defensivos</label>
+                <div class="space-y-2">
+                    <input type="text" id="inp-g-armor-def-phys" class="input-dark text-sm" placeholder="Defesa Física (Ex: Reduz 1d4 / +3 Def)">
+                    <input type="text" id="inp-g-armor-def-lust" class="input-dark text-sm" placeholder="Defesa de Lust (Ex: +4 Def)">
+                    <input type="text" id="inp-g-armor-attr-bonus" class="input-dark text-sm" placeholder="Bônus de Atributo (Ex: +2 Vigor)">
+                </div>
+            </div>
+
+            <div class="border-t border-gray-600/30 pt-2 mt-2">
+                <label class="block text-xs font-bold text-gold uppercase mb-1">Penalidades & Mobilidade</label>
+                <div class="space-y-2">
+                    <input type="text" id="inp-g-armor-agi-mod" class="input-dark text-sm" placeholder="Modificador de Agilidade (Ex: -1 AGI)">
+                    <input type="text" id="inp-g-armor-stamina-cost" class="input-dark text-sm" placeholder="Custo de Stamina (Ex: +2 ST por Esquiva)">
+                    <input type="text" id="inp-g-armor-exposure" class="input-dark text-sm" placeholder="Exposição (Ex: Vulnerável a toques)">
+                </div>
+            </div>
+
+            <div class="border-t border-gray-600/30 pt-2 mt-2">
+                <label class="block text-xs font-bold text-gold uppercase mb-1">Efeito Especial / Passiva</label>
+                <textarea id="inp-g-armor-special" class="input-dark min-h-[50px]" placeholder="Propriedade Única..."></textarea>
+            </div>
+
+            <details class="bg-black/30 rounded p-2 mt-4 border border-gray-600/30">
+                <summary class="text-[10px] text-gray-400 uppercase cursor-pointer hover:text-white">Automação do Sistema (Mecânica Oculta)</summary>
+                <div class="pt-2 mt-2 border-t border-gray-600/30">
+                    <label class="block text-xs text-gray-400 mb-1">Base (Modificadores Automáticos de HP/Stamina)</label>
+                    <select id="inp-g-armor-base" class="input-dark mb-2">
+                        <option value="none">Sem Armadura</option>
+                        <option value="heavy">Pesada</option>
+                        <option value="light">Leve</option>
+                        <option value="seduction">Sedução</option>
+                        <option value="mixed_hl">Híbrida: Pesada + Leve</option>
+                        <option value="mixed_hs">Híbrida: Pesada + Sedução</option>
+                        <option value="mixed_ls">Híbrida: Leve + Sedução</option>
+                    </select>
+                    <div class="grid grid-cols-5 gap-1">
+                        <div><label class="block text-[9px] text-gray-400 uppercase">DF</label><input type="number" id="inp-g-armor-df" value="0" class="input-dark text-center px-1"></div>
+                        <div><label class="block text-[9px] text-gray-400 uppercase">DLUST</label><input type="number" id="inp-g-armor-dlust" value="0" class="input-dark text-center px-1"></div>
+                        <div><label class="block text-[9px] text-gray-400 uppercase">AGI</label><input type="number" id="inp-g-armor-agi" value="0" class="input-dark text-center px-1"></div>
+                        <div><label class="block text-[9px] text-gray-400 uppercase">SED</label><input type="number" id="inp-g-armor-sed" value="0" class="input-dark text-center px-1"></div>
+                        <div><label class="block text-[9px] text-gray-400 uppercase">MIS</label><input type="number" id="inp-g-armor-mis" value="0" class="input-dark text-center px-1"></div>
+                    </div>
+                </div>
+            </details>
         </form>
         <div class="p-4 border-t border-gold/20 flex justify-end gap-3 bg-black/20">
             <button type="button" onclick="document.getElementById('modal-armor').close()" class="px-4 py-2 text-sm text-gray-400 hover:text-white transition">Cancelar</button>
@@ -546,23 +585,47 @@
                 <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Nome da Habilidade</label>
                 <input type="text" id="inp-g-skill-name" required class="input-dark">
             </div>
-            <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">Descrição Narrativa</label>
+                <textarea id="inp-g-skill-desc" class="input-dark min-h-[50px]" placeholder="Frase narrativa ou descrição curta..."></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
                 <div>
                     <label class="block text-[10px] text-gray-400 uppercase">Tipo</label>
-                    <input type="text" id="inp-g-skill-type" class="input-dark" placeholder="Mágica, Passiva...">
+                    <input type="text" id="inp-g-skill-type" class="input-dark" placeholder="Ativa, Passiva, Rito...">
                 </div>
                 <div>
-                    <label class="block text-[10px] text-gray-400 uppercase">Custo</label>
-                    <input type="text" id="inp-g-skill-cost" class="input-dark" placeholder="10 HP">
+                    <label class="block text-[10px] text-gray-400 uppercase">Custo de Uso</label>
+                    <input type="text" id="inp-g-skill-cost" class="input-dark" placeholder="Ex: 15 Stamina">
                 </div>
-                <div class="col-span-2">
-                    <label class="block text-[10px] text-gray-400 uppercase">Teste</label>
-                    <input type="text" id="inp-g-skill-test" class="input-dark" placeholder="Força vs DF">
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="block text-[10px] text-gray-400 uppercase">Tempo de Conjuração</label>
+                    <input type="text" id="inp-g-skill-cast-time" class="input-dark" placeholder="Ex: 1 Ação">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 uppercase">Recarga (Cooldown)</label>
+                    <input type="text" id="inp-g-skill-cooldown" class="input-dark" placeholder="Ex: 2 Turnos">
                 </div>
             </div>
             <div>
-                <label class="block text-xs text-gray-400 mb-1">Efeito</label>
-                <textarea id="inp-g-skill-effect" required class="input-dark min-h-[60px]"></textarea>
+                <label class="block text-[10px] text-gray-400 uppercase">Alcance & Alvo</label>
+                <input type="text" id="inp-g-skill-range" class="input-dark" placeholder="Ex: Toque / 5 Metros">
+            </div>
+
+            <div class="border-t border-gray-600/30 pt-2 mt-2">
+                <label class="block text-xs font-bold text-gold uppercase mb-1">Efeito</label>
+                <div class="space-y-2">
+                    <textarea id="inp-g-skill-effect" required class="input-dark min-h-[50px]" placeholder="Efeito Principal (Ex: Aplica 2d6)"></textarea>
+                    <input type="text" id="inp-g-skill-sec-effect" class="input-dark text-sm" placeholder="Efeito Secundário / Condição (Opcional)">
+                    <input type="text" id="inp-g-skill-scaling" class="input-dark text-sm" placeholder="Modificador de Escalonamento (Opcional)">
+                </div>
+            </div>
+
+            <div class="border-t border-gray-600/30 pt-2 mt-2">
+                <label class="block text-xs font-bold text-red-400 uppercase mb-1">Desvantagem (Opcional)</label>
+                <textarea id="inp-g-skill-penalty" class="input-dark min-h-[50px]" placeholder="Efeito Colateral ou Penalidade..."></textarea>
             </div>
         </form>
         <div class="p-4 border-t border-gold/20 flex justify-end gap-3 bg-black/20">

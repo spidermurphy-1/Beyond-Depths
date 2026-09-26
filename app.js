@@ -407,6 +407,17 @@ document.getElementById('btn-save-g-armor').addEventListener('click', (e) => {
         name: nameVal,
         base: document.getElementById('inp-g-armor-base').value,
         desc: document.getElementById('inp-g-armor-desc').value,
+        category: document.getElementById('inp-g-armor-category')?.value || 'Leve',
+        rarity: document.getElementById('inp-g-armor-rarity')?.value || 'Comum',
+        req: document.getElementById('inp-g-armor-req')?.value || '',
+        durability: document.getElementById('inp-g-armor-durability')?.value || '',
+        defPhys: document.getElementById('inp-g-armor-def-phys')?.value || '',
+        defLust: document.getElementById('inp-g-armor-def-lust')?.value || '',
+        attrBonus: document.getElementById('inp-g-armor-attr-bonus')?.value || '',
+        agiMod: document.getElementById('inp-g-armor-agi-mod')?.value || '',
+        staminaCost: document.getElementById('inp-g-armor-stamina-cost')?.value || '',
+        exposure: document.getElementById('inp-g-armor-exposure')?.value || '',
+        special: document.getElementById('inp-g-armor-special')?.value || '',
         mods: {
             df: parseInt(document.getElementById('inp-g-armor-df').value) || 0,
             dlust: parseInt(document.getElementById('inp-g-armor-dlust').value) || 0,
@@ -436,8 +447,15 @@ document.getElementById('btn-save-g-skill').addEventListener('click', (e) => {
         name: nameVal,
         type: document.getElementById('inp-g-skill-type').value,
         cost: document.getElementById('inp-g-skill-cost').value,
-        test: document.getElementById('inp-g-skill-test').value,
-        effect: document.getElementById('inp-g-skill-effect').value
+        test: document.getElementById('inp-g-skill-test')?.value || '',
+        desc: document.getElementById('inp-g-skill-desc')?.value || '',
+        castTime: document.getElementById('inp-g-skill-cast-time')?.value || '',
+        cooldown: document.getElementById('inp-g-skill-cooldown')?.value || '',
+        range: document.getElementById('inp-g-skill-range')?.value || '',
+        effect: document.getElementById('inp-g-skill-effect').value,
+        secEffect: document.getElementById('inp-g-skill-sec-effect')?.value || '',
+        scaling: document.getElementById('inp-g-skill-scaling')?.value || '',
+        penalty: document.getElementById('inp-g-skill-penalty')?.value || ''
     };
     saveToDB('global_skills', obj, globalSkills, 'bd_skills');
     document.getElementById('modal-skill').close();
@@ -451,38 +469,98 @@ window.openViewModal = function(type, id) {
     if (type === 'skill') {
         const sk = globalSkills.find(s => s.id === id);
         if (!sk) return;
-        titleEl.innerHTML = `<i class="fa-solid fa-star text-gold mr-2"></i>${escapeHTML(sk.name)}`;
+        titleEl.innerHTML = `<i class="fa-solid fa-scroll text-gold mr-2"></i>FICHA DE HABILIDADE`;
         contentEl.innerHTML = `
-            <div class="grid grid-cols-2 gap-x-2 gap-y-2 mb-4">
-                <div><span class="font-bold text-gray-400 uppercase text-xs">Tipo:</span><br>${escapeHTML(sk.type)}</div>
-                <div><span class="font-bold text-gray-400 uppercase text-xs">Custo:</span><br>${escapeHTML(sk.cost)}</div>
-                <div class="col-span-2"><span class="font-bold text-gray-400 uppercase text-xs">Teste:</span><br>${escapeHTML(sk.test)}</div>
+            <div class="mb-4 text-center">
+                <div class="font-bold text-lg text-gold mb-1">✦ ${escapeHTML(sk.name)}</div>
+                ${sk.desc ? `<div class="italic text-gray-400 text-sm">***${escapeHTML(sk.desc)}***</div>` : ''}
             </div>
+            
+            <div class="mb-4">
+                <div class="text-gold font-bold border-b border-gold/20 pb-1 mb-2"><i class="fa-solid fa-crystal-ball mr-1"></i> Dados</div>
+                <ul class="text-sm text-gray-300 space-y-1 ml-1">
+                    <li><strong class="text-gray-400">Tipo:</strong> ${escapeHTML(sk.type || '-')}</li>
+                    <li><strong class="text-gray-400">Custo de Uso:</strong> ${escapeHTML(sk.cost || '-')}</li>
+                    <li><strong class="text-gray-400">Tempo de Conjuração:</strong> ${escapeHTML(sk.castTime || '-')}</li>
+                    <li><strong class="text-gray-400">Recarga:</strong> ${escapeHTML(sk.cooldown || '-')}</li>
+                    <li><strong class="text-gray-400">Alcance & Alvo:</strong> ${escapeHTML(sk.range || '-')}</li>
+                    ${sk.test ? `<li><strong class="text-gray-400">Teste:</strong> ${escapeHTML(sk.test)}</li>` : ''}
+                </ul>
+            </div>
+
+            <div class="mb-4">
+                <div class="text-gold font-bold border-b border-gold/20 pb-1 mb-2"><i class="fa-solid fa-bolt mr-1"></i> Efeito</div>
+                <ul class="text-sm text-gray-300 space-y-1 ml-1">
+                    <li><strong class="text-gray-400">Efeito Principal:</strong> <span class="italic">${escapeHTML(sk.effect || '-')}</span></li>
+                    ${sk.secEffect ? `<li><strong class="text-gray-400">Efeito Secundário:</strong> <span class="italic">${escapeHTML(sk.secEffect)}</span></li>` : ''}
+                    ${sk.scaling ? `<li><strong class="text-gray-400">Modificador:</strong> <span class="italic">${escapeHTML(sk.scaling)}</span></li>` : ''}
+                </ul>
+            </div>
+
+            ${sk.penalty ? `
             <div>
-                <span class="font-bold text-gray-400 uppercase text-xs">Efeito:</span><br>
-                <div class="mt-1 p-3 bg-black/40 border-l-2 border-gold rounded text-gray-300 italic whitespace-pre-wrap leading-relaxed">${escapeHTML(sk.effect)}</div>
+                <div class="text-red-400 font-bold border-b border-red-500/20 pb-1 mb-2"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Desvantagem</div>
+                <ul class="text-sm text-gray-300 space-y-1 ml-1">
+                    <li><strong class="text-red-300">Penalidade:</strong> <span class="italic">${escapeHTML(sk.penalty)}</span></li>
+                </ul>
             </div>
+            ` : ''}
         `;
     } else if (type === 'armor') {
         const ar = globalArmors.find(a => a.id === id);
         if (!ar) return;
         const b = getArmorBaseStats(ar.base);
-        titleEl.innerHTML = `<i class="fa-solid fa-shield-halved text-gold mr-2"></i>${escapeHTML(ar.name)}`;
+        titleEl.innerHTML = `<i class="fa-solid fa-gear text-gold mr-2"></i>FICHA DE ARMADURA`;
         contentEl.innerHTML = `
-            <div class="grid grid-cols-2 gap-x-2 gap-y-2 mb-4">
-                <div><span class="font-bold text-gray-400 uppercase text-xs">Tipo:</span><br>${escapeHTML(ar.type)}</div>
-                <div><span class="font-bold text-gray-400 uppercase text-xs">Base:</span><br>${escapeHTML(b.name)}</div>
+            <div class="mb-4 text-center">
+                <div class="font-bold text-lg text-gold mb-1">🛡️ ${escapeHTML(ar.name)}</div>
+                ${ar.desc ? `<div class="italic text-gray-400 text-sm">***${escapeHTML(ar.desc)}***</div>` : ''}
             </div>
+
             <div class="mb-4">
-                <span class="font-bold text-gray-400 uppercase text-xs">Modificadores:</span><br>
-                <ul class="list-disc list-inside mt-1 space-y-1 text-gray-300">
-                    <li><span class="text-green-400">DF:</span> +${ar.mods.df}</li>
-                    ${ar.mods.hp ? `<li><span class="text-red-400">HP:</span> +${Math.round((ar.mods.hp-1)*100)}%</li>` : ''}
-                    ${ar.mods.st ? `<li><span class="text-blue-400">Vigor:</span> +${Math.round((ar.mods.st-1)*100)}%</li>` : ''}
-                    ${ar.mods.pen ? `<li><span class="text-red-500">Penalidade Furtividade:</span> +${ar.mods.pen} CD</li>` : ''}
+                <div class="text-gold font-bold border-b border-gold/20 pb-1 mb-2"><i class="fa-solid fa-info-circle mr-1"></i> Dados Básicos</div>
+                <ul class="text-sm text-gray-300 space-y-1 ml-1">
+                    <li><strong class="text-gray-400">Categoria:</strong> ${escapeHTML(ar.category || ar.type || '-')}</li>
+                    <li><strong class="text-gray-400">Raridade:</strong> ${escapeHTML(ar.rarity || 'Comum')}</li>
+                    <li><strong class="text-gray-400">Requisitos:</strong> ${escapeHTML(ar.req || '-')}</li>
+                    <li><strong class="text-gray-400">Material:</strong> ${escapeHTML(ar.durability || '-')}</li>
                 </ul>
             </div>
-            ${ar.desc ? `<div><span class="font-bold text-gray-400 uppercase text-xs">Descrição:</span><br><div class="mt-1 text-gray-300 italic whitespace-pre-wrap leading-relaxed">${escapeHTML(ar.desc)}</div></div>` : ''}
+
+            <div class="mb-4">
+                <div class="text-gold font-bold border-b border-gold/20 pb-1 mb-2"><i class="fa-solid fa-shield mr-1"></i> Atributos Defensivos</div>
+                <ul class="text-sm text-gray-300 space-y-1 ml-1">
+                    <li><strong class="text-gray-400">Defesa Física:</strong> ${escapeHTML(ar.defPhys || `+${ar.mods?.df || 0}`)}</li>
+                    <li><strong class="text-gray-400">Defesa de Lust:</strong> ${escapeHTML(ar.defLust || `+${ar.mods?.dlust || 0}`)}</li>
+                    <li><strong class="text-gray-400">Bônus de Atributo:</strong> ${escapeHTML(ar.attrBonus || '-')}</li>
+                </ul>
+            </div>
+
+            <div class="mb-4">
+                <div class="text-gold font-bold border-b border-gold/20 pb-1 mb-2"><i class="fa-solid fa-person-running mr-1"></i> Penalidades & Mobilidade</div>
+                <ul class="text-sm text-gray-300 space-y-1 ml-1">
+                    <li><strong class="text-gray-400">Modificador de Agilidade:</strong> ${escapeHTML(ar.agiMod || (ar.mods?.agi ? `${ar.mods.agi} AGI` : '-'))}</li>
+                    <li><strong class="text-gray-400">Custo de Stamina:</strong> ${escapeHTML(ar.staminaCost || '-')}</li>
+                    <li><strong class="text-gray-400">Exposição:</strong> ${escapeHTML(ar.exposure || '-')}</li>
+                </ul>
+            </div>
+
+            ${ar.special ? `
+            <div class="mb-4">
+                <div class="text-gold font-bold border-b border-gold/20 pb-1 mb-2"><i class="fa-solid fa-sparkles mr-1"></i> Efeito Especial / Passiva</div>
+                <div class="mt-1 p-3 bg-black/40 border-l-2 border-gold rounded text-gray-300 italic whitespace-pre-wrap leading-relaxed">${escapeHTML(ar.special)}</div>
+            </div>
+            ` : ''}
+
+            ${ar.mods ? `
+            <details class="bg-black/30 rounded p-2 mt-4 border border-gray-600/30">
+                <summary class="text-[10px] text-gray-400 uppercase cursor-pointer hover:text-white">Automação de Base (Oculta)</summary>
+                <div class="pt-2 mt-2 border-t border-gray-600/30 text-xs text-gray-300">
+                    Base ID: ${escapeHTML(ar.base)}<br>
+                    Mods Adicionais: DF ${ar.mods.df}, DLUST ${ar.mods.dlust}, AGI ${ar.mods.agi}, SED ${ar.mods.sed}, MIS ${ar.mods.mis}
+                </div>
+            </details>
+            ` : ''}
         `;
     }
     
