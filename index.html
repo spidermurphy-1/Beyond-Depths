@@ -554,7 +554,10 @@
                 <div class="space-y-2">
                     <input type="text" id="inp-g-armor-agi-mod" class="input-dark text-sm" placeholder="Modificador de Agilidade (Ex: -1 AGI)">
                     <input type="text" id="inp-g-armor-stamina-cost" class="input-dark text-sm" placeholder="Custo de Stamina (Ex: +2 ST por Esquiva)">
-                    <input type="text" id="inp-g-armor-exposure" class="input-dark text-sm" placeholder="Exposição (Ex: Vulnerável a toques)">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="inp-g-armor-exposure" class="input-dark text-sm" placeholder="Nível Exposição (Ex: Alta)">
+                        <input type="text" id="inp-g-armor-exposed-part" class="input-dark text-sm" placeholder="Local Exposto (Ex: Peito)">
+                    </div>
                 </div>
             </div>
 
@@ -582,6 +585,7 @@
                         <div><label class="block text-[9px] text-gray-400 uppercase">AGI</label><input type="number" id="inp-g-armor-agi" value="0" class="input-dark text-center px-1"></div>
                         <div><label class="block text-[9px] text-gray-400 uppercase">SED</label><input type="number" id="inp-g-armor-sed" value="0" class="input-dark text-center px-1"></div>
                         <div><label class="block text-[9px] text-gray-400 uppercase">MIS</label><input type="number" id="inp-g-armor-mis" value="0" class="input-dark text-center px-1"></div>
+                        <div><label class="block text-[9px] text-red-400 uppercase" title="Custo de Stamina ao agir/esquivar">ST COST</label><input type="number" id="inp-g-armor-st-cost" value="0" class="input-dark text-center px-1"></div>
                     </div>
                 </div>
             </details>
@@ -716,19 +720,31 @@
                         </thead>
                         <tbody class="text-xs">
                             <tr class="border-b border-gray-800" data-dmg="HP">
-                                <td class="py-2 font-bold text-gray-300">Físico (HP)</td>
+                                <td class="py-2 font-bold text-gray-300">Físico (Não-Mágico)</td>
                                 <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-vuln" placeholder="0"></td>
                                 <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-red" placeholder="0"></td>
                                 <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-def" placeholder="0"></td>
                             </tr>
-                            <tr class="border-b border-gray-800" data-dmg="MAG">
-                                <td class="py-2 font-bold text-gray-300">Mágico (HP)</td>
+                            <tr class="border-b border-gray-800" data-dmg="HP_MAG">
+                                <td class="py-2 font-bold text-gray-300 text-purple-400">Físico (Mágico)</td>
                                 <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-vuln" placeholder="0"></td>
                                 <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-red" placeholder="0"></td>
                                 <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-def" placeholder="0"></td>
                             </tr>
                             <tr class="border-b border-gray-800" data-dmg="LUST">
-                                <td class="py-2 font-bold text-pink-300">Lust (Mental)</td>
+                                <td class="py-2 font-bold text-pink-300">Lust (Não-Mágico)</td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-vuln" placeholder="0"></td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-red" placeholder="0"></td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-def" placeholder="0"></td>
+                            </tr>
+                            <tr class="border-b border-gray-800" data-dmg="LUST_MAG">
+                                <td class="py-2 font-bold text-pink-500">Lust (Mágico)</td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-vuln" placeholder="0"></td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-red" placeholder="0"></td>
+                                <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-def" placeholder="0"></td>
+                            </tr>
+                            <tr class="border-b border-gray-800" data-dmg="MAG">
+                                <td class="py-2 font-bold text-purple-400">Mágico Puro (HP)</td>
                                 <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-vuln" placeholder="0"></td>
                                 <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-red" placeholder="0"></td>
                                 <td class="px-1"><input type="number" class="input-dark w-full text-center p-1 mod-def" placeholder="0"></td>
@@ -902,8 +918,10 @@
                 <div>
                     <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Tipo de Dano</label>
                     <select id="inp-dmg-type" class="input-dark w-full">
-                        <option value="HP">Físico (HP)</option>
-                        <option value="LUST">Lust (Sed)</option>
+                        <option value="HP">Físico (Não-Mágico)</option>
+                        <option value="HP_MAG">Físico (Mágico)</option>
+                        <option value="LUST">Lust (Não-Mágico)</option>
+                        <option value="LUST_MAG">Lust (Mágico)</option>
                         <option value="MAG">Mágico Puro (HP)</option>
                         <option value="FOGO">Elemental: Fogo (HP)</option>
                         <option value="GELO">Elemental: Gelo (HP)</option>
@@ -918,6 +936,16 @@
                         <option value="vantagem">Com Vantagem</option>
                         <option value="desvantagem">Com Desvantagem</option>
                     </select>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mt-2 mb-2">
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Stamina Gasta (Atacante)</label>
+                    <input type="number" id="inp-dmg-st-attacker" class="input-dark w-full" placeholder="Ex: 5" value="0">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Stamina Gasta (Esquiva/Alvo)</label>
+                    <input type="number" id="inp-dmg-st-target" class="input-dark w-full" placeholder="Ex: 3" value="0">
                 </div>
             </div>
             <div>

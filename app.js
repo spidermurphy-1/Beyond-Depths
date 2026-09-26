@@ -418,13 +418,15 @@ document.getElementById('btn-save-g-armor').addEventListener('click', (e) => {
         agiMod: document.getElementById('inp-g-armor-agi-mod')?.value || '',
         staminaCost: document.getElementById('inp-g-armor-stamina-cost')?.value || '',
         exposure: document.getElementById('inp-g-armor-exposure')?.value || '',
+        exposedPart: document.getElementById('inp-g-armor-exposed-part')?.value || '',
         special: document.getElementById('inp-g-armor-special')?.value || '',
         mods: {
             df: parseInt(document.getElementById('inp-g-armor-df').value) || 0,
             dlust: parseInt(document.getElementById('inp-g-armor-dlust').value) || 0,
             agi: parseInt(document.getElementById('inp-g-armor-agi').value) || 0,
             sed: parseInt(document.getElementById('inp-g-armor-sed').value) || 0,
-            mis: parseInt(document.getElementById('inp-g-armor-mis').value) || 0
+            mis: parseInt(document.getElementById('inp-g-armor-mis').value) || 0,
+            st_cost: parseInt(document.getElementById('inp-g-armor-st-cost').value) || 0
         }
     };
     saveToDB('global_armors', obj, globalArmors, 'bd_armors');
@@ -542,7 +544,7 @@ window.openViewModal = function(type, id) {
                 <ul class="text-sm text-gray-300 space-y-1 ml-1">
                     <li><strong class="text-gray-400">Modificador de Agilidade:</strong> ${escapeHTML(ar.agiMod || (ar.mods?.agi ? `${ar.mods.agi} AGI` : '-'))}</li>
                     <li><strong class="text-gray-400">Custo de Stamina:</strong> ${escapeHTML(ar.staminaCost || '-')}</li>
-                    <li><strong class="text-gray-400">Exposição:</strong> ${escapeHTML(ar.exposure || '-')}</li>
+                    <li><strong class="text-gray-400">Exposição:</strong> ${escapeHTML(ar.exposure || '-')} ${ar.exposedPart ? `<span class="text-red-400 italic">(Local: ${escapeHTML(ar.exposedPart)})</span>` : ''}</li>
                 </ul>
             </div>
 
@@ -2251,8 +2253,8 @@ window.parsePerkBuffs = function(char, dmgType, isAttacker, attackTags = []) {
         if (isAttacker && isDef) return; // Attackers don't get defense buffs on attack
         if (!isAttacker && text.toLowerCase().includes('dano') && !isDef) return; // Defenders don't get attack buffs
 
-        if (isLust && dmgType !== 'LUST') return;
-        if (isMag && dmgType !== 'MAG') return;
+        if (isLust && !['LUST', 'LUST_MAG'].includes(dmgType)) return;
+        if (isMag && !['MAG', 'HP_MAG', 'LUST_MAG'].includes(dmgType)) return;
         
         if (isAttacker) {
             // Apply strict tag validation for Attackers so we don't apply boob damage on punches.
@@ -2426,8 +2428,8 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
         if(!target.isMonster) {
             if(defChar) {
                 const pMods = getCharModifiers(defChar);
-                if(dmgType === 'HP' || dmgType === 'MAG') defesaTotal += Math.floor(pMods.con * 1);
-                if(dmgType === 'LUST') defesaTotal += Math.floor(pMods.von * 1);
+                if(['HP', 'HP_MAG', 'MAG'].includes(dmgType)) defesaTotal += Math.floor(pMods.con * 1);
+                if(['LUST', 'LUST_MAG'].includes(dmgType)) defesaTotal += Math.floor(pMods.von * 1);
 
                 if (defBuffs.pct !== 0) {
                     let block = Math.floor(baseDano * (Math.abs(defBuffs.pct) / 100));
@@ -2446,8 +2448,8 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
         } else {
             const mObj = monsters.find(m => m.id === target.refId);
             if(mObj) {
-                if(dmgType === 'HP' || dmgType === 'MAG' || ['FOGO', 'GELO', 'ELETRICO', 'VENENO'].includes(dmgType)) defesaTotal += Math.floor((mObj.con || 5) * 1);
-                if(dmgType === 'LUST') defesaTotal = Math.floor((mObj.von || 5) * 1);
+                if(['HP', 'HP_MAG', 'MAG', 'FOGO', 'GELO', 'ELETRICO', 'VENENO'].includes(dmgType)) defesaTotal += Math.floor((mObj.con || 5) * 1);
+                if(['LUST', 'LUST_MAG'].includes(dmgType)) defesaTotal = Math.floor((mObj.von || 5) * 1);
 
                 if(mObj.modifiers && mObj.modifiers[dmgType]) {
                     const modData = mObj.modifiers[dmgType];
@@ -2487,13 +2489,13 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
                 const maxSt = tStats.st + (defChar.attr.vig * 5);
                 if (defChar.hp <= (maxHp * 0.5) || defChar.stamina <= (maxSt * 0.5)) {
                     humanoResilienciaAtiva = true;
-                    if (dmgType === 'LUST') {
+                    if (['LUST', 'LUST_MAG'].includes(dmgType)) {
                         defesaTotal += 4;
                         logNotes.push("[Defesa do Alvo] Resiliência Humana Ativada (+4 Def. Lust)");
                     }
                 }
             }
-            if (dmgType === 'LUST' && isAttackerDemon) {
+            if (['LUST', 'LUST_MAG'].includes(dmgType) && isAttackerDemon) {
                 defesaTotal -= 3;
                 if(defesaTotal < 0) defesaTotal = 0;
                 logNotes.push("[Fraqueza do Alvo] Carne Ordinária (Humano: -3 Def. Lust vs Demônios)");
@@ -2511,7 +2513,7 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
             
             if (!isEnfraquecido && isAttackerDemon) {
                 defesaTotal += 2;
-                if (dmgType === 'LUST') defesaTotal += 4;
+                if (['LUST', 'LUST_MAG'].includes(dmgType)) defesaTotal += 4;
                 logNotes.push("[Defesa do Alvo] Energia Celestial (+2 DF, +4 DLust vs Demônios)");
             } else if (isEnfraquecido && isAttackerDemon) {
                 logNotes.push("[Defesa do Alvo] Sangue Enfraquecido (Energia Celestial anulada pelo cansaço)");
@@ -2521,7 +2523,7 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
         if(classTpl === 'Bulwark') {
             defesaTotal += 3;
             logNotes.push("[Defesa do Alvo] Égide de Defesa (Bulwark: +3 Defesa Geral)");
-            if(dmgType === 'HP') {
+            if(['HP', 'HP_MAG'].includes(dmgType)) {
                 defesaTotal += 2;
                 logNotes.push("[Defesa do Alvo] Vanguarda (Bulwark: +2 Redução Física)");
             }
@@ -2533,7 +2535,7 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
         if (isNaN(danoTotal) || danoTotal === null) danoTotal = 0;
         if(danoTotal < 0) danoTotal = 0;
 
-        if (humanoResilienciaAtiva && dmgType === 'LUST') {
+        if (humanoResilienciaAtiva && ['LUST', 'LUST_MAG'].includes(dmgType)) {
             danoTotal = Math.floor(danoTotal * 0.85);
             logNotes.push("[Defesa do Alvo] Resiliência Humana Ativada (-15% Dano Lust Recebido)");
         }
@@ -2544,7 +2546,7 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
         }
 
         if(raceTpl === 'Sexualizados') {
-            if(dmgType === 'LUST') {
+            if(['LUST', 'LUST_MAG'].includes(dmgType)) {
                 danoTotal = Math.floor(danoTotal * 1.15);
                 logNotes.push("[Fraqueza do Alvo] Carne Ordinária (Sexualizado: +15% Dano Lust)");
             } else {
@@ -2553,7 +2555,7 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
             }
         }
 
-        if(dmgType === 'LUST') {
+        if(['LUST', 'LUST_MAG'].includes(dmgType)) {
             adjustCombatStat(targetCid, 'lust', danoTotal);
             
             // Auto-conversão de Lust para Magia
@@ -2580,11 +2582,24 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
             adjustCombatStat(targetCid, 'hp', -danoTotal);
         }
 
-        let attackerStaminaCost = Math.floor(Math.random() * 7) + 2;
-        let targetStaminaCost = Math.floor(Math.random() * 7) + 2;
+        let baseStAttacker = parseInt(document.getElementById('inp-dmg-st-attacker').value) || 0;
+        let baseStTarget = parseInt(document.getElementById('inp-dmg-st-target').value) || 0;
+        
+        let attackerStaminaCost = baseStAttacker;
+        let targetStaminaCost = baseStTarget;
+        
+        if (attackerChar && attackerStaminaCost > 0) {
+            const aMods = getCharModifiers(attackerChar);
+            if (aMods.st_cost) attackerStaminaCost += aMods.st_cost;
+        }
+        
+        if (defChar && targetStaminaCost > 0) {
+            const dMods = getCharModifiers(defChar);
+            if (dMods.st_cost) targetStaminaCost += dMods.st_cost;
+        }
 
-        if (attackerCid) adjustCombatStat(attackerCid, 'stamina', -attackerStaminaCost);
-        adjustCombatStat(targetCid, 'stamina', -targetStaminaCost);
+        if (attackerCid && attackerStaminaCost > 0) adjustCombatStat(attackerCid, 'stamina', -attackerStaminaCost);
+        if (targetStaminaCost > 0) adjustCombatStat(targetCid, 'stamina', -targetStaminaCost);
 
         const logMsg = `Mestre aplicou ${danoTotal} de Dano [${dmgType}] em ${target.name}. (Dano Bruto: ${baseDano+mod} [Rolado: ${baseDano}, Mod: ${mod}] - Defesa: ${defesaTotal}). Notas: ${logNotes.join(', ')} | Stamina Gasta: Atacante -${attackerStaminaCost}, Alvo -${targetStaminaCost}`;
 
