@@ -407,6 +407,7 @@ document.getElementById('btn-save-g-armor').addEventListener('click', (e) => {
         name: nameVal,
         base: document.getElementById('inp-g-armor-base').value,
         desc: document.getElementById('inp-g-armor-desc').value,
+        slot: document.getElementById('inp-g-armor-slot')?.value || 'body',
         category: document.getElementById('inp-g-armor-category')?.value || 'Leve',
         rarity: document.getElementById('inp-g-armor-rarity')?.value || 'Comum',
         req: document.getElementById('inp-g-armor-req')?.value || '',
@@ -571,10 +572,32 @@ window.openViewModal = function(type, id) {
 let editingCharId = null;
 
 function populateCharModalSelects() {
-    const selArmor = document.getElementById('inp-armor-select');
-    selArmor.innerHTML = '<option value="">Sem Armadura</option>';
-    globalArmors.forEach(a => {
-        selArmor.innerHTML += `<option value="${a.id}">${escapeHTML(a.name)} (Base: ${getArmorBaseStats(a.base).name})</option>`;
+    const slots = [
+        {id: 'inp-equip-head', type: 'head'},
+        {id: 'inp-equip-back', type: 'back'},
+        {id: 'inp-equip-body', type: 'body'},
+        {id: 'inp-equip-waist', type: 'waist'},
+        {id: 'inp-equip-feet', type: 'feet'},
+        {id: 'inp-equip-intimate', type: 'intimate'},
+        {id: 'inp-equip-hand_1', type: 'hand_1'},
+        {id: 'inp-equip-hand_2', type: 'hand_2'},
+        {id: 'inp-equip-ring_1', type: 'ring'},
+        {id: 'inp-equip-ring_2', type: 'ring'},
+        {id: 'inp-equip-charm', type: 'charm'}
+    ];
+
+    slots.forEach(slotInfo => {
+        const sel = document.getElementById(slotInfo.id);
+        if(!sel) return;
+        sel.innerHTML = '<option value="">Nenhum</option>';
+        globalArmors.forEach(a => {
+            const itemSlot = a.slot || 'body'; // Legacy items default to body
+            if (itemSlot === slotInfo.type || 
+                (slotInfo.type === 'hand_1' && itemSlot === 'hand_2') || 
+                (slotInfo.type === 'hand_2' && itemSlot === 'hand_2')) {
+                sel.innerHTML += `<option value="${a.id}">${escapeHTML(a.name)} (Base: ${getArmorBaseStats(a.base).name})</option>`;
+            }
+        });
     });
 }
 
@@ -804,14 +827,27 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
     }
 
     const classNameVal = document.getElementById('inp-class').value.toLowerCase();
-    let armorId = document.getElementById('inp-armor-select').value;
+    
+    const equipment = {
+        head: document.getElementById('inp-equip-head').value,
+        back: document.getElementById('inp-equip-back').value,
+        body: document.getElementById('inp-equip-body').value,
+        waist: document.getElementById('inp-equip-waist').value,
+        feet: document.getElementById('inp-equip-feet').value,
+        intimate: document.getElementById('inp-equip-intimate').value,
+        hand_1: document.getElementById('inp-equip-hand_1').value,
+        hand_2: document.getElementById('inp-equip-hand_2').value,
+        ring_1: document.getElementById('inp-equip-ring_1').value,
+        ring_2: document.getElementById('inp-equip-ring_2').value,
+        charm: document.getElementById('inp-equip-charm').value
+    };
     
     // Class restrictions
-    if (classNameVal.includes('sacerdote') && armorId) {
-        const armor = globalArmors.find(a => a.id === armorId);
+    if (classNameVal.includes('sacerdote') && equipment.body) {
+        const armor = globalArmors.find(a => a.id === equipment.body);
         if (armor && (armor.base === 'heavy' || armor.base.startsWith('mixed_h'))) {
-            alert("Sacerdotes não podem equipar armaduras pesadas. Armadura desequipada.");
-            armorId = "";
+            alert("Sacerdotes não podem equipar armaduras pesadas no corpo. Armadura desequipada.");
+            equipment.body = "";
         }
     }
 
@@ -825,7 +861,8 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
         gender: document.getElementById('inp-gender')?.value || '',
         orientation: document.getElementById('inp-orientation')?.value || '',
         avatarUrl: document.getElementById('inp-avatar').value,
-        equippedArmorId: armorId,
+        equipment: equipment,
+        equippedArmorId: equipment.body, // Backwards compatibility if needed somewhere loosely
         equippedSkillIds: selSkills,
         activeConditionIds: selConds,
         isUnlockedPoints: isUnlocked,
@@ -868,9 +905,22 @@ document.getElementById('btn-modal-save').addEventListener('click', (e) => {
 // --- DASHBOARD RENDER ---
 function getActiveChar() { return characters.find(c => c.id === activeCharId); }
 
-function getCharArmor(char) {
-    if (!char.equippedArmorId) return null;
-    return globalArmors.find(a => a.id === char.equippedArmorId) || null;
+function getEquippedItems(char) {
+    if (!char.equipment) {
+        if (char.equippedArmorId) {
+            const legacyArmor = globalArmors.find(a => a.id === char.equippedArmorId);
+            return legacyArmor ? [legacyArmor] : [];
+        }
+        return [];
+    }
+    const items = [];
+    Object.values(char.equipment).forEach(id => {
+        if (id) {
+            const armor = globalArmors.find(a => a.id === id);
+            if (armor && !items.some(i => i.id === armor.id)) items.push(armor);
+        }
+    });
+    return items;
 }
 
 function getClassStats(className) {
@@ -887,38 +937,49 @@ function getClassStats(className) {
 }
 
 function getCharModifiers(char) {
-    const armor = getCharArmor(char);
-    const baseArmorStats = armor ? getArmorBaseStats(armor.base) : getArmorBaseStats('none');
+    const items = getEquippedItems(char);
     
     let mods = { df: 0, dlust: 0, agi: 0, sed: 0, mis: 0, hp_mult: 1, st_mult: 1, esq: 0, dlust_set: null, ecstasy_set: null, danFis: 0, danLust: 0, danMag: 0, danDist: 0, danFurt: 0 };
     let bk = { hp: [], st: [], en: [], lust: [], df: [], dlust: [], esq: [], danFis: [], danLust: [], agi: [], sed: [], mis: [], con: [], for: [], vig: [], von: [] };
     
-    // Sum Armor
-    if (baseArmorStats.mods.df || armor?.mods?.df) {
-        let v = (baseArmorStats.mods.df || 0) + (armor?.mods?.df || 0);
-        mods.df += v;
-        bk.df.push({label: 'Armadura', val: v});
-    }
-    if (baseArmorStats.mods.dlust || armor?.mods?.dlust) {
-        let v = (baseArmorStats.mods.dlust || 0) + (armor?.mods?.dlust || 0);
-        mods.dlust += v;
-        bk.dlust.push({label: 'Armadura', val: v});
-    }
-    if (baseArmorStats.mods.agi || armor?.mods?.agi) {
-        let v = (baseArmorStats.mods.agi || 0) + (armor?.mods?.agi || 0);
-        mods.agi += v;
-        bk.agi.push({label: 'Armadura', val: v});
-    }
-    if (baseArmorStats.mods.sed || armor?.mods?.sed) {
-        let v = (baseArmorStats.mods.sed || 0) + (armor?.mods?.sed || 0);
-        mods.sed += v;
-        bk.sed.push({label: 'Armadura', val: v});
-    }
-    if (baseArmorStats.mods.mis || armor?.mods?.mis) {
-        let v = (baseArmorStats.mods.mis || 0) + (armor?.mods?.mis || 0);
-        mods.mis += v;
-        bk.mis.push({label: 'Armadura', val: v});
-    }
+    // Sum Equipment
+    items.forEach(armor => {
+        const baseArmorStats = getArmorBaseStats(armor.base || 'none');
+        
+        if (baseArmorStats.mods.df || armor?.mods?.df) {
+            let v = (baseArmorStats.mods.df || 0) + (armor?.mods?.df || 0);
+            mods.df += v;
+            bk.df.push({label: armor.name, val: v});
+        }
+        if (baseArmorStats.mods.dlust || armor?.mods?.dlust) {
+            let v = (baseArmorStats.mods.dlust || 0) + (armor?.mods?.dlust || 0);
+            mods.dlust += v;
+            bk.dlust.push({label: armor.name, val: v});
+        }
+        if (baseArmorStats.mods.agi || armor?.mods?.agi) {
+            let v = (baseArmorStats.mods.agi || 0) + (armor?.mods?.agi || 0);
+            mods.agi += v;
+            bk.agi.push({label: armor.name, val: v});
+        }
+        if (baseArmorStats.mods.sed || armor?.mods?.sed) {
+            let v = (baseArmorStats.mods.sed || 0) + (armor?.mods?.sed || 0);
+            mods.sed += v;
+            bk.sed.push({label: armor.name, val: v});
+        }
+        if (baseArmorStats.mods.mis || armor?.mods?.mis) {
+            let v = (baseArmorStats.mods.mis || 0) + (armor?.mods?.mis || 0);
+            mods.mis += v;
+            bk.mis.push({label: armor.name, val: v});
+        }
+        if (armor?.mods?.hp) {
+            mods.hp_mult *= armor.mods.hp;
+            bk.hp.push({label: armor.name, val: 'x'+armor.mods.hp});
+        }
+        if (armor?.mods?.st) {
+            mods.st_mult *= armor.mods.st;
+            bk.st.push({label: armor.name, val: 'x'+armor.mods.st});
+        }
+    });
     
     // Class Passives
     if (char.class && char.class.toLowerCase().includes('sacerdote')) {
@@ -1194,7 +1255,32 @@ function renderDashboard() {
 
         enforceClassConditions(); // Applies condition visibility and loads select options
         
-        document.getElementById('inp-armor-select').value = char.equippedArmorId || "";
+        if (char.equipment) {
+            document.getElementById('inp-equip-head').value = char.equipment.head || "";
+            document.getElementById('inp-equip-back').value = char.equipment.back || "";
+            document.getElementById('inp-equip-body').value = char.equipment.body || "";
+            document.getElementById('inp-equip-waist').value = char.equipment.waist || "";
+            document.getElementById('inp-equip-feet').value = char.equipment.feet || "";
+            document.getElementById('inp-equip-intimate').value = char.equipment.intimate || "";
+            document.getElementById('inp-equip-hand_1').value = char.equipment.hand_1 || "";
+            document.getElementById('inp-equip-hand_2').value = char.equipment.hand_2 || "";
+            document.getElementById('inp-equip-ring_1').value = char.equipment.ring_1 || "";
+            document.getElementById('inp-equip-ring_2').value = char.equipment.ring_2 || "";
+            document.getElementById('inp-equip-charm').value = char.equipment.charm || "";
+        } else {
+            // Legacy load
+            document.getElementById('inp-equip-body').value = char.equippedArmorId || "";
+            document.getElementById('inp-equip-head').value = "";
+            document.getElementById('inp-equip-back').value = "";
+            document.getElementById('inp-equip-waist').value = "";
+            document.getElementById('inp-equip-feet').value = "";
+            document.getElementById('inp-equip-intimate').value = "";
+            document.getElementById('inp-equip-hand_1').value = "";
+            document.getElementById('inp-equip-hand_2').value = "";
+            document.getElementById('inp-equip-ring_1').value = "";
+            document.getElementById('inp-equip-ring_2').value = "";
+            document.getElementById('inp-equip-charm').value = "";
+        }
         
         document.getElementById('inp-con').value = char.attr.con;
         document.getElementById('inp-for').value = char.attr.for;
@@ -1333,27 +1419,33 @@ function renderAttributesAndDerivedStats(char, mods) {
         ${mkRow('Misticismo', 'mis', char.attr.mis, mods.mis, 'wand-magic-sparkles')}
     `;
 
-    const armor = getCharArmor(char);
-    if (armor) {
-        document.getElementById('dash-armor-name').innerHTML = escapeHTML(armor.name);
-        document.getElementById('dash-armor-type').innerHTML = `Base: ${getArmorBaseStats(armor.base).name}`;
-        document.getElementById('dash-armor-desc').innerHTML = escapeHTML(armor.desc || "Sem efeitos especiais.");
-        document.getElementById('dash-armor-details-panel').classList.remove('hidden');
-        
-        let modHtml = '';
-        const aMod = armor.mods || {};
-        if(aMod.df) modHtml += `<li class="${aMod.df > 0 ? 'text-green-400' : 'text-red-400'}">Defesa Física Extra: ${aMod.df > 0 ? '+'+aMod.df : aMod.df}</li>`;
-        if(aMod.dlust) modHtml += `<li class="${aMod.dlust > 0 ? 'text-green-400' : 'text-red-400'}">Defesa Lust Extra: ${aMod.dlust > 0 ? '+'+aMod.dlust : aMod.dlust}</li>`;
-        if(aMod.agi) modHtml += `<li class="${aMod.agi > 0 ? 'text-green-400' : 'text-red-400'}">Agilidade Extra: ${aMod.agi > 0 ? '+'+aMod.agi : aMod.agi}</li>`;
-        if(aMod.sed) modHtml += `<li class="${aMod.sed > 0 ? 'text-green-400' : 'text-red-400'}">Sedução Extra: ${aMod.sed > 0 ? '+'+aMod.sed : aMod.sed}</li>`;
-        if(aMod.mis) modHtml += `<li class="${aMod.mis > 0 ? 'text-green-400' : 'text-red-400'}">Misticismo Extra: ${aMod.mis > 0 ? '+'+aMod.mis : aMod.mis}</li>`;
-        if(modHtml === '') modHtml = '<li class="text-gray-500">Apenas mods da base</li>';
-        document.getElementById('dash-armor-mods').innerHTML = modHtml;
+    const items = getEquippedItems(char);
+    const equipContainer = document.getElementById('dash-equipment-list');
+    if (items.length > 0) {
+        let html = '';
+        items.forEach(armor => {
+            let modHtml = '';
+            const aMod = armor.mods || {};
+            if(aMod.df) modHtml += `<span class="${aMod.df > 0 ? 'text-green-400' : 'text-red-400'}">DF ${aMod.df > 0 ? '+'+aMod.df : aMod.df}</span>`;
+            if(aMod.dlust) modHtml += `<span class="${aMod.dlust > 0 ? 'text-green-400' : 'text-red-400'}">DLUST ${aMod.dlust > 0 ? '+'+aMod.dlust : aMod.dlust}</span>`;
+            if(aMod.agi) modHtml += `<span class="${aMod.agi > 0 ? 'text-green-400' : 'text-red-400'}">AGI ${aMod.agi > 0 ? '+'+aMod.agi : aMod.agi}</span>`;
+            if(aMod.sed) modHtml += `<span class="${aMod.sed > 0 ? 'text-green-400' : 'text-red-400'}">SED ${aMod.sed > 0 ? '+'+aMod.sed : aMod.sed}</span>`;
+            if(aMod.mis) modHtml += `<span class="${aMod.mis > 0 ? 'text-green-400' : 'text-red-400'}">MIS ${aMod.mis > 0 ? '+'+aMod.mis : aMod.mis}</span>`;
+            
+            html += `
+            <div class="p-3 bg-black/40 rounded border border-gray-700/50 flex justify-between items-center cursor-pointer hover:border-gold/50 transition-colors" onclick="openViewModal('armor', '${armor.id}')">
+                <div>
+                    <div class="font-bold text-gold text-sm"><i class="fa-solid fa-shield-halved mr-1"></i> ${escapeHTML(armor.name)}</div>
+                    <div class="text-[10px] text-gray-400 uppercase">${escapeHTML(armor.slot || 'Equipamento')} | ${getArmorBaseStats(armor.base).name}</div>
+                </div>
+                <div class="flex gap-2 text-[10px] md:text-xs flex-wrap justify-end max-w-[50%]">
+                    ${modHtml || '<span class="text-gray-600">Sem bônus diretos</span>'}
+                </div>
+            </div>`;
+        });
+        equipContainer.innerHTML = html;
     } else {
-        document.getElementById('dash-armor-name').innerHTML = "Sem Armadura";
-        document.getElementById('dash-armor-type').innerHTML = "Trajes Comuns";
-        document.getElementById('dash-armor-details-panel').classList.add('hidden');
-        document.getElementById('dash-armor-mods').innerHTML = '<li class="text-gray-500">Nenhum bônus</li>';
+        equipContainer.innerHTML = '<div class="text-sm text-gray-400 text-center italic mt-4 mb-4">Nenhum equipamento ativo. (Vestindo trajes comuns)</div>';
     }
 }
 
@@ -1363,6 +1455,14 @@ window.adjustStat = function(stat, amount) {
     if(!char) return;
     if(!canEdit(char)) return alert("Sem permissão.");
     
+    if (char.race === 'Sexualizados') {
+        if (amount < 0 && (stat === 'energy' || stat === 'lust')) {
+            amount = Math.ceil(amount * 0.9); // Gasto reduzido em 10%
+        } else if (amount > 0 && (stat === 'stamina' || stat === 'energy')) {
+            amount = Math.floor(amount * 1.1); // Recuperação 10% mais eficiente
+        }
+    }
+
     const oldVal = char[stat];
     char[stat] += amount;
     
@@ -1373,6 +1473,16 @@ window.adjustStat = function(stat, amount) {
         const mx = cStats.lust;
         if(char[stat] > mx) char[stat] = mx;
         if(char[stat] < 0) char[stat] = 0;
+        
+        // Auto-conversão de Lust para Magia ao ganhar Lust
+        if (amount > 0 && char.autoConvertLust) {
+            const energyGain = Math.floor(amount / 2);
+            if (energyGain > 0) {
+                char.energy = (char.energy || 0) + energyGain;
+                if (char.energy > cStats.en) char.energy = cStats.en;
+                addLog(char, `Conversão Automática (Dashboard): +${energyGain} Magia gerada por ganhar Lust.`, "info");
+            }
+        }
     } else if (stat === 'hp') {
         const mx = Math.max(1, Math.floor((cStats.hp + (char.attr.con * 10)) * mods.hp_mult));
         if(char[stat] > mx) char[stat] = mx;
@@ -1625,6 +1735,7 @@ document.getElementById('form-monster').addEventListener('submit', (e) => {
         ownerId: currentUser ? currentUser.uid : null,
         name: nameVal,
         avatar: document.getElementById('inp-monster-avatar').value,
+        type: document.getElementById('inp-monster-type')?.value || '',
         hp: parseInt(document.getElementById('inp-monster-hp').value) || 50,
         stamina: parseInt(document.getElementById('inp-monster-st').value) || 50,
         lust: parseInt(document.getElementById('inp-monster-lust').value) || 100,
@@ -1654,6 +1765,7 @@ window.openEditMonster = function(id) {
     editingMonsterId = id;
     document.getElementById('inp-monster-name').value = m.name;
     document.getElementById('inp-monster-avatar').value = m.avatar || '';
+    if(document.getElementById('inp-monster-type')) document.getElementById('inp-monster-type').value = m.type || '';
     document.getElementById('inp-monster-hp').value = m.hp;
     document.getElementById('inp-monster-st').value = m.stamina;
     document.getElementById('inp-monster-lust').value = m.lust;
@@ -2359,10 +2471,51 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
             }
         }
 
-        if(raceTpl === 'Humano' && dmgType === 'LUST') {
-            defesaTotal -= 3;
-            if(defesaTotal < 0) defesaTotal = 0;
-            logNotes.push("[Defesa do Alvo] Carne Ordinária (Humano: -3 Def. Lust)");
+        let isAttackerDemon = false;
+        if (attacker && attacker.isMonster) {
+            const m = monsters.find(x => x.id === attacker.refId);
+            if (m && m.type && (m.type.toLowerCase().includes('demônio') || m.type.toLowerCase().includes('demonio') || m.type.toLowerCase().includes('infernal'))) {
+                isAttackerDemon = true;
+            }
+        }
+
+        let humanoResilienciaAtiva = false;
+        if (raceTpl === 'Humano') {
+            if (defChar) {
+                const tStats = getClassStats(classTpl);
+                const maxHp = tStats.hp + (defChar.attr.con * 10);
+                const maxSt = tStats.st + (defChar.attr.vig * 5);
+                if (defChar.hp <= (maxHp * 0.5) || defChar.stamina <= (maxSt * 0.5)) {
+                    humanoResilienciaAtiva = true;
+                    if (dmgType === 'LUST') {
+                        defesaTotal += 4;
+                        logNotes.push("[Defesa do Alvo] Resiliência Humana Ativada (+4 Def. Lust)");
+                    }
+                }
+            }
+            if (dmgType === 'LUST' && isAttackerDemon) {
+                defesaTotal -= 3;
+                if(defesaTotal < 0) defesaTotal = 0;
+                logNotes.push("[Fraqueza do Alvo] Carne Ordinária (Humano: -3 Def. Lust vs Demônios)");
+            }
+        }
+
+        if (raceTpl === 'Celestiais' && defChar) {
+            const tStats = getClassStats(classTpl);
+            const maxHp = tStats.hp + (defChar.attr.con * 10);
+            const maxLust = tStats.lust;
+            const currentHp = defChar.hp;
+            const currentLust = defChar.lust;
+            
+            const isEnfraquecido = (currentHp <= (maxHp * 0.25)) || (currentLust >= (maxLust * 0.80));
+            
+            if (!isEnfraquecido && isAttackerDemon) {
+                defesaTotal += 2;
+                if (dmgType === 'LUST') defesaTotal += 4;
+                logNotes.push("[Defesa do Alvo] Energia Celestial (+2 DF, +4 DLust vs Demônios)");
+            } else if (isEnfraquecido && isAttackerDemon) {
+                logNotes.push("[Defesa do Alvo] Sangue Enfraquecido (Energia Celestial anulada pelo cansaço)");
+            }
         }
 
         if(classTpl === 'Bulwark') {
@@ -2379,6 +2532,11 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
         let danoTotal = baseDano + mod - defesaTotal;
         if (isNaN(danoTotal) || danoTotal === null) danoTotal = 0;
         if(danoTotal < 0) danoTotal = 0;
+
+        if (humanoResilienciaAtiva && dmgType === 'LUST') {
+            danoTotal = Math.floor(danoTotal * 0.85);
+            logNotes.push("[Defesa do Alvo] Resiliência Humana Ativada (-15% Dano Lust Recebido)");
+        }
 
         if(classTpl === 'Artífice' && dmgType === 'MAG') {
             danoTotal = Math.floor(danoTotal * 1.10);
@@ -2409,6 +2567,16 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
                 logNotes.push(`Conversão Automática: +${energyGain} Magia gerada pelo golpe.`);
             }
         } else {
+            if (defChar && raceTpl === 'Tiefling' && dmgType === 'HP') {
+                if (defChar.hp - danoTotal <= 0 && (!defChar.activeConditionIds || !defChar.activeConditionIds.includes('hellblood_cd'))) {
+                    danoTotal = defChar.hp - 1; 
+                    if (danoTotal < 0) danoTotal = 0;
+                    if (!defChar.activeConditionIds) defChar.activeConditionIds = [];
+                    defChar.activeConditionIds.push('hellblood_cd');
+                    saveToDB('characters', defChar, characters, 'bd_characters');
+                    logNotes.push("[Habilidade Racial] Hellblood! Sangue ferve e o Tiefling se recusa a cair, ficando com 1 HP (Cooldown ativado).");
+                }
+            }
             adjustCombatStat(targetCid, 'hp', -danoTotal);
         }
 

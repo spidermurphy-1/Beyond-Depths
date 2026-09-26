@@ -235,21 +235,11 @@
 
                 <!-- Equipment Details -->
                 <div class="glass-panel p-6 rounded-lg">
-                    <h3 class="font-cinzel text-xl text-gold border-b border-gold/20 pb-2 mb-4">Equipamento Ativo</h3>
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-12 h-12 rounded-full bg-gold/10 border border-gold/40 flex items-center justify-center text-xl text-gold">
-                            <i class="fa-solid fa-shield-halved"></i>
-                        </div>
-                        <div>
-                            <div class="font-semibold text-lg" id="dash-armor-name">Armadura</div>
-                            <div class="text-xs text-gray-400" id="dash-armor-type">Tipo</div>
-                        </div>
-                    </div>
-                    
-                    <h4 class="font-bold text-xs uppercase text-gray-500 mb-2">Modificadores</h4>
-                    <ul class="text-sm space-y-1 text-gray-300" id="dash-armor-mods">
+                    <h3 class="font-cinzel text-xl text-gold border-b border-gold/20 pb-2 mb-4">Equipamentos Ativos</h3>
+                    <div id="dash-equipment-list" class="space-y-3">
                         <!-- Populated via JS -->
-                    </ul>
+                        <div class="text-sm text-gray-400">Nenhum equipamento ativo.</div>
+                    </div>
                 </div>
             </div>
             
@@ -450,10 +440,19 @@
 
                 <div class="mt-4">
                     <h3 class="font-cinzel text-gold border-b border-gold/20 pb-1 mb-3">Equipamento Anexado</h3>
-                    <select id="inp-armor-select" class="input-dark mb-1">
-                        <option value="">Sem Armadura (Trajes Comuns)</option>
-                        <!-- Puxado do Global -->
-                    </select>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                        <div><label class="block text-[10px] text-gray-400 uppercase">Cabeça</label><select id="inp-equip-head" class="input-dark text-xs"><option value="">Nenhum</option></select></div>
+                        <div><label class="block text-[10px] text-gray-400 uppercase">Costas</label><select id="inp-equip-back" class="input-dark text-xs"><option value="">Nenhum</option></select></div>
+                        <div><label class="block text-[10px] text-gray-400 uppercase">Corpo</label><select id="inp-equip-body" class="input-dark text-xs"><option value="">Nenhum</option></select></div>
+                        <div><label class="block text-[10px] text-gray-400 uppercase">Cintura</label><select id="inp-equip-waist" class="input-dark text-xs"><option value="">Nenhum</option></select></div>
+                        <div><label class="block text-[10px] text-gray-400 uppercase">Pés</label><select id="inp-equip-feet" class="input-dark text-xs"><option value="">Nenhum</option></select></div>
+                        <div><label class="block text-[10px] text-gray-400 uppercase">Partes Íntimas</label><select id="inp-equip-intimate" class="input-dark text-xs"><option value="">Nenhum</option></select></div>
+                        <div><label class="block text-[10px] text-gray-400 uppercase">Mão Principal</label><select id="inp-equip-hand_1" class="input-dark text-xs"><option value="">Nenhum</option></select></div>
+                        <div><label class="block text-[10px] text-gray-400 uppercase">Mão Secundária</label><select id="inp-equip-hand_2" class="input-dark text-xs"><option value="">Nenhum</option></select></div>
+                        <div><label class="block text-[10px] text-gray-400 uppercase">Anel 1</label><select id="inp-equip-ring_1" class="input-dark text-xs"><option value="">Nenhum</option></select></div>
+                        <div><label class="block text-[10px] text-gray-400 uppercase">Anel 2</label><select id="inp-equip-ring_2" class="input-dark text-xs"><option value="">Nenhum</option></select></div>
+                        <div><label class="block text-[10px] text-gray-400 uppercase">Charm</label><select id="inp-equip-charm" class="input-dark text-xs"><option value="">Nenhum</option></select></div>
+                    </div>
                 </div>
 
                 <!-- Master Options -->
@@ -468,7 +467,7 @@
             
             <div id="char-tab-perks" class="hidden space-y-4">
                 <div class="text-xs text-gray-400 bg-black/30 p-3 rounded mb-2">
-                    <i class="fa-solid fa-circle-info text-blue-400 mr-1"></i> Cada ponto de Atributo base fornece <strong>3 Pontos de Vantagem (PV)</strong> para distribuir exclusivamente nas vantagens daquele atributo.
+                    <i class="fa-solid fa-circle-info text-blue-400 mr-1"></i> Cada ponto de Atributo base fornece <strong>2 Pontos de Vantagem (PV)</strong> para distribuir exclusivamente nas vantagens daquele atributo.
                 </div>
                 <div id="perks-container" class="space-y-3">
                     <!-- Gerado pelo JS -->
@@ -498,19 +497,37 @@
             </div>
             <div class="grid grid-cols-2 gap-2">
                 <div>
+                    <label class="block text-[10px] text-gray-400 uppercase">Slot</label>
+                    <select id="inp-g-armor-slot" class="input-dark">
+                        <option value="body">Corpo</option>
+                        <option value="head">Cabeça</option>
+                        <option value="back">Costas</option>
+                        <option value="waist">Cintura</option>
+                        <option value="ring">Anel</option>
+                        <option value="charm">Charm</option>
+                        <option value="hand_1">Mão (Uma mão)</option>
+                        <option value="hand_2">Duas Mãos</option>
+                        <option value="feet">Pés</option>
+                        <option value="intimate">Partes Íntimas</option>
+                    </select>
+                </div>
+                <div>
                     <label class="block text-[10px] text-gray-400 uppercase">Categoria</label>
                     <select id="inp-g-armor-category" class="input-dark">
                         <option value="Leve">Leve</option>
                         <option value="Pesada">Pesada</option>
                         <option value="Sexual">Sexual</option>
                         <option value="Híbrida">Híbrida</option>
+                        <option value="Arma Branca">Arma Branca</option>
+                        <option value="Arma Mágica">Arma Mágica</option>
                         <option value="Traje Comum">Traje Comum</option>
+                        <option value="Acessório">Acessório</option>
                     </select>
                 </div>
-                <div>
-                    <label class="block text-[10px] text-gray-400 uppercase">Raridade</label>
-                    <input type="text" id="inp-g-armor-rarity" class="input-dark" value="Comum">
-                </div>
+            </div>
+            <div>
+                <label class="block text-[10px] text-gray-400 uppercase">Raridade</label>
+                <input type="text" id="inp-g-armor-rarity" class="input-dark" value="Comum">
             </div>
             <div class="grid grid-cols-2 gap-2">
                 <div>
@@ -646,6 +663,10 @@
                 <div class="flex-1">
                     <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Nome do Monstro</label>
                     <input type="text" id="inp-monster-name" required class="input-dark">
+                </div>
+                <div class="flex-1">
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Tipo / Tags</label>
+                    <input type="text" id="inp-monster-type" class="input-dark" placeholder="Ex: Demônio, Fera">
                 </div>
                 <div class="flex-1">
                     <label class="block text-xs font-bold text-gray-400 uppercase mb-1">URL Imagem</label>
