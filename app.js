@@ -2362,3 +2362,34 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
         console.error(err);
     }
 });
+
+function populateDropdowns() {
+    const raceSelect = document.getElementById('inp-race');
+    if (raceSelect) {
+        raceSelect.innerHTML = '<option value="">-- Nenhuma --</option>';
+        if (typeof RACE_TEMPLATES !== 'undefined') {
+            for (const race in RACE_TEMPLATES) {
+                const opt = document.createElement('option');
+                opt.value = race;
+                opt.innerText = race;
+                raceSelect.appendChild(opt);
+            }
+        }
+    }
+
+    const templateSelect = document.getElementById('inp-template');
+    if (templateSelect) {
+        templateSelect.innerHTML = '<option value="">+</option>';
+        if (typeof CLASS_TEMPLATES !== 'undefined') {
+            for (const cls in CLASS_TEMPLATES) {
+                const opt = document.createElement('option');
+                opt.value = cls;
+                opt.innerText = cls;
+                templateSelect.appendChild(opt);
+            }
+        }
+    }
+}
+
+// Call initially
+setTimeout(populateDropdowns, 100);
