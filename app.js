@@ -1097,7 +1097,7 @@ function getCharModifiers(char, targetZone = 'Qualquer') {
 
         // Accessories use their own modifier schema and are not tied to a hit zone.
         if (isAccessory && armor.mods) {
-            ['df_hp','df_hpmag','df_mag','df_lust','df_lustmag'].forEach(k => {
+            ['df_hp','df_hpmag','df_mag','df_lust','df_lustmag', 'df', 'dlust'].forEach(k => {
                 const v = Number(armor.mods[k]) || 0;
                 if (v) { mods[k] += v; bk[k].push({label: armor.name, val: v}); }
             });
@@ -1123,46 +1123,54 @@ function getCharModifiers(char, targetZone = 'Qualquer') {
         
         const baseArmorStats = getArmorBaseStats(armor.base || 'none');
         
-        if (protectsZone && (baseArmorStats.mods.df || armor?.mods?.df_hp)) {
-            let v = (baseArmorStats.mods.df || 0) + (armor?.mods?.df_hp || 0);
+        let armDfHp = Number(armor?.mods?.df_hp || armor?.mods?.df || 0);
+        if (protectsZone && (baseArmorStats.mods.df || armDfHp)) {
+            let v = Number(baseArmorStats.mods.df || 0) + armDfHp;
             mods.df_hp += v;
             bk.df_hp.push({label: armor.name + ' (HP)', val: v});
         }
-        if (protectsZone && armor?.mods?.df_hpmag) {
-            let v = armor.mods.df_hpmag;
+        let armDfHpMag = Number(armor?.mods?.df_hpmag || 0);
+        if (protectsZone && armDfHpMag) {
+            let v = armDfHpMag;
             mods.df_hpmag += v;
             bk.df_hpmag.push({label: armor.name + ' (HP_MAG)', val: v});
         }
-        if (protectsZone && armor?.mods?.df_mag) {
-            let v = armor.mods.df_mag;
+        let armDfMag = Number(armor?.mods?.df_mag || 0);
+        if (protectsZone && armDfMag) {
+            let v = armDfMag;
             mods.df_mag += v;
             bk.df_mag.push({label: armor.name + ' (MAG)', val: v});
         }
         
-        if (protectsZone && (baseArmorStats.mods.dlust || armor?.mods?.df_lust)) {
-            let v = (baseArmorStats.mods.dlust || 0) + (armor?.mods?.df_lust || 0);
+        let armDfLust = Number(armor?.mods?.df_lust || armor?.mods?.dlust || 0);
+        if (protectsZone && (baseArmorStats.mods.dlust || armDfLust)) {
+            let v = Number(baseArmorStats.mods.dlust || 0) + armDfLust;
             mods.df_lust += v;
             bk.df_lust.push({label: armor.name + ' (LUST)', val: v});
         }
-        if (protectsZone && armor?.mods?.df_lustmag) {
-            let v = armor.mods.df_lustmag;
+        let armDfLustMag = Number(armor?.mods?.df_lustmag || 0);
+        if (protectsZone && armDfLustMag) {
+            let v = armDfLustMag;
             mods.df_lustmag += v;
             bk.df_lustmag.push({label: armor.name + ' (LUST_MAG)', val: v});
         }
         
         // Agility and other stats always apply regardless of hit zone
-        if (baseArmorStats.mods.agi || armor?.mods?.agi) {
-            let v = (baseArmorStats.mods.agi || 0) + (armor?.mods?.agi || 0);
+        let armAgi = Number(armor?.mods?.agi || 0);
+        if (baseArmorStats.mods.agi || armAgi) {
+            let v = Number(baseArmorStats.mods.agi || 0) + armAgi;
             mods.agi += v;
             bk.agi.push({label: armor.name, val: v});
         }
-        if (baseArmorStats.mods.sed || armor?.mods?.sed) {
-            let v = (baseArmorStats.mods.sed || 0) + (armor?.mods?.sed || 0);
+        let armSed = Number(armor?.mods?.sed || 0);
+        if (baseArmorStats.mods.sed || armSed) {
+            let v = Number(baseArmorStats.mods.sed || 0) + armSed;
             mods.sed += v;
             bk.sed.push({label: armor.name, val: v});
         }
-        if (baseArmorStats.mods.mis || armor?.mods?.mis) {
-            let v = (baseArmorStats.mods.mis || 0) + (armor?.mods?.mis || 0);
+        let armMis = Number(armor?.mods?.mis || 0);
+        if (baseArmorStats.mods.mis || armMis) {
+            let v = Number(baseArmorStats.mods.mis || 0) + armMis;
             mods.mis += v;
             bk.mis.push({label: armor.name, val: v});
         }
