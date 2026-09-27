@@ -195,7 +195,10 @@ function loadData() {
                 unsubscribeMonsters = db.collection('monsters').onSnapshot(snap => {
                     monsters = snap.docs.map(doc => doc.data());
                     if(currentTab === 'monsters') renderSidebar();
-                    if(currentTab === 'rpg') renderRPG();
+                    if(currentTab === 'rpg') {
+                        renderSidebar();
+                        renderRPG();
+                    }
                 });
             } else {
                 characters = []; monsters = []; globalArmors = []; globalSkills = []; activeCharId = null;
