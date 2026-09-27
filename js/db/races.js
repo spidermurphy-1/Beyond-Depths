@@ -76,6 +76,7 @@ const RACE_TEMPLATES = {
                 name: "Sangue Enfraquecido",
                 desc: "Os Celestiais possuem apenas uma pequena parcela do poder que seus ancestrais angelicais possuíam. Ao chegar a 25% ou menos de HP ou >=80% de Lust, perdem suas vantagens até que sua vida volte acima desse limite."
             }
+        ]
     },
     "Palhaxotas": {
         skills: [
