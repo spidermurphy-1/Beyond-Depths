@@ -891,6 +891,16 @@ if (inpTemplate) {
 document.getElementById('btn-modal-cancel').addEventListener('click', () => document.getElementById('modal-character').close());
 document.getElementById('btn-modal-save').addEventListener('click', (e) => {
     e.preventDefault();
+    
+    if (!document.getElementById('inp-name').value.trim()) {
+        switchCharTab('base');
+        return alert("O Nome do personagem é obrigatório.");
+    }
+    if (!document.getElementById('inp-class').value.trim()) {
+        switchCharTab('base');
+        return alert("A Classe do personagem é obrigatória.");
+    }
+
     const form = document.getElementById('form-character');
     if(!form.checkValidity()) { form.reportValidity(); return; }
     

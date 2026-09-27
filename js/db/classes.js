@@ -156,7 +156,7 @@ const CLASS_TEMPLATES = {
         ]
     },
     "Jester": {
-        baseStats: { hp: 75, maxHp: 75, stamina: 100, maxStamina: 100, lust: 0, maxLust: 150, sexEnergy: 0, maxSexEnergy: 60 },
+        baseStats: { hp: 75, st: 100, lust: 150, en: 60 },
         attrMods: { sed: 3, agi: 2 },
         skillsToCreate: [
             {
