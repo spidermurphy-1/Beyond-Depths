@@ -1551,8 +1551,8 @@ function updateBars(char, mods) {
 }
 
 function renderAttributesAndDerivedStats(char, mods) {
-    const totalDF = char.attr.con + mods.df;
-    const totalDL = mods.dlust_set !== null ? mods.dlust_set : (char.attr.von + mods.dlust);
+    const totalDF = char.attr.con + mods.df + mods.df_hp;
+    const totalDL = mods.dlust_set !== null ? mods.dlust_set : (char.attr.von + mods.dlust + mods.df_lust);
     
     const totalAgi = char.attr.agi + mods.agi;
     const baseEsq = 8 + mods.esq;
@@ -1579,8 +1579,8 @@ function renderAttributesAndDerivedStats(char, mods) {
         return h;
     };
 
-    if(document.getElementById('tt-df')) document.getElementById('tt-df').innerHTML = buildTT('Base (CON)', char.attr.con, mods.breakdown.df);
-    if(document.getElementById('tt-dl')) document.getElementById('tt-dl').innerHTML = buildTT('Base (VON)', char.attr.von, mods.breakdown.dlust);
+    if(document.getElementById('tt-df')) document.getElementById('tt-df').innerHTML = buildTT('Base (CON)', char.attr.con, mods.breakdown.df.concat(mods.breakdown.df_hp));
+    if(document.getElementById('tt-dl')) document.getElementById('tt-dl').innerHTML = buildTT('Base (VON)', char.attr.von, mods.breakdown.dlust.concat(mods.breakdown.df_lust));
     if(document.getElementById('tt-esq')) document.getElementById('tt-esq').innerHTML = buildTT('Base (8 + 2dAGI)', `8${totalAgi > 0 ? ` + (2 a ${maxDodge})` : ''}`, mods.breakdown.esq);
     if(document.getElementById('tt-danfis')) document.getElementById('tt-danfis').innerHTML = buildTT('Base (5 + FOR)', 5 + char.attr.for, mods.breakdown.danFis);
     if(document.getElementById('tt-danlust')) document.getElementById('tt-danlust').innerHTML = buildTT('Base (5 + SED)', 5 + char.attr.sed, mods.breakdown.danLust);
