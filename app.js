@@ -1645,11 +1645,18 @@ function renderAttributesAndDerivedStats(char, mods) {
                 modHtml += `<span class="text-red-300">${escapeHTML(dmg)} ${escapeHTML(item.dmgType || 'HP')}</span>`;
                 if (item.durability !== undefined) modHtml += `<span class="text-gray-400">Dur. ${item.durability}/${item.maxDurability || item.durability}</span>`;
             } else {
-                if(aMod.df || aMod.df_hp) modHtml += `<span class="text-green-400">DF ${aMod.df_hp || aMod.df > 0 ? '+' + (aMod.df_hp || aMod.df) : (aMod.df_hp || aMod.df)}</span>`;
-                if(aMod.dlust || aMod.df_lust) modHtml += `<span class="text-purple-300">DLUST ${aMod.df_lust || aMod.dlust > 0 ? '+' + (aMod.df_lust || aMod.dlust) : (aMod.df_lust || aMod.dlust)}</span>`;
-                if(aMod.agi) modHtml += `<span class="text-green-400">AGI ${aMod.agi > 0 ? '+'+aMod.agi : aMod.agi}</span>`;
-                if(aMod.sed) modHtml += `<span class="text-pink-300">SED ${aMod.sed > 0 ? '+'+aMod.sed : aMod.sed}</span>`;
-                if(aMod.mis) modHtml += `<span class="text-blue-300">MIS ${aMod.mis > 0 ? '+'+aMod.mis : aMod.mis}</span>`;
+                const baseArmorStats = getArmorBaseStats(item.base || 'none');
+                let totalDfHp = Number(baseArmorStats.mods.df || 0) + Number(aMod.df_hp || aMod.df || 0);
+                let totalDfLust = Number(baseArmorStats.mods.dlust || 0) + Number(aMod.df_lust || aMod.dlust || 0);
+                let totalAgi = Number(baseArmorStats.mods.agi || 0) + Number(aMod.agi || 0);
+                let totalSed = Number(baseArmorStats.mods.sed || 0) + Number(aMod.sed || 0);
+                let totalMis = Number(baseArmorStats.mods.mis || 0) + Number(aMod.mis || 0);
+
+                if(totalDfHp) modHtml += `<span class="text-green-400">DF ${totalDfHp > 0 ? '+' + totalDfHp : totalDfHp}</span>`;
+                if(totalDfLust) modHtml += `<span class="text-purple-300">DLUST ${totalDfLust > 0 ? '+' + totalDfLust : totalDfLust}</span>`;
+                if(totalAgi) modHtml += `<span class="text-green-400">AGI ${totalAgi > 0 ? '+'+totalAgi : totalAgi}</span>`;
+                if(totalSed) modHtml += `<span class="text-pink-300">SED ${totalSed > 0 ? '+'+totalSed : totalSed}</span>`;
+                if(totalMis) modHtml += `<span class="text-blue-300">MIS ${totalMis > 0 ? '+'+totalMis : totalMis}</span>`;
             }
 
             const icon = isWeapon ? 'fa-khanda' : isAccessory ? 'fa-gem' : 'fa-shield-halved';
