@@ -1264,6 +1264,13 @@ function openPerkModal(attrKey) {
 }
 
 function renderDashboard() {
+    if (typeof window !== 'undefined' && window.currentTab === 'rpg') {
+        document.getElementById('dashboard-container')?.classList.add('hidden');
+        document.getElementById('no-char-selected')?.classList.add('hidden');
+        document.getElementById('rpg-dashboard-container')?.classList.remove('hidden');
+        return;
+    }
+
     const char = getActiveChar();
     const dash = document.getElementById('dashboard-container');
     const noChar = document.getElementById('no-char-selected');
