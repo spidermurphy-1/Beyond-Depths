@@ -1090,7 +1090,7 @@ function getClassStats(className) {
 function getCharModifiers(char, targetZone = 'Qualquer') {
     const items = getEquippedItems(char);
     
-    let mods = { df: 0, dlust: 0, df_hp: 0, df_hpmag: 0, df_mag: 0, df_lust: 0, df_lustmag: 0, agi: 0, sed: 0, mis: 0, hp_mult: 1, st_mult: 1, esq: 0, dlust_set: null, ecstasy_set: null, danFis: 0, danLust: 0, danMag: 0, danDist: 0, danFurt: 0 };
+    let mods = { df: 0, dlust: 0, df_hp: 0, df_hpmag: 0, df_mag: 0, df_lust: 0, df_lustmag: 0, agi: 0, sed: 0, mis: 0, hp_mult: 1, st_mult: 1, esq: 0, dlust_set: null, ecstasy_set: null, danFis: 0, danLust: 0, danMag: 0, danDist: 0, danFurt: 0, hp_max: 0, st_max: 0, lust_max: 0, danLustDice: [], danFisDice: [] };
     let bk = { hp: [], st: [], en: [], lust: [], df: [], dlust: [], df_hp: [], df_hpmag: [], df_mag: [], df_lust: [], df_lustmag: [], esq: [], danFis: [], danLust: [], agi: [], sed: [], mis: [], con: [], for: [], vig: [], von: [] };
     
     // Sum Equipment
@@ -1209,22 +1209,44 @@ function getCharModifiers(char, targetZone = 'Qualquer') {
     });
 
     // Extract Perks values
-    const perkRegex = /\+([0-9]+(?:d[0-9]+)?)/;
     if (char.perks) {
         for (const attr in char.perks) {
             for (const pName in char.perks[attr]) {
                 let lvl = char.perks[attr][pName];
                 if (lvl > 0 && PERKS_DB[attr].perks[pName]) {
                     let desc = PERKS_DB[attr].perks[pName][lvl - 1];
-                    let match = desc.match(perkRegex);
-                    let val = match ? match[1] : null;
-                    if (val) {
-                        if (desc.includes('Dano Físico') || desc.includes('Dano') && attr === 'for') { mods.danFis += (val.includes('d') ? 0 : parseInt(val)); bk.danFis.push({label: pName, val: '+'+val}); }
-                        if (desc.includes('Dano LUST') || desc.includes('Dano LUST')) { mods.danLust += (val.includes('d') ? 0 : parseInt(val)); bk.danLust.push({label: pName, val: '+'+val}); }
-                        if (desc.includes('Defesa Fís')) { mods.df += (val.includes('d') ? 0 : parseInt(val)); bk.df.push({label: pName, val: '+'+val}); }
-                        if (desc.includes('Defesa LUST')) { mods.dlust += (val.includes('d') ? 0 : parseInt(val)); bk.dlust.push({label: pName, val: '+'+val}); }
-                        if (desc.includes('Stamina máxima')) { bk.st.push({label: pName, val: '+'+val}); }
+                    
+                    const extract = (regex) => {
+                        let m = desc.match(regex);
+                        return m ? (m[1] || m[2]) : null;
+                    };
+
+                    const apply = (val, numKey, diceKey, bkKey) => {
+                        if (!val) return;
+                        if (val.includes('d')) {
+                            if (diceKey) mods[diceKey].push(val);
+                            bk[bkKey].push({label: pName, val: '+' + val});
+                        } else {
+                            mods[numKey] += parseInt(val);
+                            bk[bkKey].push({label: pName, val: '+' + val});
+                        }
+                    };
+
+                    apply(extract(/Dano(?: de)? LUST \+([0-9]+(?:d[0-9]+)?)/i), 'danLust', 'danLustDice', 'danLust');
+                    apply(extract(/Dano Físico \+([0-9]+(?:d[0-9]+)?)/i), 'danFis', 'danFisDice', 'danFis');
+                    
+                    let justDmg = extract(/Dano \+([0-9]+(?:d[0-9]+)?)/i);
+                    if (justDmg && !desc.match(/Dano(?: de)? LUST/i) && !desc.match(/Dano Físico/i)) {
+                        if (attr === 'sed' || attr === 'con') apply(justDmg, 'danLust', 'danLustDice', 'danLust');
+                        else apply(justDmg, 'danFis', 'danFisDice', 'danFis');
                     }
+
+                    apply(extract(/Defesa LUST \+([0-9]+(?:d[0-9]+)?)/i), 'dlust', null, 'dlust');
+                    apply(extract(/Defesa Fís(?:ica)? \+([0-9]+(?:d[0-9]+)?)/i), 'df', null, 'df');
+                    
+                    apply(extract(/(?:\+([0-9]+) de LUST Máximo|LUST Máximo \+([0-9]+))/i), 'lust_max', null, 'lust');
+                    apply(extract(/(?:\+([0-9]+) de HP Máximo|HP Máximo \+([0-9]+))/i), 'hp_max', null, 'hp');
+                    apply(extract(/(?:\+([0-9]+) de Stamina Máxim[oa]|Stamina Máxim[oa] \+([0-9]+))/i), 'st_max', null, 'st');
                 }
             }
         }
@@ -1523,11 +1545,11 @@ function renderDashboard() {
 function updateBars(char, mods) {
     const cStats = getClassStats(char.class);
     
-    // Apply Condition Multipliers
-    let maxHp = Math.max(1, Math.floor((cStats.hp + (char.attr.con * 10)) * mods.hp_mult));
-    let maxSt = Math.max(1, Math.floor((cStats.st + (char.attr.vig * 5)) * mods.st_mult));
+    // Apply Condition Multipliers and Perk Max Mods
+    let maxHp = Math.max(1, Math.floor((cStats.hp + (char.attr.con * 10) + (mods.hp_max || 0)) * mods.hp_mult));
+    let maxSt = Math.max(1, Math.floor((cStats.st + (char.attr.vig * 5) + (mods.st_max || 0)) * mods.st_mult));
     const maxEn = cStats.en;
-    const maxLu = cStats.lust;
+    const maxLu = cStats.lust + (mods.lust_max || 0);
     
     const hp = Math.max(0, Math.min(maxHp, char.hp));
     document.getElementById('val-hp').innerText = hp; document.getElementById('max-hp').innerText = maxHp;
@@ -1577,8 +1599,11 @@ function renderAttributesAndDerivedStats(char, mods) {
     const minDodge = totalAgi > 0 ? 2 : 0;
     const maxDodge = totalAgi > 0 ? 2 * totalAgi : 0;
     const totalEsq = minDodge === maxDodge ? (baseEsq + minDodge) : `${baseEsq + minDodge}-${baseEsq + maxDodge}`;
-    const totalDanFis = 5 + (char.attr.for) + mods.danFis;
-    const totalDanLust = 5 + (char.attr.sed) + mods.danLust;
+    let totalDanFis = 5 + (char.attr.for) + mods.danFis;
+    if (mods.danFisDice && mods.danFisDice.length > 0) totalDanFis += " + " + mods.danFisDice.join(" + ");
+    
+    let totalDanLust = 5 + (char.attr.sed) + mods.danLust;
+    if (mods.danLustDice && mods.danLustDice.length > 0) totalDanLust += " + " + mods.danLustDice.join(" + ");
 
     document.getElementById('dash-df').innerText = totalDF;
     document.getElementById('dash-dl').innerText = totalDL;
