@@ -20,16 +20,13 @@ h1, h2, h3, h4, .font-medieval {
 
 /* Glassmorphism Classes */
 .glass-panel {
-    background: rgba(30, 30, 35, 0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(30, 30, 35, 0.95);
     border: 1px solid rgba(212, 175, 55, 0.2);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
 }
 
 .glass-card {
-    background: rgba(40, 40, 45, 0.5);
-    backdrop-filter: blur(8px);
+    background: rgba(40, 40, 45, 0.9);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 0.5rem;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -136,8 +133,7 @@ h1, h2, h3, h4, .font-medieval {
 
 /* Modal */
 dialog::backdrop {
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(6px);
+    background: rgba(0, 0, 0, 0.95);
 }
 dialog {
     background: transparent;
