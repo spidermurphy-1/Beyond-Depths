@@ -560,7 +560,17 @@ const modalsHtml = `
         <form method="dialog" id="form-skill" class="p-6 max-h-[70vh] overflow-y-auto space-y-4">
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Nome da Habilidade</label>
-                <input type="text" id="inp-g-skill-name" required class="input-dark">
+                <input type="text" id="inp-g-skill-name" required class="input-dark mb-2">
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Parte do Corpo Envolvida</label>
+                <select id="inp-g-skill-bodypart" class="input-dark w-full">
+                    <option value="Geral">Geral / Magia / Arma (Padrão)</option>
+                    <option value="Toque/Mãos">Mãos / Dedos / Toque</option>
+                    <option value="Pés/Pernas">Pés / Pernas / Coxas</option>
+                    <option value="Lábios/Fala">Lábios / Fala / Beijo</option>
+                    <option value="Quadril/Glúteos">Quadril / Glúteos</option>
+                    <option value="Peitos/Peitoral">Peitos / Peitoral</option>
+                    <option value="Dotação / Membro">Dotação / Membro</option>
+                </select>
             </div>
             <div>
                 <label class="block text-xs text-gray-400 mb-1">Descrição Narrativa</label>

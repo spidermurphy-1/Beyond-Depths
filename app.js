@@ -478,6 +478,7 @@ document.getElementById('btn-save-g-skill').addEventListener('click', (e) => {
         cost: document.getElementById('inp-g-skill-cost').value,
         test: document.getElementById('inp-g-skill-test')?.value || '',
         desc: document.getElementById('inp-g-skill-desc')?.value || '',
+        bodyPart: document.getElementById('inp-g-skill-bodypart')?.value || 'Geral',
         castTime: document.getElementById('inp-g-skill-cast-time')?.value || '',
         cooldown: document.getElementById('inp-g-skill-cooldown')?.value || '',
         range: document.getElementById('inp-g-skill-range')?.value || '',
@@ -1087,7 +1088,7 @@ function getClassStats(className) {
     return { hp: 10, st: 10, en: 35, lust: 100, ecstasy: 25 };
 }
 
-function getCharModifiers(char, targetZone = 'Qualquer') {
+function getCharModifiers(char, targetZone = 'Qualquer', attackBodyPart = 'Geral') {
     const items = getEquippedItems(char);
     
     let mods = { df: 0, dlust: 0, df_hp: 0, df_hpmag: 0, df_mag: 0, df_lust: 0, df_lustmag: 0, agi: 0, sed: 0, mis: 0, hp_mult: 1, st_mult: 1, esq: 0, dlust_set: null, ecstasy_set: null, danFis: 0, danLust: 0, danMag: 0, danDist: 0, danFurt: 0, hp_max: 0, st_max: 0, lust_max: 0, danLustDice: [], danFisDice: [] };
@@ -1221,8 +1222,36 @@ function getCharModifiers(char, targetZone = 'Qualquer') {
                         return m ? (m[1] || m[2]) : null;
                     };
 
-                    const apply = (val, numKey, diceKey, bkKey) => {
+                    const bodyPartMap = {
+                        'Toque/Mãos': ['Mãos/Dedos', 'Punhos', 'Braços', 'Pegada'],
+                        'Pés/Pernas': ['Pés/Pernas', 'Coxas', 'Pés'],
+                        'Lábios/Fala': ['Lábios/Fala'],
+                        'Quadril/Glúteos': ['Quadril/Glúteos'],
+                        'Peitos/Peitoral': ['Peitos/Peitoral'],
+                        'Dotação / Membro': ['Dotação / Membro', 'Fluidos']
+                    };
+                    
+                    let isRestricted = false;
+                    let requiredBodyPart = null;
+                    for (const [bp, categories] of Object.entries(bodyPartMap)) {
+                        if (categories.some(c => pName.includes(c) || c.includes(pName))) {
+                            isRestricted = true;
+                            requiredBodyPart = bp;
+                            break;
+                        }
+                    }
+
+                    let applyDamage = true;
+                    if (isRestricted && attackBodyPart !== 'Geral' && attackBodyPart !== requiredBodyPart) {
+                        applyDamage = false; 
+                    }
+                    if (isRestricted && attackBodyPart === 'Geral' && requiredBodyPart !== 'Toque/Mãos' && requiredBodyPart !== 'Pés/Pernas') {
+                        applyDamage = false;
+                    }
+
+                    const apply = (val, numKey, diceKey, bkKey, isDamageObj = false) => {
                         if (!val) return;
+                        if (isDamageObj && !applyDamage) return;
                         if (val.includes('d')) {
                             if (diceKey) mods[diceKey].push(val);
                             bk[bkKey].push({label: pName, val: '+' + val});
@@ -1232,13 +1261,13 @@ function getCharModifiers(char, targetZone = 'Qualquer') {
                         }
                     };
 
-                    apply(extract(/Dano(?: de)? LUST \+([0-9]+(?:d[0-9]+)?)/i), 'danLust', 'danLustDice', 'danLust');
-                    apply(extract(/Dano Físico \+([0-9]+(?:d[0-9]+)?)/i), 'danFis', 'danFisDice', 'danFis');
+                    apply(extract(/Dano(?: de)? LUST \+([0-9]+(?:d[0-9]+)?)/i), 'danLust', 'danLustDice', 'danLust', true);
+                    apply(extract(/Dano Físico \+([0-9]+(?:d[0-9]+)?)/i), 'danFis', 'danFisDice', 'danFis', true);
                     
                     let justDmg = extract(/Dano \+([0-9]+(?:d[0-9]+)?)/i);
                     if (justDmg && !desc.match(/Dano(?: de)? LUST/i) && !desc.match(/Dano Físico/i)) {
-                        if (attr === 'sed' || attr === 'con') apply(justDmg, 'danLust', 'danLustDice', 'danLust');
-                        else apply(justDmg, 'danFis', 'danFisDice', 'danFis');
+                        if (attr === 'sed' || attr === 'con') apply(justDmg, 'danLust', 'danLustDice', 'danLust', true);
+                        else apply(justDmg, 'danFis', 'danFisDice', 'danFis', true);
                     }
 
                     apply(extract(/Defesa LUST \+([0-9]+(?:d[0-9]+)?)/i), 'dlust', null, 'dlust');
@@ -2406,6 +2435,18 @@ window.updateMasterDamageUI = function() {
         c.classList.add('hidden');
     }
     
+    // 2. Auto-fill Body Part based on Attack Name
+    const bpSelect = document.getElementById('inp-dmg-bodypart');
+    if (bpSelect && aSelect.value !== 'custom') {
+        const n = aSelect.options[aSelect.selectedIndex].text.toLowerCase();
+        let bp = 'Geral';
+        if (n.includes('soco') || n.includes('adaga') || n.includes('toque') || n.includes('apalpar') || n.includes('masturbação') || n.includes('encontrão') || n.includes('arremesso') || n.includes('brinquedos')) bp = 'Toque/Mãos';
+        else if (n.includes('chute') || n.includes('perna')) bp = 'Pés/Pernas';
+        else if (n.includes('beijo') || n.includes('oral') || n.includes('verbal')) bp = 'Lábios/Fala';
+        else if (n.includes('penetração') || n.includes('cavalgada') || n.includes('montaria') || n.includes('fricção')) bp = 'Dotação / Membro';
+        
+        bpSelect.value = bp;
+    }
 };
 
 document.getElementById('btn-master-damage').addEventListener('click', () => {
@@ -2541,7 +2582,7 @@ window.getAttackTags = function(attackName) {
     return tags;
 };
 
-window.parsePerkBuffs = function(char, dmgType, isAttacker, attackTags = []) {
+window.parsePerkBuffs = function(char, dmgType, isAttacker, attackBodyPart = 'Geral') {
     let buff = { flat: 0, pct: 0, diceCount: 0, diceFaces: 0, notes: [] };
     if(!char || !char.perks) return buff;
 
@@ -2560,9 +2601,29 @@ window.parsePerkBuffs = function(char, dmgType, isAttacker, attackTags = []) {
         if (isMag && !['MAG', 'HP_MAG', 'LUST_MAG'].includes(dmgType)) return;
         
         if (isAttacker) {
-            // Apply strict tag validation for Attackers so we don't apply boob damage on punches.
-            if (attackTags.length > 0 && !attackTags.includes(perkName)) {
-                // Passives like Presence or Pheromones are always active.
+            const bodyPartMap = {
+                'Toque/Mãos': ['Mãos/Dedos', 'Punhos', 'Braços', 'Pegada'],
+                'Pés/Pernas': ['Pés/Pernas', 'Coxas', 'Pés'],
+                'Lábios/Fala': ['Lábios/Fala'],
+                'Quadril/Glúteos': ['Quadril/Glúteos'],
+                'Peitos/Peitoral': ['Peitos/Peitoral'],
+                'Dotação / Membro': ['Dotação / Membro', 'Fluidos']
+            };
+            
+            let isRestricted = false;
+            let requiredBodyPart = null;
+            for (const [bp, categories] of Object.entries(bodyPartMap)) {
+                if (categories.some(c => perkName.includes(c) || c.includes(perkName))) {
+                    isRestricted = true;
+                    requiredBodyPart = bp;
+                    break;
+                }
+            }
+
+            if (isRestricted && attackBodyPart !== 'Geral' && attackBodyPart !== requiredBodyPart) {
+                return; 
+            }
+            if (isRestricted && attackBodyPart === 'Geral' && requiredBodyPart !== 'Toque/Mãos' && requiredBodyPart !== 'Pés/Pernas') {
                 if (!perkName.includes('Feromônios') && !perkName.includes('Presença')) return;
             }
 
@@ -2721,13 +2782,11 @@ document.getElementById('btn-dmg-confirm').addEventListener('click', () => {
         else if(cond === 'desvantagem') baseDano = Math.min(r1, r2);
 
         // --- AUTOMATED PERKS SYSTEM ---
-        const attackSelect = document.getElementById('inp-dmg-attack'); 
-        const attackName = attackSelect.options[attackSelect.selectedIndex].text; 
-        const attackTags = getAttackTags(attackName);
-        let atkBuffs = parsePerkBuffs(attackerChar, dmgType, true, attackTags);
+        const attackBodyPart = document.getElementById('inp-dmg-bodypart')?.value || 'Geral';
+        let atkBuffs = parsePerkBuffs(attackerChar, dmgType, true, attackBodyPart);
 
         let defChar = target.isMonster ? null : characters.find(c => c.id === target.refId);
-        let defBuffs = parsePerkBuffs(defChar, dmgType, false, []);
+        let defBuffs = parsePerkBuffs(defChar, dmgType, false, 'Geral');
 
         // Apply Attacker Buffs
         baseDano += atkBuffs.flat;
@@ -3125,6 +3184,7 @@ window.openEditItem = function(type, id) {
         if (!sk || !canEdit(sk)) return alert("Sem permissão ou item não encontrado.");
         editingSkillId = sk.id;
         setVal('inp-g-skill-name', sk.name || '');
+        setVal('inp-g-skill-bodypart', sk.bodyPart || 'Geral');
         setVal('inp-g-skill-type', sk.type || '');
         setVal('inp-g-skill-cost', sk.cost || '');
         setVal('inp-g-skill-test', sk.test || '');
