@@ -92,5 +92,20 @@ const RACE_TEMPLATES = {
                 desc: "Sofre 10% a mais de dano físico e não pode equipar armaduras médias ou pesadas."
             }
         ]
+    },
+    "Cowgirl": {
+        skills: [
+            {
+                name: "Leite doce",
+                type: "Passiva",
+                desc: "Ao um aliado beber seus fluidos diretamente dos seios, eles curam 3d6 de HP além de que seu próximo ataque (físico) ganha +1 de dano físico. Porém, em situações adversas, a própria vaca pode alterar a doçura de seu leite, para o mesmo funcionar como um Afrosidiaco, causando 3d6 de LUST. Quando a mesma Gozar, pode jorrar direto de seus seios em conjunto com sua intimidade, e todos aqueles que beberam ou se melarem, recebem os mesmos Efeitos de Leite Doce."
+            }
+        ],
+        weaknesses: [
+            {
+                name: "Sensibilidade aos seios",
+                desc: "Ao levar um dano lust que envolva os seios, eles aumentam em +2 de dano lust."
+            }
+        ]
     }
 };

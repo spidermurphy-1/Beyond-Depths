@@ -186,5 +186,37 @@ const CLASS_TEMPLATES = {
                 desc: "Se passar 3 turnos consecutivos sem causar dano sexual a alguém ela começa a ficar ansiosa e impaciente recebendo -3 em testes de vontade."
             }
         ]
+    },
+    "Berserk": {
+        baseStats: { hp: 120, st: 110, lust: 120, en: 30 },
+        attrMods: { vig: 3, sed: 2 },
+        skillsToCreate: [
+            {
+                name: "Frenesi",
+                type: "Passiva",
+                cost: "-",
+                test: "-",
+                desc: "Ao entrar em estado de fúria, o Berserk aumenta sua pressão ofensiva, o efetivo é ativado em 2 etapas, em 30% de perca de hp ou em 30% de dano lust, o efeito pode variar entre +3 de dano físico se o usuário escolher, ou em +3 de dano lust se escolher o lust. ( Dura por 3 turnos, se renovando a cada 30% )",
+                classRestricted: "Berserk"
+            },
+            {
+                name: "Gemido provocativo",
+                type: "Ativa",
+                cost: "5 turnos",
+                test: "-",
+                desc: "Esse gemido tem efeito na cama, no combate e na inspiração dos aliados, o usuário pode usar isso para inspirar seus companheiros em um combate, dandolhes +1 no próximo teste, ou pode ser usado para causar 2d8 de dano lust em um alvo que estiver a penetrando ou a fazendo sentir prazer, um contra ataque muito eficaz.",
+                classRestricted: "Berserk"
+            }
+        ],
+        weaknesses: [
+            {
+                name: "Defesa Exposta",
+                desc: "Por concentrar-se completamente no ataque, o Berserk sofre -2 em Defesa Física e Defesa de LUST enquanto estiver em Frenesi."
+            },
+            {
+                name: "Movimentos Previsíveis",
+                desc: "Se permanecer em Frenesi por mais de 4 turnos seguidos, seus movimentos tornam-se previsíveis, recebendo -2 em Agilidade."
+            }
+        ]
     }
 };
