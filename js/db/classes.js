@@ -218,5 +218,37 @@ const CLASS_TEMPLATES = {
                 desc: "Se permanecer em Frenesi por mais de 4 turnos seguidos, seus movimentos tornam-se previsíveis, recebendo -2 em Agilidade."
             }
         ]
+    },
+    "Franco golpeador": {
+        baseStats: { hp: 120, st: 150, lust: 100, en: 45 },
+        attrMods: { for: 2, agi: 3 },
+        skills: [
+            {
+                name: "Aparar",
+                type: "Ativa",
+                cost: "3 turnos",
+                test: "-",
+                desc: "Quando se trata de bater de frente e dominar o avanço, golpeadores são profissionais. Caso a ação seja focada em executar a famigerada ação dita como 'parry', receberá um bônus de +3, o bônus esse que se repete caso a guarda do inimigo não seja quebrada na primeira ação, porém, diminuindo a cada repetição.",
+                classRestricted: "Franco golpeador"
+            },
+            {
+                name: "My pretty girl",
+                type: "Passiva",
+                cost: "-",
+                test: "-",
+                desc: "Todo golpeador, mesmo com a enorme versatilidade no uso de armas, sempre tem sua favorita. Ao usar a arma que carrega esse título, tanto sua ativa quanto o bônus de força e velocidade da classe ganham +1, além de, em quesito narrativo, tornar o portador dessa classe bem mais imprevisível de se lidar. Em contra parte, sua arma favorita deve ser uma habilidade assinatura, não apenas um mero equipamento.",
+                classRestricted: "Franco golpeador"
+            }
+        ],
+        weaknesses: [
+            {
+                name: "Ai minha artrite",
+                desc: "No que se focam em bater e correr, são péssimos em realmente aguentar golpes. Classes portadoras de uma força bruta superior a sua podem facilmente ganhar destes com até um único golpe, demonstrando apenas meras chances de sobrevivência caso seja um ataque perfurante ou cortante. ( -3 em resistência física )"
+            },
+            {
+                name: "Faminto",
+                desc: "Acabam sendo a classe mais brigona e inconsequente, não existindo a possibilidade de clicar no botão de diálogo. Se uma intriga ocorre, propõem uma luta. Se uma pessoa está sendo difícil de se persuadir, já puxam uma faca. Se não tiver alguém para segurar um golpeador, ele também não vai se segurar."
+            }
+        ]
     }
 };

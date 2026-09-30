@@ -1628,11 +1628,26 @@ function renderAttributesAndDerivedStats(char, mods) {
     const minDodge = totalAgi > 0 ? 2 : 0;
     const maxDodge = totalAgi > 0 ? 2 * totalAgi : 0;
     const totalEsq = minDodge === maxDodge ? (baseEsq + minDodge) : `${baseEsq + minDodge}-${baseEsq + maxDodge}`;
-    let totalDanFis = 5 + (char.attr.for) + mods.danFis;
-    if (mods.danFisDice && mods.danFisDice.length > 0) totalDanFis += " + " + mods.danFisDice.join(" + ");
-    
-    let totalDanLust = 5 + (char.attr.sed) + mods.danLust;
-    if (mods.danLustDice && mods.danLustDice.length > 0) totalDanLust += " + " + mods.danLustDice.join(" + ");
+    const formatDamageRange = (base, diceArr) => {
+        if (!diceArr || diceArr.length === 0) return base;
+        let parsed = diceArr.map(d => {
+            let m = d.toLowerCase().match(/(\d*)d(\d+)/);
+            if (m) {
+                let count = m[1] ? parseInt(m[1]) : 1;
+                let faces = parseInt(m[2]);
+                return { count, faces, max: count * faces, min: count };
+            }
+            return { count: 0, faces: 0, max: 0, min: 0 };
+        });
+        parsed.sort((a, b) => b.max - a.max);
+        let topTwo = parsed.slice(0, 2);
+        let minAdd = 0, maxAdd = 0;
+        topTwo.forEach(d => { minAdd += d.min; maxAdd += d.max; });
+        return `${base + minAdd}-${base + maxAdd}`;
+    };
+
+    let totalDanFis = formatDamageRange(5 + (char.attr.for) + mods.danFis, mods.danFisDice);
+    let totalDanLust = formatDamageRange(5 + (char.attr.sed) + mods.danLust, mods.danLustDice);
 
     document.getElementById('dash-df').innerText = totalDF;
     document.getElementById('dash-dl').innerText = totalDL;
